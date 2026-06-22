@@ -73,31 +73,28 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
 
-      {/* ── HERO LOCKUP: [M / MEVITE] | divider | Invite Yourself Over. ── */}
+      {/* ── HERO LOCKUP: [M stacked over MEVITE] | vertical divider | Invite Yourself Over. ── */}
       <div style={{ padding: "32px 20px 0" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
 
-          {/* Left: M icon stacked tightly over MEVITE wordmark */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+          {/* Left: M mark + MEVITE below — use the exact stacked PNG */}
+          <div style={{ flexShrink: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/m-only.png" alt="M" style={{ height: 80, width: "auto", display: "block" }} />
-            <span style={{
-              fontSize: 11, fontWeight: 900, letterSpacing: "0.18em",
-              color: "#111", fontFamily: "Inter, system-ui, sans-serif",
-              marginTop: 3, display: "block"
-            }}>
-              MEVITE
-            </span>
+            <img
+              src="/m-lockup.png"
+              alt="MEVITE"
+              style={{ height: 110, width: "auto", display: "block" }}
+            />
           </div>
 
-          {/* Vertical divider — tight to M block */}
-          <div style={{ width: 2, background: "#111", alignSelf: "stretch", margin: "0 16px", minHeight: 80 }} />
+          {/* Vertical divider */}
+          <div style={{ width: 2, background: "#111", alignSelf: "stretch", margin: "0 18px", minHeight: 110 }} />
 
           {/* Right: Invite Yourself Over. */}
           <div style={{
             fontSize: 34, fontWeight: 900, lineHeight: 1.05,
             color: "#111", letterSpacing: "-0.01em",
-            fontFamily: "Inter, system-ui, sans-serif"
+            fontFamily: "Inter, system-ui, sans-serif",
           }}>
             Invite<br />Yourself<br />Over<span style={{ color: "#E8470A" }}>.</span>
           </div>
