@@ -15,45 +15,66 @@ function MIcon({ size = 36 }: { size?: number }) {
   );
 }
 
+const headerStyle: React.CSSProperties = {
+  position: "sticky",
+  top: 0,
+  zIndex: 50,
+  backgroundColor: "#ffffff",
+  borderBottom: "1px solid #E8E8E8",
+  display: "flex",
+  alignItems: "center",
+  padding: "0 20px",
+  height: "56px",
+  gap: 0,
+};
+
+const dividerStyle: React.CSSProperties = {
+  width: "1px",
+  height: "28px",
+  backgroundColor: "#1a1a1a",
+  margin: "0 16px",
+  flexShrink: 0,
+};
+
+const wordmarkStyle: React.CSSProperties = {
+  fontSize: "16px",
+  fontWeight: 900,
+  letterSpacing: "0.1em",
+  color: "#111111",
+  marginLeft: "10px",
+  fontFamily: "Inter, system-ui, sans-serif",
+};
+
+const taglineStyle: React.CSSProperties = {
+  fontSize: "16px",
+  fontWeight: 900,
+  color: "#111111",
+  fontFamily: "Inter, system-ui, sans-serif",
+  lineHeight: 1,
+};
+
 export function MeviteHeader() {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#E8E8E8]">
-      <div className="px-5 h-14 flex items-center gap-0">
-        {/* M icon */}
-        <MIcon size={38} />
-
-        {/* MEVITE wordmark */}
-        <span className="ml-3 text-[16px] font-black tracking-[0.1em] text-[#111]">
-          MEVITE
-        </span>
-
-        {/* Vertical divider — matches the lockup */}
-        <div className="mx-4 self-stretch py-2">
-          <div className="h-full w-px bg-[#1a1a1a]" />
-        </div>
-
-        {/* Tagline — bold to match lockup */}
-        <span className="text-[16px] font-black text-[#111] leading-none">
-          Invite Yourself Over<span className="text-[#E8470A]">.</span>
-        </span>
-      </div>
+    <header style={headerStyle}>
+      <MIcon size={38} />
+      <span style={wordmarkStyle}>MEVITE</span>
+      <div style={dividerStyle} />
+      <span style={taglineStyle}>
+        Invite Yourself Over<span style={{ color: "#E8470A" }}>.</span>
+      </span>
     </header>
   );
 }
 
 export function MeviteHeaderCompact() {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#E8E8E8]">
-      <div className="px-5 h-12 flex items-center">
-        <MIcon size={28} />
-        <span className="ml-2.5 text-[14px] font-black tracking-[0.1em] text-[#111]">MEVITE</span>
-        <div className="mx-3 self-stretch py-2.5">
-          <div className="h-full w-px bg-[#1a1a1a]" />
-        </div>
-        <span className="text-[14px] font-black text-[#111]">
-          Invite Yourself Over<span className="text-[#E8470A]">.</span>
-        </span>
-      </div>
+    <header style={{ ...headerStyle, height: "48px" }}>
+      <MIcon size={28} />
+      <span style={{ ...wordmarkStyle, fontSize: "14px", marginLeft: "8px" }}>MEVITE</span>
+      <div style={{ ...dividerStyle, height: "22px", margin: "0 12px" }} />
+      <span style={{ ...taglineStyle, fontSize: "14px" }}>
+        Invite Yourself Over<span style={{ color: "#E8470A" }}>.</span>
+      </span>
     </header>
   );
 }
