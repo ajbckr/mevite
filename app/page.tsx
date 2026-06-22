@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MeviteHeader } from "@/components/MeviteHeader";
 import { RotatingPrompt } from "@/components/RotatingPrompt";
 import { ThisIsHappeningPicker } from "@/components/ArrivalGauge";
 import { createMevite } from "@/lib/mevite";
@@ -67,110 +66,139 @@ export default function Home() {
 
   if (sending) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#111]">
-        <div className="text-center space-y-5 animate-fade-in px-8">
-          <svg width="56" height="56" viewBox="0 0 100 90" fill="none" style={{margin:"0 auto"}}>
-            <rect x="4" y="8" width="17" height="74" fill="white"/>
-            <polygon points="4,8 21,8 52,54 35,54" fill="white"/>
-            <polygon points="65,54 79,8 96,8 79,54" fill="white"/>
-            <rect x="79" y="8" width="17" height="74" fill="white"/>
-            <polygon points="35,54 52,54 52,82 35,82" fill="white"/>
-            <polygon points="52,54 79,54 79,82 52,82" fill="#E8470A"/>
-            <circle cx="70" cy="69" r="3" fill="white"/>
-          </svg>
-          <p className="text-white text-xl font-black">Sending your Mevite…</p>
-          <div className="flex gap-2 justify-center">
-            {[0,1,2].map(i => (
-              <div key={i} className="w-2 h-2 rounded-full bg-[#FF4C00]"
-                style={{ animation: `pulseDot 1.2s ease-in-out ${i*0.2}s infinite` }} />
-            ))}
-          </div>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#111" }}>
+        <div style={{ textAlign: "center" }}>
+          <MHero size={64} />
+          <p style={{ color: "white", fontSize: 20, fontWeight: 900, marginTop: 20, fontFamily: "Inter, sans-serif" }}>Sending your Mevite…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ minHeight: "100vh", background: "#fff" }}>
 
-      {/* ── PERMANENT STICKY LOCKUP HEADER ── */}
-      <MeviteHeader />
+      {/* ── HERO LOCKUP — M icon | MEVITE | divider | Invite Yourself Over. ── */}
+      <div style={{ padding: "40px 24px 32px" }}>
 
-      {/* ── HERO ── */}
-      <div className="px-6 pt-10 pb-8">
-        <h1 className="text-[3.6rem] font-black leading-[0.93] tracking-tight text-[#111]">
+        {/* Top row: M icon + MEVITE wordmark */}
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 0, marginBottom: 4 }}>
+          <MHero size={100} />
+          <span style={{
+            fontSize: 36,
+            fontWeight: 900,
+            letterSpacing: "0.08em",
+            color: "#111",
+            fontFamily: "Inter, system-ui, sans-serif",
+            lineHeight: 1,
+            marginLeft: 8,
+            paddingBottom: 6,
+          }}>
+            MEVITE
+          </span>
+        </div>
+
+        {/* Divider line — full width */}
+        <div style={{ height: 2, background: "#1a1a1a", margin: "10px 0 12px" }} />
+
+        {/* Tagline — large, bold, stacked */}
+        <div style={{
+          fontSize: 44,
+          fontWeight: 900,
+          lineHeight: 1.05,
+          color: "#111",
+          fontFamily: "Inter, system-ui, sans-serif",
+          letterSpacing: "-0.01em",
+        }}>
           Invite<br />
           Yourself<br />
-          Over<span className="text-[#FF4C00]">.</span>
-        </h1>
-        <p className="text-[#888] text-sm mt-4 leading-relaxed">
-          Stop saying &ldquo;we should get together.&rdquo;<br />Show up.
+          Over<span style={{ color: "#E8470A" }}>.</span>
+        </div>
+
+        <p style={{ color: "#888", fontSize: 14, marginTop: 12, lineHeight: 1.5, fontFamily: "Inter, sans-serif" }}>
+          Stop saying &ldquo;we should get together.&rdquo; Show up.
         </p>
       </div>
 
       {/* ── FORM ── */}
-      <div className="px-6 space-y-7">
-        <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={setWho} placeholder="" />
+      <div style={{ padding: "0 24px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
 
-        <div className="space-y-1">
-          <label className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#888]">When?</label>
-          <button onClick={() => setShowDatePicker(true)} className="w-full text-left">
-            <div className={`text-xl pb-3 border-b border-[#E0E0E0] w-full ${when ? "text-[#111] font-semibold" : "text-[#CCC]"}`}>
-              {when || WHEN_ROTATE[whenIdx]}
-            </div>
-          </button>
-        </div>
+          <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={setWho} placeholder="" />
 
-        <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={setBringing} placeholder="" />
-        <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={setWhy} placeholder="" />
-
-        {/* This Is Happening */}
-        <div className="border-t border-[#F0F0F0] pt-5">
-          <button onClick={() => setShowPicker(true)} className="w-full flex items-center justify-between group">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-[#FF4C00]" />
-              <div className="text-left">
-                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#FF4C00]">This Is Happening…</p>
-                <p className="text-sm font-bold text-[#111] mt-0.5">
-                  {currentStatus ? `${currentStatus.icon} ${currentStatus.label}` : "Choose your mission status"}
-                </p>
+          {/* When */}
+          <div>
+            <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", display: "block", marginBottom: 4 }}>When?</label>
+            <button onClick={() => setShowDatePicker(true)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: 0, cursor: "pointer" }}>
+              <div style={{
+                fontSize: 20,
+                paddingBottom: 12,
+                borderBottom: "1px solid #E0E0E0",
+                color: when ? "#111" : "#CCC",
+                fontWeight: when ? 600 : 400,
+                fontFamily: "Inter, sans-serif",
+              }}>
+                {when || WHEN_ROTATE[whenIdx]}
               </div>
+            </button>
+          </div>
+
+          <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={setBringing} placeholder="" />
+          <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={setWhy} placeholder="" />
+
+          {/* This Is Happening */}
+          <div style={{ borderTop: "1px solid #F0F0F0", paddingTop: 20 }}>
+            <button onClick={() => setShowPicker(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E8470A", flexShrink: 0 }} />
+                <div style={{ textAlign: "left" }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#E8470A", textTransform: "uppercase", margin: 0 }}>This Is Happening…</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#111", margin: "3px 0 0", fontFamily: "Inter, sans-serif" }}>
+                    {currentStatus ? `${currentStatus.icon} ${currentStatus.label}` : "Choose your mission status"}
+                  </p>
+                </div>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M6 3l6 6-6 6" stroke="#E8470A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <div style={{ display: "flex", gap: 4, marginTop: 10 }}>
+              {[1,2,3,4,5].map(i => (
+                <div key={i} style={{ height: 4, flex: 1, borderRadius: 2, background: i <= (currentStatus?.gaugeLevel ?? 3) ? "#E8470A" : "#E8E8E8", transition: "background 0.3s" }} />
+              ))}
             </div>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="text-[#FF4C00]">
-              <path d="M6 3l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <div className="mt-3 flex gap-1">
-            {[1,2,3,4,5].map(i => (
-              <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                i <= (currentStatus?.gaugeLevel ?? 3) ? "bg-[#FF4C00]" : "bg-[#E8E8E8]"
-              }`} />
-            ))}
           </div>
         </div>
       </div>
 
       {/* CTA */}
-      <div className="px-6 pt-8 pb-14">
-        {error && <p className="text-[#FF4C00] text-sm text-center mb-3">{error}</p>}
-        <button onClick={handleSend} className="cta-btn">I&apos;M COMING OVER →</button>
+      <div style={{ padding: "32px 24px 56px" }}>
+        {error && <p style={{ color: "#E8470A", fontSize: 14, textAlign: "center", marginBottom: 12 }}>{error}</p>}
+        <button onClick={handleSend} style={{
+          width: "100%", background: "#111", color: "#fff",
+          padding: "16px 24px", borderRadius: 12, fontSize: 16,
+          fontWeight: 700, border: "none", cursor: "pointer",
+          letterSpacing: "0.01em", fontFamily: "Inter, sans-serif",
+        }}>
+          I&apos;M COMING OVER →
+        </button>
       </div>
 
       {/* Date Picker */}
       {showDatePicker && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-end" onClick={() => setShowDatePicker(false)}>
-          <div className="bg-white w-full rounded-t-2xl p-6 space-y-5 animate-slide-up" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <button onClick={() => setShowDatePicker(false)} className="text-[#888] text-sm font-medium">Cancel</button>
-              <p className="text-sm font-black">Pick a time</p>
-              <button onClick={handleDateConfirm} className="text-[#FF4C00] text-sm font-bold">Done</button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 50, display: "flex", alignItems: "flex-end" }} onClick={() => setShowDatePicker(false)}>
+          <div style={{ background: "#fff", width: "100%", borderRadius: "16px 16px 0 0", padding: 24 }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+              <button onClick={() => setShowDatePicker(false)} style={{ color: "#888", fontSize: 14, background: "none", border: "none", cursor: "pointer" }}>Cancel</button>
+              <span style={{ fontSize: 14, fontWeight: 700 }}>Pick a time</span>
+              <button onClick={handleDateConfirm} style={{ color: "#E8470A", fontSize: 14, fontWeight: 700, background: "none", border: "none", cursor: "pointer" }}>Done</button>
             </div>
             <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)}
-              className="w-full border border-[#E8E8E8] rounded-xl p-3 text-sm"
+              style={{ width: "100%", border: "1px solid #E8E8E8", borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 12 }}
               min={new Date().toISOString().split("T")[0]} />
             <input type="time" value={selectedTime} onChange={e => setSelectedTime(e.target.value)}
-              className="w-full border border-[#E8E8E8] rounded-xl p-3 text-sm" />
-            <button onClick={handleDateConfirm} className="cta-btn">Set Time</button>
+              style={{ width: "100%", border: "1px solid #E8E8E8", borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 16 }} />
+            <button onClick={handleDateConfirm} style={{ width: "100%", background: "#111", color: "#fff", padding: 16, borderRadius: 12, fontSize: 16, fontWeight: 700, border: "none", cursor: "pointer" }}>Set Time</button>
           </div>
         </div>
       )}
@@ -185,5 +213,17 @@ export default function Home() {
         />
       )}
     </div>
+  );
+}
+
+// Real M icon — cropped from actual logo file
+function MHero({ size }: { size: number }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/m-icon.png"
+      alt="MEVITE"
+      style={{ width: size, height: size, objectFit: "contain", objectPosition: "center", display: "block" }}
+    />
   );
 }
