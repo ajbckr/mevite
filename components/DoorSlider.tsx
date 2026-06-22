@@ -6,142 +6,130 @@ const ORANGE = "#E8470A";
 const f = "Inter, system-ui, sans-serif";
 
 const STATES = [
-  { key: "maybe"          as ArrivalStatus, label: "Maybe",         sub: "It's a thought.",           msg: "Still just an idea.",   gauge: 1 },
-  { key: "probably"       as ArrivalStatus, label: "Probably",      sub: "I'm looking at calendars.", msg: "It's moving.",          gauge: 2 },
-  { key: "definitely"     as ArrivalStatus, label: "Definitely",    sub: "Plans are forming.",        msg: "This is real.",         gauge: 3 },
-  { key: "on-my-way"      as ArrivalStatus, label: "On My Way",     sub: "En route.",                 msg: "I'm committed now.",    gauge: 4 },
-  { key: "open-the-door"  as ArrivalStatus, label: "Open The Door", sub: "I'm outside.",              msg: "Open up.",              gauge: 5 },
+  { key: "maybe"          as ArrivalStatus, label: "Maybe",         sub: "It's a thought.",          msg: "Still living entirely in my head.", gauge: 1 },
+  { key: "probably"       as ArrivalStatus, label: "Probably",      sub: "Calendars are open.",       msg: "This has moved beyond wishful thinking.", gauge: 2 },
+  { key: "definitely"     as ArrivalStatus, label: "Definitely",    sub: "It's happening.",           msg: "The plan is real now.",          gauge: 3 },
+  { key: "on-my-way"      as ArrivalStatus, label: "On My Way",     sub: "No turning back.",          msg: "I'm already moving.",            gauge: 4 },
+  { key: "open-the-door"  as ArrivalStatus, label: "Open The Door", sub: "I'm outside.",              msg: "Seriously. Open up.",            gauge: 5 },
 ];
+
+// Friend-will-see sublabels
+const FRIEND_SUBS: Record<string, string> = {
+  "maybe":          "It's a thought.",
+  "probably":       "Calendars are open.",
+  "definitely":     "It's happening.",
+  "on-my-way":      "No turning back.",
+  "open-the-door":  "I'm outside.",
+};
 
 const SNAP_ANGLES = [2, 20, 42, 65, 85];
 
-// All door geometry defined as constants so nothing conflicts
-const FX = 30;   // frame left x
-const FY = 8;    // frame top y
-const FW = 100;  // frame inner width
-const FH = 160;  // frame inner height
-const FS = 8;    // frame stroke width
-// Frame outer bounds: FX-FS/2 to FX+FW+FS/2, FY-FS/2 to FY+FH+FS/2
-// Right outer edge of frame: FX + FW + FS/2 = 30 + 100 + 4 = 134
-// Rays start from right edge x=134, keep within viewBox width 180
-// ViewBox: width=180, height=200
+// All geometry in one coordinate space — no CSS/SVG conflicts
+// ViewBox: 180 wide x 200 tall
+// Frame: starts at x=30, y=10, 100 wide, 158 tall, stroke=8
+const FX = 30, FY = 10, FW = 100, FH = 158, FS = 8;
+// Inner opening (where panel sits): hinge on left inner edge
+const IX = FX + FS / 2;   // 34
+const IY = FY + FS / 2;   // 14
+const IW = FW - FS;       // 92
+const IH = FH - FS;       // 150
 
 function Door({ angle }: { angle: number }) {
   const rad = (angle * Math.PI) / 180;
-  // Panel foreshortens with perspective cos approximation
-  const panelW = Math.max(2, FW * Math.cos(rad));
-  // Slight top/bottom skew for 3D feel
-  const skewPx = panelW * Math.sin(rad) * 0.07;
+  // True perspective foreshortening
+  const panelW = Math.max(1, IW * Math.cos(rad));
+  // Skew: top-right corner shifts right, bottom-right shifts left — creates 3D feel
+  // Keep skew small and proportional so recesses don't distort
+  const skew = Math.sin(rad) * 4; // max 4px skew at 90deg
 
-  const lightOpacity = Math.pow(angle / 85, 1.3) * 0.45;
-  const showRays = angle > 65;
-  const raysOpacity = Math.min(1, (angle - 65) / 20);
+  const lightOpacity = Math.pow(angle / 85, 1.2) * 0.4;
+  const showKnob = panelW > 12;
 
-  // Panel polygon points (hinge on left)
-  const hx = FX;
-  const topY = FY + FS / 2;
-  const botY = FY + FH - FS / 2;
-  const pts = [
-    `${hx},${topY}`,
-    `${hx + panelW},${topY + skewPx}`,
-    `${hx + panelW},${botY - skewPx}`,
-    `${hx},${botY}`,
-  ].join(" ");
+  // Panel corners — parallelogram, hinge fixed on left
+  const p = {
+    tl: { x: IX,           y: IY },
+    tr: { x: IX + panelW,  y: IY + skew },
+    br: { x: IX + panelW,  y: IY + IH - skew },
+    bl: { x: IX,           y: IY + IH },
+  };
+  const panelPts = `${p.tl.x},${p.tl.y} ${p.tr.x},${p.tr.y} ${p.br.x},${p.br.y} ${p.bl.x},${p.bl.y}`;
 
-  // Knob — on door panel, right side
-  const knobX = hx + panelW * 0.82;
-  const knobY = topY + (botY - topY) * 0.55;
-  const showKnob = panelW > 15;
+  // Recess rectangles — computed in panel-local terms, scaled by panelW
+  // Only show when panel is wide enough to look right
+  const showRecess = panelW > 28;
+  const recessPadH = panelW * 0.12;  // horizontal padding inside panel
+  const recessPadV = IH * 0.08;      // vertical padding
+  const recessMid = IY + IH * 0.52;  // divider between upper/lower recess
 
-  // Panel inner recess lines (only when wide enough)
-  const showRecess = panelW > 35;
-  const rx1 = hx + panelW * 0.12;
-  const rx2 = hx + panelW * 0.88;
-  const ry1a = topY + (botY - topY) * 0.08 + skewPx * 0.12;
-  const ry1b = topY + (botY - topY) * 0.46 + skewPx * 0.88;
-  const ry2a = topY + (botY - topY) * 0.54 + skewPx * 0.12;
-  const ry2b = topY + (botY - topY) * 0.92 + skewPx * 0.88;
+  // Upper recess corners
+  const ur = {
+    tl: { x: IX + recessPadH,          y: IY + recessPadV + skew * (recessPadH / IW) },
+    tr: { x: IX + panelW - recessPadH, y: IY + recessPadV + skew * ((panelW - recessPadH) / IW) },
+    br: { x: IX + panelW - recessPadH, y: recessMid - 4 + skew * ((panelW - recessPadH) / IW) },
+    bl: { x: IX + recessPadH,          y: recessMid - 4 + skew * (recessPadH / IW) },
+  };
+  // Lower recess corners
+  const lr = {
+    tl: { x: IX + recessPadH,          y: recessMid + 4 + skew * (recessPadH / IW) },
+    tr: { x: IX + panelW - recessPadH, y: recessMid + 4 + skew * ((panelW - recessPadH) / IW) },
+    br: { x: IX + panelW - recessPadH, y: IY + IH - recessPadV + skew * ((panelW - recessPadH) / IW) },
+    bl: { x: IX + recessPadH,          y: IY + IH - recessPadV + skew * (recessPadH / IW) },
+  };
 
-  // Rays — all within viewBox (width=180)
-  // Origin: right outer edge of frame = FX + FW + FS/2 = 134, mid-height = FY + FH/2 = 88
-  const rayOX = FX + FW + FS / 2 + 2; // 136
-  const rayOY = FY + FH / 2;           // 88
-  // Ray directions spread right — keep x2 <= 175 (leaving 5px margin)
-  const rays = [
-    { a: -35, len: 22 },
-    { a: -18, len: 26 },
-    { a:   0, len: 28 },
-    { a:  18, len: 26 },
-    { a:  35, len: 22 },
-  ];
+  // Knob — on the panel, right-ish side, vertically centered
+  // x at 75% of panel width, y at 54% of panel height
+  const knobFrac = 0.75;
+  const knobX = IX + panelW * knobFrac;
+  const knobY = IY + IH * 0.54 + skew * knobFrac;
+
+  // Floor slab bottom y
+  const floorY = FY + FH + FS / 2;
 
   return (
-    <svg
-      width="180" height="200"
-      viewBox="0 0 180 200"
-      fill="none"
-      style={{ display: "block", overflow: "visible" }}
-    >
-      {/* Light fill behind open door */}
+    <svg width="180" height="200" viewBox="0 0 180 200" fill="none" style={{ display: "block" }}>
+
+      {/* Light behind open door */}
       {angle > 3 && (
         <rect
-          x={FX + panelW} y={FY + FS / 2}
-          width={Math.max(0, FW - panelW)} height={FH - FS}
+          x={IX + panelW} y={IY}
+          width={Math.max(0, IW - panelW)} height={IH}
           fill={ORANGE} opacity={lightOpacity}
         />
       )}
 
       {/* Door panel */}
-      <polygon points={pts} fill={ORANGE} />
+      <polygon points={panelPts} fill={ORANGE} />
 
-      {/* Panel inner recess — upper */}
+      {/* Panel recesses — properly perspective-mapped */}
       {showRecess && (
-        <polygon
-          points={`${rx1},${ry1a} ${rx2},${ry1a + skewPx * 0.76} ${rx2},${ry1b - skewPx * 0.76} ${rx1},${ry1b}`}
-          fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1.5"
-        />
-      )}
-      {/* Panel inner recess — lower */}
-      {showRecess && (
-        <polygon
-          points={`${rx1},${ry2a} ${rx2},${ry2a + skewPx * 0.76} ${rx2},${ry2b - skewPx * 0.76} ${rx1},${ry2b}`}
-          fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1.5"
-        />
+        <>
+          <polygon
+            points={`${ur.tl.x},${ur.tl.y} ${ur.tr.x},${ur.tr.y} ${ur.br.x},${ur.br.y} ${ur.bl.x},${ur.bl.y}`}
+            fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1.5"
+          />
+          <polygon
+            points={`${lr.tl.x},${lr.tl.y} ${lr.tr.x},${lr.tr.y} ${lr.br.x},${lr.br.y} ${lr.bl.x},${lr.bl.y}`}
+            fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1.5"
+          />
+        </>
       )}
 
-      {/* Knob */}
+      {/* Knob — circle, perspective-aware position */}
       {showKnob && (
-        <circle cx={knobX} cy={knobY} r={4.5}
-          fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" />
+        <circle cx={knobX} cy={knobY} r={3.5}
+          fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="2" />
       )}
 
-      {/* Door frame — drawn on top */}
-      <rect
-        x={FX} y={FY} width={FW} height={FH} rx="2"
-        fill="none" stroke={ORANGE} strokeWidth={FS} strokeLinejoin="miter"
-      />
+      {/* Frame — drawn on top so it cleanly covers panel edges */}
+      <rect x={FX} y={FY} width={FW} height={FH} rx="2"
+        fill="none" stroke={ORANGE} strokeWidth={FS} strokeLinejoin="miter" />
 
-      {/* Hinge marks */}
-      <rect x={FX - 2} y={FY + 20} width={7} height={5} rx="1" fill={ORANGE} opacity={0.5} />
-      <rect x={FX - 2} y={FY + FH - 25} width={7} height={5} rx="1" fill={ORANGE} opacity={0.5} />
+      {/* Hinge markers */}
+      <rect x={FX - 2} y={IY + 16} width={6} height={5} rx="1" fill={ORANGE} opacity={0.55} />
+      <rect x={FX - 2} y={IY + IH - 21} width={6} height={5} rx="1" fill={ORANGE} opacity={0.55} />
 
       {/* Floor slab */}
-      <rect x={FX - 10} y={FY + FH + FS / 2} width={FW + 20} height={10} rx="3" fill={ORANGE} />
-
-      {/* Rays — fully inside viewBox, fanning right from frame edge */}
-      {showRays && rays.map((ray, i) => {
-        const a = ray.a * Math.PI / 180;
-        const x1 = rayOX + Math.cos(a) * 6;
-        const y1 = rayOY + Math.sin(a) * 6;
-        const x2 = rayOX + Math.cos(a) * ray.len;
-        const y2 = rayOY + Math.sin(a) * ray.len;
-        return (
-          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke={ORANGE} strokeWidth="2.5" strokeLinecap="round"
-            opacity={raysOpacity}
-          />
-        );
-      })}
+      <rect x={FX - 10} y={floorY} width={FW + 20} height={10} rx="3" fill={ORANGE} />
     </svg>
   );
 }
@@ -160,16 +148,11 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
     const raw = parseFloat(e.target.value);
     const angle = 2 + (raw / 4) * 83;
     setLiveAngle(angle);
-    const snapIdx = Math.min(4, Math.max(0, Math.round(raw)));
-    onChange(STATES[snapIdx].key);
+    onChange(STATES[Math.min(4, Math.max(0, Math.round(raw)))].key);
   };
 
   const handleSliderEnd = () => setLiveAngle(SNAP_ANGLES[idx]);
-
-  const handleStateTap = (i: number) => {
-    onChange(STATES[i].key);
-    setLiveAngle(SNAP_ANGLES[i]);
-  };
+  const handleStateTap = (i: number) => { onChange(STATES[i].key); setLiveAngle(SNAP_ANGLES[i]); };
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 50, display: "flex", alignItems: "flex-end" }}>
@@ -182,9 +165,9 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
               This Is Happening.
             </p>
             <h2 style={{ fontSize: 24, fontWeight: 900, color: "#111", margin: "0 0 4px", fontFamily: f, lineHeight: 1.1 }}>
-              How far are you<br />willing to take this?
+              How real is this?
             </h2>
-            <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: f }}>Slide the door. Show how real this is.</p>
+            <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: f }}>Slide the door to show your level of commitment.</p>
           </div>
           {onClose && (
             <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#888", padding: 4, flexShrink: 0 }}>
@@ -195,13 +178,15 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
           )}
         </div>
 
-        {/* Door — perfectly centered */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "28px 0 4px" }}>
+        {/* Door + label — centered column */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "28px 24px 4px" }}>
           <Door angle={liveAngle} />
-          <div style={{ textAlign: "center", marginTop: 14 }}>
-            <p style={{ fontSize: 20, fontWeight: 900, color: ORANGE, margin: 0, fontFamily: f }}>{current.label}</p>
-            <p style={{ fontSize: 13, color: "#666", margin: "3px 0 0", fontFamily: f }}>{current.sub}</p>
-            <p style={{ fontSize: 12, color: "#AAA", margin: "3px 0 0", fontFamily: f, fontStyle: "italic" }}>&ldquo;{current.msg}&rdquo;</p>
+          <div style={{ textAlign: "center", marginTop: 16 }}>
+            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", color: ORANGE, textTransform: "uppercase", margin: "0 0 4px", fontFamily: f }}>
+              {current.label}
+            </p>
+            <p style={{ fontSize: 17, fontWeight: 700, color: "#111", margin: "0 0 4px", fontFamily: f }}>{current.sub}</p>
+            <p style={{ fontSize: 13, color: "#AAA", margin: 0, fontFamily: f, fontStyle: "italic" }}>{current.msg}</p>
           </div>
         </div>
 
@@ -221,7 +206,7 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
             className="door-range"
             style={{ background: `linear-gradient(to right, ${ORANGE} ${idx * 25}%, #E8E8E8 ${idx * 25}%)` }}
           />
-          {/* Labels: pad by half thumb width so first/last center under endpoints */}
+          {/* Pad by half thumb (14px) so labels center under endpoints */}
           <div style={{ display: "flex", marginTop: 8, paddingLeft: 14, paddingRight: 14 }}>
             {STATES.map((s, i) => (
               <button key={s.key} onClick={() => handleStateTap(i)}
@@ -236,11 +221,13 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
 
         {/* Your friend will see */}
         <div style={{ padding: "16px 24px 0" }}>
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "#AAA", textTransform: "uppercase", margin: "0 0 8px", fontFamily: f }}>Your friend will see</p>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "#AAA", textTransform: "uppercase", margin: "0 0 8px", fontFamily: f }}>
+            Your Friend Will See
+          </p>
           <div style={{ background: "#F5F5F5", borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: ORANGE, flexShrink: 0 }} />
             <p style={{ fontSize: 14, fontWeight: 700, color: "#111", margin: 0, fontFamily: f }}>{current.label}</p>
-            <p style={{ fontSize: 12, color: "#888", margin: 0, fontFamily: f }}>— {current.sub}</p>
+            <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: f }}>{FRIEND_SUBS[current.key]}</p>
             <div style={{ marginLeft: "auto", display: "flex", gap: 3 }}>
               {[1,2,3,4,5].map(i => (
                 <div key={i} style={{ width: 18, height: 4, borderRadius: 2, background: i <= current.gauge ? ORANGE : "#E0E0E0", transition: "background 0.3s" }} />
