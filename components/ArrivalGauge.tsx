@@ -1,34 +1,30 @@
 "use client";
 import { ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
+import { StatusIcon } from "./StatusIcons";
 
 export function ArrivalGauge({ status }: { status: ArrivalStatus }) {
   const current = ARRIVAL_STATUSES.find((s) => s.key === status);
   const level = current?.gaugeLevel ?? 1;
-
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-[#FF4C00] animate-pulse" />
-        <span className="text-xs font-bold uppercase tracking-wider text-[#888]">
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E8470A" }} />
+        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", fontFamily: "Inter, sans-serif" }}>
           Arrival Status
         </span>
       </div>
-      <p className="text-sm font-bold text-[#111]">{current?.label}</p>
-      <div className="gauge-bar">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className={`gauge-segment ${i <= level ? "active" : ""}`} />
+      <p style={{ fontSize: 13, fontWeight: 700, color: "#111", margin: 0, fontFamily: "Inter, sans-serif" }}>{current?.label}</p>
+      <div style={{ display: "flex", gap: 4 }}>
+        {[1,2,3,4,5].map(i => (
+          <div key={i} style={{ height: 4, flex: 1, borderRadius: 2, background: i <= level ? "#E8470A" : "#E0E0E0", transition: "background 0.3s" }} />
         ))}
       </div>
     </div>
   );
 }
 
-// Full "This Is Happening" picker — two panel layout matching mockup
 export function ThisIsHappeningPicker({
-  value,
-  onChange,
-  onConfirm,
-  onClose,
+  value, onChange, onConfirm, onClose,
 }: {
   value: ArrivalStatus;
   onChange: (s: ArrivalStatus) => void;
@@ -37,21 +33,22 @@ export function ThisIsHappeningPicker({
 }) {
   const current = ARRIVAL_STATUSES.find((s) => s.key === value);
   const level = current?.gaugeLevel ?? 1;
+  const f = "Inter, system-ui, sans-serif";
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl animate-slide-up overflow-hidden">
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ background: "#fff", borderRadius: 20, width: "100%", maxWidth: 680, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
 
         {/* Header */}
-        <div className="px-7 pt-7 pb-5 flex items-start justify-between">
+        <div style={{ padding: "28px 28px 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <h2 className="text-3xl font-black text-[#111]">
-              This Is Happening<span className="text-[#FF4C00]">.</span>
+            <h2 style={{ fontSize: 28, fontWeight: 900, color: "#111", margin: 0, fontFamily: f }}>
+              This Is Happening<span style={{ color: "#E8470A" }}>.</span>
             </h2>
-            <p className="text-[#888] text-sm mt-1">Set your mission status. Your friend will see this.</p>
+            <p style={{ fontSize: 14, color: "#888", margin: "6px 0 0", fontFamily: f }}>Set your mission status. Your friend will see this.</p>
           </div>
           {onClose && (
-            <button onClick={onClose} className="text-[#888] hover:text-[#111] transition-colors ml-4 mt-1">
+            <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#888", padding: 4 }}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
@@ -60,81 +57,78 @@ export function ThisIsHappeningPicker({
         </div>
 
         {/* Two-panel body */}
-        <div className="flex gap-0">
+        <div style={{ display: "flex" }}>
 
-          {/* Left — status options */}
-          <div className="flex-1 px-7 pb-7 space-y-2">
+          {/* Left: options */}
+          <div style={{ flex: 1, padding: "0 28px 28px", display: "flex", flexDirection: "column", gap: 10 }}>
             {ARRIVAL_STATUSES.map((s) => {
-              const isSelected = value === s.key;
+              const selected = value === s.key;
               return (
-                <button
-                  key={s.key}
-                  onClick={() => onChange(s.key)}
-                  className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl border-2 transition-all text-left ${
-                    isSelected
-                      ? "border-[#FF4C00] bg-[#FF4C00]/8"
-                      : "border-[#F0F0F0] hover:border-[#DDD] bg-white"
-                  }`}
-                >
+                <button key={s.key} onClick={() => onChange(s.key)} style={{
+                  display: "flex", alignItems: "center", gap: 14,
+                  padding: "14px 16px", borderRadius: 14,
+                  border: selected ? "2px solid #E8470A" : "2px solid #F0F0F0",
+                  background: selected ? "rgba(232,71,10,0.06)" : "#fff",
+                  cursor: "pointer", textAlign: "left", transition: "all 0.15s",
+                }}>
                   {/* Icon box */}
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl shrink-0 ${
-                    isSelected ? "bg-[#FF4C00]/15" : "bg-[#F5F5F5]"
-                  }`}>
-                    {s.icon}
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 10, flexShrink: 0,
+                    background: selected ? "rgba(232,71,10,0.12)" : "#F5F5F5",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <StatusIcon status={s.key} size={26} color={selected ? "#E8470A" : "#AAAAAA"} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold ${isSelected ? "text-[#111]" : "text-[#333]"}`}>{s.label}</p>
-                    <p className="text-xs text-[#888] mt-0.5">{s.description}</p>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: "#111", margin: 0, fontFamily: f }}>{s.label}</p>
+                    <p style={{ fontSize: 12, color: "#888", margin: "2px 0 0", fontFamily: f }}>{s.description}</p>
                   </div>
                   {/* Radio */}
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                    isSelected ? "border-[#FF4C00]" : "border-[#DDD]"
-                  }`}>
-                    {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#FF4C00]" />}
+                  <div style={{
+                    width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
+                    border: selected ? "2px solid #E8470A" : "2px solid #DDD",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    {selected && <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#E8470A" }} />}
                   </div>
                 </button>
               );
             })}
           </div>
 
-          {/* Right — live preview */}
-          <div className="w-[200px] shrink-0 bg-[#F9F8F7] border-l border-[#EBEBEB] px-5 py-6 flex flex-col gap-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#999]">Your Friend Will See</p>
-
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#AAA]">Arrival Status</p>
-
-              {/* Selected status display */}
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#FF4C00]" />
-                <p className="text-sm font-black text-[#111]">{current?.label}</p>
+          {/* Right: live preview */}
+          <div style={{ width: 200, flexShrink: 0, background: "#F9F8F7", borderLeft: "1px solid #EBEBEB", padding: "20px 20px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#999", textTransform: "uppercase", margin: 0, fontFamily: f }}>Your Friend Will See</p>
+            <div style={{ background: "#fff", borderRadius: 12, padding: 14, border: "1px solid #EBEBEB" }}>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "#AAA", textTransform: "uppercase", margin: "0 0 10px", fontFamily: f }}>Arrival Status</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E8470A", flexShrink: 0 }} />
+                <p style={{ fontSize: 14, fontWeight: 900, color: "#111", margin: 0, fontFamily: f }}>{current?.label}</p>
               </div>
-
-              {/* Mini description */}
-              <p className="text-xs text-[#888]">{current?.description}</p>
-
-              {/* Gauge preview */}
-              <div className="flex gap-1 pt-1">
+              <p style={{ fontSize: 12, color: "#888", margin: "0 0 10px", fontFamily: f }}>{current?.description}</p>
+              <div style={{ display: "flex", gap: 3 }}>
                 {[1,2,3,4,5].map(i => (
-                  <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                    i <= level ? "bg-[#FF4C00]" : "bg-[#E0E0E0]"
-                  }`} />
+                  <div key={i} style={{ height: 4, flex: 1, borderRadius: 2, background: i <= level ? "#E8470A" : "#E0E0E0", transition: "background 0.3s" }} />
                 ))}
               </div>
             </div>
-
-            {/* Icon preview large */}
-            <div className="mt-auto pt-4 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#FF4C00]/10 flex items-center justify-center text-4xl mx-auto transition-all duration-200">
-                {current?.icon}
+            {/* Large icon preview */}
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "auto" }}>
+              <div style={{ width: 64, height: 64, borderRadius: 16, background: "rgba(232,71,10,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <StatusIcon status={value} size={36} color="#E8470A" />
               </div>
             </div>
           </div>
         </div>
 
         {/* CTA */}
-        <div className="px-7 pb-7">
-          <button onClick={onConfirm} className="cta-btn orange">
+        <div style={{ padding: "0 28px 28px" }}>
+          <button onClick={onConfirm} style={{
+            width: "100%", background: "#E8470A", color: "#fff",
+            padding: "16px 24px", borderRadius: 12, fontSize: 15,
+            fontWeight: 700, border: "none", cursor: "pointer",
+            letterSpacing: "0.04em", fontFamily: f,
+          }}>
             LOCK IT IN →
           </button>
         </div>
@@ -143,40 +137,29 @@ export function ThisIsHappeningPicker({
   );
 }
 
-// Inline picker used on mission page sender view
-export function ArrivalStatusPicker({
-  value,
-  onChange,
-}: {
-  value: ArrivalStatus;
-  onChange: (s: ArrivalStatus) => void;
-}) {
+export function ArrivalStatusPicker({ value, onChange }: { value: ArrivalStatus; onChange: (s: ArrivalStatus) => void }) {
+  const f = "Inter, system-ui, sans-serif";
   return (
-    <div className="space-y-2">
-      {ARRIVAL_STATUSES.map((s) => (
-        <button
-          key={s.key}
-          onClick={() => onChange(s.key)}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
-            value === s.key
-              ? "border-[#FF4C00] bg-[#FF4C00]/5"
-              : "border-[#E8E8E8] hover:border-[#ccc]"
-          }`}
-        >
-          <span className="text-xl">{s.icon}</span>
-          <div className="flex-1">
-            <p className={`text-sm font-semibold ${value === s.key ? "text-[#111]" : "text-[#444]"}`}>
-              {s.label}
-            </p>
-            <p className="text-xs text-[#888] mt-0.5">{s.description}</p>
-          </div>
-          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-            value === s.key ? "border-[#FF4C00]" : "border-[#DDD]"
-          }`}>
-            {value === s.key && <div className="w-2.5 h-2.5 rounded-full bg-[#FF4C00]" />}
-          </div>
-        </button>
-      ))}
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {ARRIVAL_STATUSES.map((s) => {
+        const selected = value === s.key;
+        return (
+          <button key={s.key} onClick={() => onChange(s.key)} style={{
+            display: "flex", alignItems: "center", gap: 12, padding: "12px 14px",
+            borderRadius: 12, border: selected ? "2px solid #E8470A" : "2px solid #E8E8E8",
+            background: selected ? "rgba(232,71,10,0.05)" : "#fff", cursor: "pointer", textAlign: "left",
+          }}>
+            <StatusIcon status={s.key} size={24} color={selected ? "#E8470A" : "#AAA"} />
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#111", margin: 0, fontFamily: f }}>{s.label}</p>
+              <p style={{ fontSize: 11, color: "#888", margin: "2px 0 0", fontFamily: f }}>{s.description}</p>
+            </div>
+            <div style={{ width: 20, height: 20, borderRadius: "50%", border: selected ? "2px solid #E8470A" : "2px solid #DDD", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {selected && <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#E8470A" }} />}
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
