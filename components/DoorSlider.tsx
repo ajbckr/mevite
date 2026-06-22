@@ -22,33 +22,33 @@ function Door({ angle }: { angle: number }) {
   const raysOpacity = Math.min(1, (angle - 68) / 17);
 
   return (
-    <div style={{ position: "relative", width: 160, height: 220 }}>
+    <div style={{ position: "relative", width: 200, height: 220 }}>
 
-      {/* SVG: frame, light fill, floor, rays — all 2D, behind the panel */}
-      <svg width="160" height="220" viewBox="0 0 160 220" fill="none"
-        style={{ position: "absolute", inset: 0 }}>
+      {/* SVG: frame, light fill, floor, rays — wider viewBox to contain rays */}
+      <svg width="200" height="220" viewBox="0 0 200 220" fill="none"
+        style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)" }}>
 
-        {/* Light fill inside frame — grows as door opens */}
-        <rect x="12" y="8" width="106" height="176" fill={ORANGE} opacity={lightOpacity} />
+        {/* Light fill inside frame */}
+        <rect x="32" y="8" width="106" height="176" fill={ORANGE} opacity={lightOpacity} />
 
-        {/* Door frame — thick line art, portrait ratio */}
-        <rect x="8" y="4" width="114" height="184" rx="2"
+        {/* Door frame — centered in wider viewBox */}
+        <rect x="28" y="4" width="114" height="184" rx="2"
           fill="none" stroke={ORANGE} strokeWidth="9" strokeLinejoin="miter"/>
 
         {/* Floor slab */}
-        <rect x="0" y="188" width="130" height="12" rx="3" fill={ORANGE}/>
+        <rect x="18" y="188" width="134" height="12" rx="3" fill={ORANGE}/>
 
         {/* Hinge marks */}
-        <rect x="8" y="30" width="8" height="6" rx="1" fill={ORANGE} opacity={0.5}/>
-        <rect x="8" y="155" width="8" height="6" rx="1" fill={ORANGE} opacity={0.5}/>
+        <rect x="28" y="30" width="8" height="6" rx="1" fill={ORANGE} opacity={0.5}/>
+        <rect x="28" y="155" width="8" height="6" rx="1" fill={ORANGE} opacity={0.5}/>
 
-        {/* Rays when fully open */}
+        {/* Rays — centered on right side of frame (x=142), fully inside viewBox */}
         {showRays && (
           <>
-            {[[-28,-28],[-36,0],[-28,28],[0,-36],[0,36]].map(([dx,dy], i) => (
+            {[[22,-30],[30,-10],[30,10],[22,30],[10,38],[-10,38]].map(([dx,dy], i) => (
               <line key={i}
-                x1={126 + dx * 0.45} y1={96 + dy * 0.45}
-                x2={126 + dx} y2={96 + dy}
+                x1={142 + dx * 0.4} y1={96 + dy * 0.4}
+                x2={142 + dx * 0.9} y2={96 + dy * 0.9}
                 stroke={ORANGE} strokeWidth="3" strokeLinecap="round"
                 opacity={raysOpacity * 0.9}
               />
@@ -57,13 +57,13 @@ function Door({ angle }: { angle: number }) {
         )}
       </svg>
 
-      {/* Door PANEL — CSS 3D rotateY around left hinge */}
+      {/* Door PANEL — CSS 3D rotateY around left hinge, aligned with frame */}
       <div style={{
         position: "absolute",
-        top: 12,       // inside frame top edge
-        left: 13,      // hinge position (inside frame left)
-        width: 100,    // panel width when closed
-        height: 172,   // panel height
+        top: 12,
+        left: "calc(50% - 72px)",  // frame starts at 50%-100px/2 + frame stroke 9/2 ≈ center-72
+        width: 100,
+        height: 172,
         transformOrigin: "0% 50%",
         transform: `perspective(600px) rotateY(${angle}deg)`,
         transition: "transform 0.12s ease-out",
@@ -172,11 +172,12 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
 
         {/* Slider — continuous 0 to 4 */}
         <div style={{ padding: "20px 24px 0" }}>
+          {/* Compensate for thumb radius (16px) at endpoints so labels align */}
           <style>{`
             .door-range{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;outline:none;cursor:pointer;}
-            .door-range::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:${ORANGE};border:3px solid white;box-shadow:0 2px 14px rgba(232,71,10,0.45);cursor:pointer;transition:transform 0.1s;}
+            .door-range::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:${ORANGE};border:3px solid white;box-shadow:0 2px 14px rgba(232,71,10,0.45);cursor:pointer;transition:transform 0.1s;}
             .door-range::-webkit-slider-thumb:active{transform:scale(1.18);}
-            .door-range::-moz-range-thumb{width:32px;height:32px;border-radius:50%;background:${ORANGE};border:3px solid white;cursor:pointer;}
+            .door-range::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:${ORANGE};border:3px solid white;cursor:pointer;}
           `}</style>
           <input
             type="range"
@@ -190,7 +191,8 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
           />
 
           {/* Tap labels */}
-          <div style={{ display: "flex", marginTop: 10 }}>
+          {/* Labels — padded by half thumb width (14px) so text centers under thumb at each position */}
+          <div style={{ display: "flex", marginTop: 8, paddingLeft: 14, paddingRight: 14 }}>
             {STATES.map((s, i) => (
               <button key={s.key} onClick={() => handleStateTap(i)}
                 style={{ flex: 1, background: "none", border: "none", cursor: "pointer", padding: "4px 0", textAlign: "center" }}>
