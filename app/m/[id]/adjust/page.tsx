@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { suggestChange } from "@/lib/mevite";
-import { MeviteHeaderCompact } from "@/components/MeviteHeader";
+
 
 export default function AdjustPage() {
   const { id } = useParams<{ id: string }>();

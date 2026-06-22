@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getMevite } from "@/lib/mevite";
 import { Mevite } from "@/lib/types";
-import { MeviteHeaderCompact } from "@/components/MeviteHeader";
+
 import { ArrivalGauge } from "@/components/ArrivalGauge";
 
 export default function SharePage() {
@@ -28,7 +28,10 @@ export default function SharePage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <MeviteHeaderCompact />
+      <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #F0F0F0"}}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/lockup.png" alt="MEVITE" style={{height:32,width:"auto",display:"block"}} />
+      </div>
 
       <div className="px-6 flex-1 space-y-6 pb-12">
         {/* Hero */}

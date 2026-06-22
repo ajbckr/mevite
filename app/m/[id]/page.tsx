@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { subscribeMevite, respondToMevite, updateArrivalStatus, confirmSuggestion } from "@/lib/mevite";
 import { Mevite, ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
-import { MeviteHeaderCompact } from "@/components/MeviteHeader";
+
 import { ArrivalGauge } from "@/components/ArrivalGauge";
 
 export default function MissionPage() {
