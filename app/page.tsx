@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { RotatingPrompt } from "@/components/RotatingPrompt";
+import { RotatingPrompt, WhenField } from "@/components/RotatingPrompt";
 import { ThisIsHappeningPicker } from "@/components/ArrivalGauge";
 import { createMevite } from "@/lib/mevite";
 import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS } from "@/lib/types";
+import { StatusIcon } from "@/components/StatusIcons";
 
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 const f: React.CSSProperties = { fontFamily: "Inter, system-ui, sans-serif" };
@@ -23,9 +24,16 @@ export default function Home() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [whenIdx, setWhenIdx] = useState(0);
+  const [whenAnimating, setWhenAnimating] = useState(false);
 
   useEffect(() => {
-    const t = setInterval(() => setWhenIdx(i => (i + 1) % WHEN_ROTATE.length), 2500);
+    const t = setInterval(() => {
+      setWhenAnimating(true);
+      setTimeout(() => {
+        setWhenIdx(i => (i + 1) % WHEN_ROTATE.length);
+        setWhenAnimating(false);
+      }, 250);
+    }, 2200);
     return () => clearInterval(t);
   }, []);
 
@@ -110,14 +118,13 @@ export default function Home() {
 
         <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={setWho} placeholder="" />
 
-        <div>
-          <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", display: "block", marginBottom: 4, ...f }}>When?</label>
-          <button onClick={() => setShowDatePicker(true)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: 0, cursor: "pointer" }}>
-            <div style={{ fontSize: 20, paddingBottom: 12, borderBottom: "1px solid #E0E0E0", color: when ? "#111" : "#CCC", fontWeight: when ? 600 : 400, ...f }}>
-              {when || WHEN_ROTATE[whenIdx]}
-            </div>
-          </button>
-        </div>
+        <WhenField
+          value={when}
+          prompts={WHEN_ROTATE}
+          promptIndex={whenIdx}
+          isAnimating={whenAnimating}
+          onClick={() => setShowDatePicker(true)}
+        />
 
         <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={setBringing} placeholder="" />
         <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={setWhy} placeholder="" />
@@ -129,7 +136,7 @@ export default function Home() {
               <div style={{ textAlign: "left" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#E8470A", textTransform: "uppercase", margin: 0, ...f }}>This Is Happening…</p>
                 <p style={{ fontSize: 14, fontWeight: 700, color: "#111", margin: "3px 0 0", ...f }}>
-                  {currentStatus ? `${currentStatus.icon} ${currentStatus.label}` : "Choose your mission status"}
+                  {currentStatus ? currentStatus.label : "Choose your mission status"}
                 </p>
               </div>
             </div>
