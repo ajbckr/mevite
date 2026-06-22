@@ -73,26 +73,29 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
 
-      {/* ── HERO LOCKUP ── */}
+      {/* ── HERO LOCKUP: M | divider | Invite Yourself Over. ── */}
       <div style={{ padding: "36px 24px 0" }}>
-        {/* M icon + MEVITE wordmark side by side */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/m-logo.png" alt="M" style={{ height: 72, width: "auto", display: "block" }} />
-          <span style={{ fontSize: 28, fontWeight: 900, letterSpacing: "0.08em", color: "#111", fontFamily: "Inter, system-ui, sans-serif" }}>
-            MEVITE
-          </span>
+        <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
+
+          {/* Left: M icon + MEVITE below */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/m-only.png" alt="M" style={{ height: 90, width: "auto", display: "block" }} />
+            <span style={{ fontSize: 13, fontWeight: 900, letterSpacing: "0.12em", color: "#111", fontFamily: "Inter, system-ui, sans-serif", marginTop: 4 }}>
+              MEVITE
+            </span>
+          </div>
+
+          {/* Vertical divider */}
+          <div style={{ width: 2, background: "#111", margin: "0 20px", alignSelf: "stretch" }} />
+
+          {/* Right: Invite Yourself Over. */}
+          <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1.05, color: "#111", letterSpacing: "-0.01em", fontFamily: "Inter, system-ui, sans-serif", alignSelf: "center" }}>
+            Invite<br />Yourself<br />Over<span style={{ color: "#E8470A" }}>.</span>
+          </div>
         </div>
 
-        {/* Divider */}
-        <div style={{ height: 2, background: "#111", margin: "14px 0 16px" }} />
-
-        {/* Tagline */}
-        <div style={{ fontSize: 44, fontWeight: 900, lineHeight: 1.05, color: "#111", letterSpacing: "-0.01em", fontFamily: "Inter, system-ui, sans-serif" }}>
-          Invite<br />Yourself<br />Over<span style={{ color: "#E8470A" }}>.</span>
-        </div>
-
-        <p style={{ color: "#888", fontSize: 14, marginTop: 10, lineHeight: 1.5, fontFamily: "Inter, system-ui, sans-serif" }}>
+        <p style={{ color: "#888", fontSize: 13, marginTop: 16, lineHeight: 1.5, fontFamily: "Inter, system-ui, sans-serif" }}>
           Stop saying &ldquo;we should get together.&rdquo; Show up.
         </p>
       </div>
