@@ -1,41 +1,39 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const f = "Inter, system-ui, sans-serif";
-
-// Shared field styles — used by both RotatingPrompt and the When field
-export const fieldLabelStyle: React.CSSProperties = {
-  fontSize: 10,
-  fontWeight: 700,
-  letterSpacing: "0.12em",
-  color: "#888",
-  textTransform: "uppercase",
-  display: "block",
-  marginBottom: 4,
-  fontFamily: f,
+const FIELD_STYLE = {
+  label: {
+    fontSize: 10,
+    fontWeight: 700,
+    letterSpacing: "0.12em",
+    color: "#888",
+    textTransform: "uppercase" as const,
+    display: "block",
+    marginBottom: 6,
+    fontFamily: "Inter, system-ui, sans-serif",
+  },
+  placeholder: {
+    fontSize: 18,
+    fontWeight: 400,
+    color: "#CCC",
+    fontFamily: "Inter, system-ui, sans-serif",
+    lineHeight: "1.2",
+  },
+  value: {
+    fontSize: 18,
+    fontWeight: 600,
+    color: "#111",
+    fontFamily: "Inter, system-ui, sans-serif",
+    lineHeight: "1.2",
+  },
+  underline: {
+    borderBottom: "1px solid #E0E0E0",
+    paddingBottom: 10,
+    display: "block",
+  },
 };
 
-export const fieldPlaceholderStyle: React.CSSProperties = {
-  fontSize: 20,
-  fontWeight: 400,
-  color: "#CCC",
-  fontFamily: f,
-  paddingBottom: 12,
-  borderBottom: "1px solid #E0E0E0",
-  display: "block",
-  width: "100%",
-};
-
-export const fieldValueStyle: React.CSSProperties = {
-  fontSize: 20,
-  fontWeight: 600,
-  color: "#111",
-  fontFamily: f,
-  paddingBottom: 12,
-  borderBottom: "1px solid #E0E0E0",
-  display: "block",
-  width: "100%",
-};
+export { FIELD_STYLE };
 
 export function RotatingPrompt({
   prompts,
@@ -49,74 +47,64 @@ export function RotatingPrompt({
   placeholder?: string;
   label: string;
 }) {
-  const [promptIndex, setPromptIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   useEffect(() => {
-    if (isFocused || value) return;
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setPromptIndex((i) => (i + 1) % prompts.length);
-        setIsAnimating(false);
-      }, 250);
+    if (focused || value) return;
+    const t = setInterval(() => {
+      setAnimating(true);
+      setTimeout(() => { setIdx(i => (i + 1) % prompts.length); setAnimating(false); }, 250);
     }, 2200);
-    return () => clearInterval(interval);
-  }, [isFocused, value, prompts.length]);
+    return () => clearInterval(t);
+  }, [focused, value, prompts.length]);
 
   return (
     <div>
-      <label style={fieldLabelStyle}>{label}</label>
-      <div style={{ position: "relative" }}>
-        {/* Actual input */}
+      <label style={FIELD_STYLE.label}>{label}</label>
+      <div style={{ position: "relative", ...FIELD_STYLE.underline }}>
+        {/* Input — invisible text, just captures typing */}
         <input
           type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder=""
+          onChange={e => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           style={{
-            ...fieldValueStyle,
+            ...FIELD_STYLE.value,
+            position: "absolute",
+            inset: 0,
+            width: "100%",
             background: "transparent",
             border: "none",
-            borderBottom: "1px solid #E0E0E0",
             outline: "none",
-            padding: "0 32px 12px 0",
-            color: value ? "#111" : "transparent",
+            opacity: value ? 1 : 0,
             caretColor: "#111",
           }}
         />
-        {/* Rotating placeholder overlay */}
-        {!value && !isFocused && (
-          <div
-            className={isAnimating ? "prompt-exit" : "prompt-enter"}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 32,
-              bottom: 12,
-              pointerEvents: "none",
-              fontSize: 20,
-              fontWeight: 400,
-              color: "#CCC",
-              fontFamily: f,
-              display: "flex",
-              alignItems: "center",
-            }}
+        {/* Rotating placeholder */}
+        {!value && !focused && (
+          <span
+            className={animating ? "prompt-exit" : "prompt-enter"}
+            style={{ ...FIELD_STYLE.placeholder, display: "block", paddingRight: 28, minHeight: 22 }}
           >
-            {prompts[promptIndex]}
-          </div>
+            {prompts[idx]}
+          </span>
         )}
-        {/* Three-dot indicator */}
-        {!value && !isFocused && (
-          <div style={{ position: "absolute", right: 0, top: 0, bottom: 12, display: "flex", alignItems: "center" }}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="3" cy="8" r="1.5" fill="#CCC"/>
-              <circle cx="8" cy="8" r="1.5" fill="#CCC"/>
-              <circle cx="13" cy="8" r="1.5" fill="#CCC"/>
+        {/* Typed value mirror when focused with no overlay */}
+        {(value || focused) && (
+          <span style={{ ...FIELD_STYLE.value, display: "block", minHeight: 22, opacity: 0, pointerEvents: "none" }}>
+            {value || "."}
+          </span>
+        )}
+        {/* Three dots */}
+        {!value && !focused && (
+          <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, display: "flex", alignItems: "center" }}>
+            <svg width="16" height="4" viewBox="0 0 16 4" fill="none">
+              <circle cx="2" cy="2" r="1.5" fill="#CCC"/>
+              <circle cx="8" cy="2" r="1.5" fill="#CCC"/>
+              <circle cx="14" cy="2" r="1.5" fill="#CCC"/>
             </svg>
           </div>
         )}
@@ -125,7 +113,7 @@ export function RotatingPrompt({
   );
 }
 
-// When field — same visual treatment as RotatingPrompt but opens date picker
+// When field — identical treatment, opens picker instead of typing
 export function WhenField({
   value,
   prompts,
@@ -141,26 +129,23 @@ export function WhenField({
 }) {
   return (
     <div>
-      <label style={fieldLabelStyle}>When?</label>
+      <label style={FIELD_STYLE.label}>When?</label>
       <button
         onClick={onClick}
-        style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: 0, cursor: "pointer", display: "block" }}
+        style={{ width: "100%", background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left", display: "block" }}
       >
-        <div style={{ position: "relative", paddingBottom: 12, borderBottom: "1px solid #E0E0E0" }}>
-          {/* Value or animated placeholder */}
+        <span style={{ ...FIELD_STYLE.underline, display: "block" }}>
           {value ? (
-            <span style={{ fontSize: 20, fontWeight: 600, color: "#111", fontFamily: f }}>
-              {value}
-            </span>
+            <span style={{ ...FIELD_STYLE.value, minHeight: 22, display: "block" }}>{value}</span>
           ) : (
             <span
               className={isAnimating ? "prompt-exit" : "prompt-enter"}
-              style={{ fontSize: 20, fontWeight: 400, color: "#CCC", fontFamily: f, display: "block" }}
+              style={{ ...FIELD_STYLE.placeholder, minHeight: 22, display: "block" }}
             >
               {prompts[promptIndex]}
             </span>
           )}
-        </div>
+        </span>
       </button>
     </div>
   );
