@@ -2,10 +2,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { RotatingPrompt, WhenField } from "@/components/RotatingPrompt";
-import { ThisIsHappeningPicker } from "@/components/ArrivalGauge";
+import { DoorSlider } from "@/components/DoorSlider";
 import { createMevite } from "@/lib/mevite";
 import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS } from "@/lib/types";
-import { StatusIcon } from "@/components/StatusIcons";
 
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 const f: React.CSSProperties = { fontFamily: "Inter, system-ui, sans-serif" };
@@ -176,7 +175,7 @@ export default function Home() {
       )}
 
       {showPicker && (
-        <ThisIsHappeningPicker value={arrivalStatus} onChange={setArrivalStatus} onConfirm={() => setShowPicker(false)} onClose={() => setShowPicker(false)} />
+        <DoorSlider value={arrivalStatus} onChange={setArrivalStatus} onConfirm={() => setShowPicker(false)} onClose={() => setShowPicker(false)} />
       )}
     </div>
   );
