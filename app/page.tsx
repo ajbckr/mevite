@@ -73,14 +73,28 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
 
-      {/* ── LOCKUP IMAGE — just the PNG, full width, no code ── */}
-      <div style={{ padding: "32px 24px 0" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/lockup.png"
-          alt="MEVITE — Invite Yourself Over."
-          style={{ width: "100%", maxWidth: 480, display: "block" }}
-        />
+      {/* ── HERO LOCKUP ── */}
+      <div style={{ padding: "36px 24px 0" }}>
+        {/* M icon + MEVITE wordmark side by side */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/m-logo.png" alt="M" style={{ height: 72, width: "auto", display: "block" }} />
+          <span style={{ fontSize: 28, fontWeight: 900, letterSpacing: "0.08em", color: "#111", fontFamily: "Inter, system-ui, sans-serif" }}>
+            MEVITE
+          </span>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 2, background: "#111", margin: "14px 0 16px" }} />
+
+        {/* Tagline */}
+        <div style={{ fontSize: 44, fontWeight: 900, lineHeight: 1.05, color: "#111", letterSpacing: "-0.01em", fontFamily: "Inter, system-ui, sans-serif" }}>
+          Invite<br />Yourself<br />Over<span style={{ color: "#E8470A" }}>.</span>
+        </div>
+
+        <p style={{ color: "#888", fontSize: 14, marginTop: 10, lineHeight: 1.5, fontFamily: "Inter, system-ui, sans-serif" }}>
+          Stop saying &ldquo;we should get together.&rdquo; Show up.
+        </p>
       </div>
 
       {/* ── FORM ── */}

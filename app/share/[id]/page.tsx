@@ -30,7 +30,7 @@ export default function SharePage() {
       {/* Header */}
       <div style={{padding:"16px 20px 12px",borderBottom:"1px solid #F0F0F0"}}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lockup.png" alt="MEVITE" style={{height:32,width:"auto",display:"block"}} />
+        <img src="/m-logo.png" alt="M" style={{height:28,width:"auto",display:"block"}} />
       </div>
 
       <div className="px-6 flex-1 space-y-6 pb-12">
