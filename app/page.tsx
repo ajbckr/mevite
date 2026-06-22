@@ -6,7 +6,6 @@ import { RotatingPrompt } from "@/components/RotatingPrompt";
 import { ThisIsHappeningPicker } from "@/components/ArrivalGauge";
 import { createMevite } from "@/lib/mevite";
 import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS } from "@/lib/types";
-import Image from "next/image";
 
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 
@@ -70,8 +69,15 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#111]">
         <div className="text-center space-y-5 animate-fade-in px-8">
-          <Image src="/logo.jpg" alt="MEVITE" width={64} height={64}
-            style={{ borderRadius: 8, objectFit: "contain", margin: "0 auto" }} />
+          <svg width="56" height="56" viewBox="0 0 100 90" fill="none" style={{margin:"0 auto"}}>
+            <rect x="4" y="8" width="17" height="74" fill="white"/>
+            <polygon points="4,8 21,8 52,54 35,54" fill="white"/>
+            <polygon points="65,54 79,8 96,8 79,54" fill="white"/>
+            <rect x="79" y="8" width="17" height="74" fill="white"/>
+            <polygon points="35,54 52,54 52,82 35,82" fill="white"/>
+            <polygon points="52,54 79,54 79,82 52,82" fill="#E8470A"/>
+            <circle cx="70" cy="69" r="3" fill="white"/>
+          </svg>
           <p className="text-white text-xl font-black">Sending your Mevite…</p>
           <div className="flex gap-2 justify-center">
             {[0,1,2].map(i => (
