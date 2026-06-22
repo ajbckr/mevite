@@ -12,8 +12,12 @@ const STATES = [
   { key: "open-the-door"  as ArrivalStatus, label: "Open The Door", sub: "I'm outside.",              msg: "Open up.",              gauge: 5 },
 ];
 
-// Door angles per state — 0=closed, 85=wide open
-const ANGLES = [2, 20, 42, 65, 85];
+// Sprite has 30 frames at 120px each = 3600px wide
+const SPRITE_FRAMES = 30;
+const FRAME_SIZE = 120;
+
+// Map slider idx 0-4 to sprite frame index
+const FRAME_MAP = [0, 6, 13, 20, 29];
 
 export function DoorSlider({ value, onChange, onConfirm, onClose }: {
   value: ArrivalStatus;
@@ -23,10 +27,8 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
 }) {
   const idx = Math.max(0, STATES.findIndex(s => s.key === value));
   const current = STATES[idx];
-  const angle = ANGLES[idx];
-  const lightOpacity = (angle / 85) * 0.7;
-  const showRays = angle > 60;
-  const raysOpacity = Math.max(0, (angle - 60) / 25);
+  const spriteFrame = FRAME_MAP[idx];
+  const spriteX = -(spriteFrame * FRAME_SIZE);
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 50, display: "flex", alignItems: "flex-end" }}>
@@ -52,114 +54,29 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
           )}
         </div>
 
-        {/* DOOR — CSS 3D perspective */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "32px 0 8px" }}>
-          <div style={{ position: "relative", width: 160, height: 200 }}>
+        {/* DOOR SPRITE — centered, 200px display size */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "32px 0 8px" }}>
+          <div style={{
+            width: FRAME_SIZE * 2,
+            height: FRAME_SIZE * 2,
+            backgroundImage: "url(/door-sprite.png)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: `${SPRITE_FRAMES * FRAME_SIZE * 2}px ${FRAME_SIZE * 2}px`,
+            backgroundPosition: `${spriteX * 2}px 0px`,
+            transition: "background-position 0.18s cubic-bezier(0.25,0.46,0.45,0.94)",
+            imageRendering: "crisp-edges",
+          }} />
 
-            {/* Floor shadow / light spill */}
-            <div style={{
-              position: "absolute",
-              bottom: -8,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 120 + angle * 0.8,
-              height: 14,
-              borderRadius: "50%",
-              background: ORANGE,
-              opacity: lightOpacity * 0.35,
-              filter: "blur(6px)",
-              transition: "all 0.18s ease-out",
-            }} />
-
-            {/* Door frame — drawn as SVG so it stays 2D and always visible */}
-            <svg
-              width="160" height="200"
-              viewBox="0 0 160 200"
-              fill="none"
-              style={{ position: "absolute", top: 0, left: 0 }}
-            >
-              {/* Light inside frame */}
-              <rect x="14" y="10" width="106" height="162" fill={ORANGE} opacity={lightOpacity * 0.6} />
-
-              {/* Frame — outer border, line art */}
-              <rect x="8" y="6" width="118" height="172" rx="2"
-                fill="none" stroke={ORANGE} strokeWidth="8" strokeLinejoin="round"/>
-
-              {/* Floor slab */}
-              <rect x="0" y="178" width="134" height="11" rx="3" fill={ORANGE}/>
-
-              {/* Ray lines when fully open */}
-              {showRays && [[-35,0],[-20,-14],[0,-18],[20,-14],[35,0],[20,14],[0,18],[-20,14]].map(([dx,dy],i) => (
-                <line key={i}
-                  x1={128 + dx * 0.4} y1={90 + dy * 0.4}
-                  x2={128 + dx} y2={90 + dy}
-                  stroke={ORANGE} strokeWidth="2.5" strokeLinecap="round"
-                  opacity={raysOpacity}
-                />
-              ))}
-            </svg>
-
-            {/* Door PANEL — CSS 3D rotateY around left hinge */}
-            <div style={{
-              position: "absolute",
-              top: 14,
-              left: 14,
-              width: 104,
-              height: 160,
-              transformOrigin: "left center",
-              transform: `perspective(400px) rotateY(${angle}deg)`,
-              transition: "transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-              background: ORANGE,
-              borderRadius: 1,
-            }}>
-              {/* Panel inner detail — two rectangles */}
-              <div style={{
-                position: "absolute",
-                top: "10%", left: "10%",
-                right: "10%", bottom: "10%",
-                border: "1.5px solid rgba(0,0,0,0.2)",
-                borderRadius: 1,
-              }} />
-              <div style={{
-                position: "absolute",
-                top: "12%", left: "12%",
-                right: "12%", height: "38%",
-                border: "1.5px solid rgba(0,0,0,0.15)",
-                borderRadius: 1,
-              }} />
-              <div style={{
-                position: "absolute",
-                bottom: "10%", left: "12%",
-                right: "12%", height: "34%",
-                border: "1.5px solid rgba(0,0,0,0.15)",
-                borderRadius: 1,
-              }} />
-              {/* Knob */}
-              <div style={{
-                position: "absolute",
-                right: "14%",
-                top: "52%",
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                border: "2px solid rgba(255,255,255,0.8)",
-                background: "rgba(255,255,255,0.15)",
-              }} />
-            </div>
+          {/* State label */}
+          <div style={{ textAlign: "center", marginTop: 12, padding: "0 24px" }}>
+            <p style={{ fontSize: 20, fontWeight: 900, color: ORANGE, margin: 0, fontFamily: f }}>{current.label}</p>
+            <p style={{ fontSize: 13, color: "#666", margin: "3px 0 0", fontFamily: f }}>{current.sub}</p>
+            <p style={{ fontSize: 12, color: "#AAA", margin: "3px 0 0", fontFamily: f, fontStyle: "italic" }}>&ldquo;{current.msg}&rdquo;</p>
           </div>
         </div>
 
-        {/* State label */}
-        <div style={{ textAlign: "center", padding: "0 24px 4px" }}>
-          <p style={{ fontSize: 20, fontWeight: 900, color: ORANGE, margin: 0, fontFamily: f, transition: "all 0.2s" }}>
-            {current.label}
-          </p>
-          <p style={{ fontSize: 13, color: "#666", margin: "3px 0 0", fontFamily: f }}>{current.sub}</p>
-          <p style={{ fontSize: 12, color: "#AAA", margin: "3px 0 0", fontFamily: f, fontStyle: "italic" }}>&ldquo;{current.msg}&rdquo;</p>
-        </div>
-
         {/* Slider */}
-        <div style={{ padding: "20px 24px 0" }}>
+        <div style={{ padding: "16px 24px 0" }}>
           <style>{`
             .door-range{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;}
             .door-range::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:${ORANGE};border:3px solid white;box-shadow:0 2px 12px rgba(232,71,10,0.4);cursor:pointer;transition:transform 0.1s;}
