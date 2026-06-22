@@ -149,7 +149,7 @@ export default function Home() {
       <div style={{ padding: "32px 24px 56px" }}>
         {error && <p style={{ color: "#E8470A", fontSize: 14, textAlign: "center", marginBottom: 12, ...f }}>{error}</p>}
         <button onClick={handleSend} style={{ width: "100%", background: "#111", color: "#fff", padding: "16px 24px", borderRadius: 12, fontSize: 16, fontWeight: 700, border: "none", cursor: "pointer", ...f }}>
-          I&apos;M COMING OVER →
+          CREATE MY MEVITE →
         </button>
       </div>
 
