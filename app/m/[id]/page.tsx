@@ -61,7 +61,7 @@ export default function MissionPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-6 bg-white">
         <div className="text-center space-y-4">
-          <MeviteIcon size={48} />
+          
           <h2 className="text-2xl font-black">Mevite not found.</h2>
           <p className="text-[#888] text-sm">This link may be expired or invalid.</p>
         </div>
@@ -87,7 +87,7 @@ export default function MissionPage() {
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <MeviteIcon size={32} />
+          
           <div className="flex gap-1 bg-[#F5F5F5] rounded-full p-1">
             <button onClick={() => setView("receiver")}
               className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${view === "receiver" ? "bg-white text-[#111] shadow-sm" : "text-[#888]"}`}>

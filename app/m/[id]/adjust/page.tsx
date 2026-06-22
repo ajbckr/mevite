@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { suggestChange } from "@/lib/mevite";
-import { MeviteIcon } from "@/components/MeviteIcon";
+import { MeviteHeaderCompact } from "@/components/MeviteHeader";
 
 export default function AdjustPage() {
   const { id } = useParams<{ id: string }>();
@@ -53,7 +53,7 @@ export default function AdjustPage() {
             <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <MeviteIcon size={28} />
+        
       </header>
 
       <div className="px-6 space-y-8">
