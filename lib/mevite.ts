@@ -153,7 +153,7 @@ export async function updateArrivalStatus(id: string, status: string): Promise<v
     thinking: "Thinking About It",
     planning: "Making a Plan",
     packing: "Packing a Bag",
-    "on-my-way": "On My Way",
+    "locked-in": "Locked In",
     outside: "Outside Your House",
   };
 
