@@ -4,9 +4,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "MEVITE — Invite Yourself Over.",
   description: "Stop saying 'we should get together.' Show up.",
+  metadataBase: new URL("https://mevite.vercel.app"),
   openGraph: {
-    title: "MEVITE",
+    title: "MEVITE — Invite Yourself Over.",
     description: "Stop saying 'we should get together.' Show up.",
+    url: "https://mevite.vercel.app",
+    siteName: "Mevite",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MEVITE" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MEVITE — Invite Yourself Over.",
+    description: "Stop saying 'we should get together.' Show up.",
+    images: ["/og-image.png"],
   },
 };
 
