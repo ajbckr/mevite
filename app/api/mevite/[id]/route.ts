@@ -1,11 +1,11 @@
-"use server";
 import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
     const apiKey    = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
@@ -13,8 +13,10 @@ export async function GET(
       return NextResponse.json({ error: "missing config" }, { status: 500 });
     }
 
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/mevites/${params.id}?key=${apiKey}`;
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(
+      `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/mevites/${id}?key=${apiKey}`,
+      { cache: "no-store" }
+    );
 
     if (!res.ok) return NextResponse.json({ error: "not found" }, { status: 404 });
 

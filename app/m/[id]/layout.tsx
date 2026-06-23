@@ -21,9 +21,10 @@ async function getMeviteData(id: string) {
 }
 
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
-  const m = await getMeviteData(params.id);
+  const { id } = await params;
+  const m = await getMeviteData(id);
   const sender = m?.sender || "Someone";
   const why    = m?.why    || "It's been too long.";
   const title  = `${sender} is coming over.`;
@@ -35,13 +36,13 @@ export async function generateMetadata(
     openGraph: {
       title,
       description: desc,
-      images: [`/m/${params.id}/opengraph-image`],
+      images: [`/m/${id}/opengraph-image`],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: desc,
-      images: [`/m/${params.id}/opengraph-image`],
+      images: [`/m/${id}/opengraph-image`],
     },
   };
 }

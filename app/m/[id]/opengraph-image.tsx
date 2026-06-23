@@ -33,8 +33,8 @@ async function getMeviteData(id: string) {
   }
 }
 
-export default async function OGImage({ params }: { params: { id: string } }) {
-  const mevite = await getMeviteData(params.id);
+export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
+  const mevite = await getMeviteData((await params).id);
 
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
