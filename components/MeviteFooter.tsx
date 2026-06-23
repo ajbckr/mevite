@@ -2,7 +2,7 @@ const F = "Inter, system-ui, sans-serif";
 
 const LINKS = [
   { label: "About",   href: "/about" },
-  { label: "FAQ",     href: "#" },
+  { label: "FAQ",     href: "/faq" },
   { label: "Privacy", href: "#" },
   { label: "Terms",   href: "#" },
   { label: "Contact", href: "#" },
