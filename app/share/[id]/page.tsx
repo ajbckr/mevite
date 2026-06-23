@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getMevite } from "@/lib/mevite";
 import { Mevite } from "@/lib/types";
+import { MeviteFooter } from "@/components/MeviteFooter";
 
 const ORANGE = "#E8470A";
 const F = "Inter, system-ui, sans-serif";
@@ -164,7 +165,7 @@ export default function SharePage() {
         </div>
 
         {/* View mission page */}
-        <div style={{ borderTop: "1px solid #F0F0F0", paddingTop: 16, textAlign: "center" }}>
+        <div style={{ borderTop: "1px solid #F0F0F0", paddingTop: 16, textAlign: "center", marginBottom: 8 }}>
           <button onClick={() => router.push(`/m/${id}`)} style={{
             fontSize: 13, fontWeight: 700, color: ORANGE, background: "none", border: "none", cursor: "pointer", fontFamily: F,
           }}>
@@ -172,6 +173,8 @@ export default function SharePage() {
           </button>
           <p style={{ fontSize: 11, color: "#AAA", margin: "4px 0 0" }}>This is what {whoName} sees when they open your link.</p>
         </div>
+
+        <MeviteFooter />
       </div>
     </div>
   );

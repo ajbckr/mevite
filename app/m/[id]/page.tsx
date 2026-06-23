@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { subscribeMevite, respondToMevite, updateArrivalStatus, confirmSuggestion } from "@/lib/mevite";
 import { Mevite, ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
 import { StatusIcon } from "@/components/StatusIcons";
+import { MeviteFooter } from "@/components/MeviteFooter";
 
 const ORANGE = "#E8470A";
 const F = "Inter, system-ui, sans-serif";
@@ -410,15 +411,7 @@ export default function MissionPage() {
         )}
 
         {/* ── FOOTER ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/m-lockup.png" alt="MEVITE" style={{ height: 16, width: "auto", opacity: 0.35 }} />
-          </div>
-          <button onClick={() => router.push("/")} style={{ fontSize: 12, fontWeight: 700, color: ORANGE, background: "none", border: "none", cursor: "pointer", fontFamily: F }}>
-            Who&apos;s coming over next? →
-          </button>
-        </div>
+        <MeviteFooter />
 
       </div>
     </div>

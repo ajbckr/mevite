@@ -5,6 +5,7 @@ import { RotatingPrompt, WhenField } from "@/components/RotatingPrompt";
 import { DoorSlider } from "@/components/DoorSlider";
 import { createMevite } from "@/lib/mevite";
 import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS, SENDER_PROMPTS } from "@/lib/types";
+import { MeviteFooter } from "@/components/MeviteFooter";
 
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 const f: React.CSSProperties = { fontFamily: "Inter, system-ui, sans-serif" };
@@ -361,64 +362,9 @@ export default function Home() {
         {/* Divider */}
         <div style={{ margin: "16px 28px 0", borderTop: "1px solid #2a2a2a" }} />
 
-        {/* Bottom bar */}
-        <div style={{ padding: "16px 28px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
-          {/* Row: M icon + MEVITE */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {/* Inline M icon — white version */}
-            <svg width="28" height="26" viewBox="0 0 100 90" fill="none">
-              <rect x="4" y="8" width="17" height="74" fill="white"/>
-              <polygon points="4,8 21,8 52,54 35,54" fill="white"/>
-              <polygon points="65,54 79,8 96,8 79,54" fill="white"/>
-              <rect x="79" y="8" width="17" height="74" fill="white"/>
-              <polygon points="35,54 52,54 52,82 35,82" fill="white"/>
-              <polygon points="52,54 79,54 79,82 52,82" fill="#E8470A"/>
-              <circle cx="70" cy="69" r="3" fill="white"/>
-            </svg>
-            <span style={{
-              fontSize: 14,
-              fontWeight: 900,
-              letterSpacing: "0.12em",
-              color: "white",
-              fontFamily: "Inter, system-ui, sans-serif",
-            }}>MEVITE</span>
-          </div>
-
-          {/* Nav links */}
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 0" }}>
-            {["About", "FAQ", "Privacy", "Terms", "Contact"].map((link, i, arr) => (
-              <span key={link} style={{ display: "flex", alignItems: "center" }}>
-                <a href="#" style={{
-                  fontSize: 13,
-                  color: "#888",
-                  textDecoration: "none",
-                  fontFamily: "Inter, system-ui, sans-serif",
-                  fontWeight: 500,
-                  transition: "color 0.15s",
-                }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "#E8470A")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "#888")}
-                >
-                  {link}
-                </a>
-                {i < arr.length - 1 && (
-                  <span style={{ color: "#E8470A", margin: "0 10px", fontSize: 11, opacity: 0.7 }}>·</span>
-                )}
-              </span>
-            ))}
-          </div>
-
-          {/* Copyright */}
-          <p style={{
-            fontSize: 11,
-            color: "#444",
-            margin: 0,
-            fontFamily: "Inter, system-ui, sans-serif",
-            fontWeight: 500,
-            letterSpacing: "0.05em",
-          }}>
-            &copy; 2026 MEVITE
-          </p>
+        {/* Footer */}
+        <div style={{ padding: "0 28px" }}>
+          <MeviteFooter dark />
         </div>
 
         {/* Orange accent line at very bottom */}
