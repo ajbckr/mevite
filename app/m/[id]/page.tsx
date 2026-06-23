@@ -140,25 +140,25 @@ export default function MissionPage() {
           {hasSuggestion && isAdjusting ? (
             <>
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#888]">Original Plan</p>
-              <PlanRow icon="📅" value={mevite.when} muted />
+              <PlanRow icon="cal" value={mevite.when} muted />
               <div className="border-t border-[#E8E8E8] pt-3">
                 <div className="flex items-center gap-2 mb-2">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-[#FF4C00]">Proposed Change</p>
                   <span className="bg-[#FF4C00] text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">NEW</span>
                 </div>
-                <PlanRow icon="📅" value={`${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`} />
+                <PlanRow icon="cal" value={`${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`} />
                 {mevite.suggestedChange!.note && (
                   <p className="text-xs text-[#888] mt-1.5 italic pl-6">&ldquo;{mevite.suggestedChange!.note}&rdquo;</p>
                 )}
               </div>
             </>
           ) : (
-            <PlanRow icon="📅" value={isLocked && hasSuggestion
+            <PlanRow icon="cal" value={isLocked && hasSuggestion
               ? `${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`
               : mevite.when} />
           )}
-          <PlanRow icon="🛍" value={mevite.bringing} />
-          <PlanRow icon="💬" value={mevite.why} />
+          <PlanRow icon="bag" value={mevite.bringing} />
+          <PlanRow icon="msg" value={mevite.why} />
           <div className="pt-2 border-t border-[#E8E8E8]">
             <ArrivalGauge status={mevite.arrivalStatus} />
           </div>
@@ -308,10 +308,31 @@ export default function MissionPage() {
   );
 }
 
+const PLAN_ICONS: Record<string, React.ReactNode> = {
+  cal: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
+      <rect x="1" y="2" width="14" height="13" rx="2" stroke="#E8470A" strokeWidth="1.5" fill="none"/>
+      <path d="M5 1v2M11 1v2M1 6h14" stroke="#E8470A" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  bag: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
+      <path d="M3 3h10l-1 8H4L3 3z" stroke="#E8470A" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+      <path d="M1 3h14" stroke="#E8470A" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M6 3V2a2 2 0 014 0v1" stroke="#E8470A" strokeWidth="1.5" fill="none"/>
+    </svg>
+  ),
+  msg: (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
+      <path d="M2 2a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H5l-3 3V2z" stroke="#E8470A" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+    </svg>
+  ),
+};
+
 function PlanRow({ icon, value, muted = false }: { icon: string; value: string; muted?: boolean }) {
   return (
     <div className="flex gap-3 items-start">
-      <span className="text-base shrink-0">{icon}</span>
+      {PLAN_ICONS[icon] ?? <span className="text-base shrink-0">{icon}</span>}
       <span className={`text-sm font-semibold leading-snug ${muted ? "text-[#BBB] line-through" : "text-[#111]"}`}>{value}</span>
     </div>
   );

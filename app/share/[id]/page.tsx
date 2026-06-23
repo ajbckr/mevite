@@ -48,12 +48,30 @@ export default function SharePage() {
         {mevite ? (
           <div className="mevite-card space-y-3 animate-fade-in">
             <p className="text-base font-black text-[#111]">
-              <span className="text-[#FF4C00]">{mevite.who}</span> is coming over.
+              <span className="text-[#FF4C00]">{mevite.sender || mevite.who}</span> is coming over.
             </p>
             <div className="space-y-2 text-sm text-[#555]">
-              <div className="flex gap-2"><span>📅</span><span className="font-medium">{mevite.when}</span></div>
-              <div className="flex gap-2"><span>🛍</span><span className="font-medium">{mevite.bringing}</span></div>
-              <div className="flex gap-2"><span>💬</span><span className="font-medium">{mevite.why}</span></div>
+              <div className="flex gap-2 items-start">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
+                  <rect x="1" y="2" width="14" height="13" rx="2" stroke="#E8470A" strokeWidth="1.5" fill="none"/>
+                  <path d="M5 1v2M11 1v2M1 6h14" stroke="#E8470A" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <span className="font-medium">{mevite.when}</span>
+              </div>
+              <div className="flex gap-2 items-start">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
+                  <path d="M3 3h10l-1 8H4L3 3z" stroke="#E8470A" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+                  <path d="M1 3h14" stroke="#E8470A" strokeWidth="1.5" strokeLinecap="round"/>
+                  <path d="M6 3V2a2 2 0 014 0v1" stroke="#E8470A" strokeWidth="1.5" fill="none"/>
+                </svg>
+                <span className="font-medium">{mevite.bringing}</span>
+              </div>
+              <div className="flex gap-2 items-start">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
+                  <path d="M2 2a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H5l-3 3V2z" stroke="#E8470A" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+                </svg>
+                <span className="font-medium">{mevite.why}</span>
+              </div>
             </div>
             <div className="pt-2 border-t border-[#E8E8E8]">
               <ArrivalGauge status={mevite.arrivalStatus} />
