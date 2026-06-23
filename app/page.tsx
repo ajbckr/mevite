@@ -180,9 +180,14 @@ export default function Home() {
       <footer style={{ background: "#0f0f0f", marginTop: 0 }}>
 
         {/* Top section: big statement + door illustration */}
-        <div className="footer-inner">
+        <div style={{
+          position: "relative",
+          padding: "28px 28px 0",
+          overflow: "hidden",
+          minHeight: 220,
+        }}>
           {/* Brand statement */}
-          <div className="footer-copy">
+          <div style={{ position: "relative", zIndex: 2, maxWidth: "55%" }}>
             <p style={{
               fontSize: "clamp(22px, 5.5vw, 32px)",
               fontWeight: 900,
@@ -199,25 +204,49 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Door — PNG illustration */}
-          <div className="footer-door-wrap">
+          {/* Door — PNG, absolutely positioned right, clipped to container */}
+          <div style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: "60%",
+            zIndex: 1,
+          }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="footer-door-img" src="/footer-door.png" alt="" />
-            {/* Fade bottom edge */}
+            <img
+              src="/footer-door.png"
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "25% center",
+                display: "block",
+              }}
+            />
+            {/* Fade left edge into bg */}
             <div style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(to bottom, transparent 50%, #0f0f0f 100%)",
+              background: "linear-gradient(to right, #0f0f0f 0%, transparent 35%)",
+              pointerEvents: "none",
+            }} />
+            {/* Fade bottom edge into bg */}
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, transparent 55%, #0f0f0f 100%)",
               pointerEvents: "none",
             }} />
           </div>
         </div>
 
         {/* Divider */}
-        <div className="footer-divider" />
+        <div style={{ margin: "16px 28px 0", borderTop: "1px solid #2a2a2a" }} />
 
-        {/* Bottom bar: M lockup + nav + copyright */}
-        <div className="footer-bottom">
+        {/* Bottom bar */}
+        <div style={{ padding: "16px 28px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Row: M icon + MEVITE */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {/* Inline M icon — white version */}

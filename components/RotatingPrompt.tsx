@@ -76,11 +76,14 @@ export function RotatingPrompt({
             position: "absolute",
             inset: 0,
             width: "100%",
+            height: "100%",
             background: "transparent",
             border: "none",
             outline: "none",
-            opacity: value ? 1 : 0,
+            opacity: value ? 1 : 0.01,
             caretColor: "#111",
+            zIndex: 10,
+            cursor: "text",
           }}
         />
         {/* Rotating placeholder */}
