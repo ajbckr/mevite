@@ -177,14 +177,14 @@ export default function Home() {
       )}
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: "#000000", marginTop: 0 }}>
+      <footer style={{ background: "#0f0f0f", marginTop: 0 }}>
 
         {/* Top section: big statement + door illustration */}
         <div style={{
           position: "relative",
-          padding: "40px 28px 0",
+          padding: "28px 28px 0",
           overflow: "hidden",
-          minHeight: 260,
+          minHeight: 200,
         }}>
           {/* Brand statement — tighter font, left side */}
           <div style={{ position: "relative", zIndex: 2, maxWidth: "58%" }}>
@@ -229,11 +229,11 @@ export default function Home() {
         </div>
 
         {/* Divider */}
-        <div style={{ margin: "0 28px", borderTop: "1px solid #222", paddingTop: 0, marginTop: 32 }} />
+        <div style={{ margin: "0 28px", borderTop: "1px solid #2a2a2a", marginTop: 16 }} />
 
         {/* Bottom bar: M lockup + nav + copyright */}
         <div style={{
-          padding: "20px 28px 32px",
+          padding: "16px 28px 24px",
           display: "flex",
           flexDirection: "column",
           gap: 16,
