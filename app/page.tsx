@@ -177,18 +177,80 @@ export default function Home() {
       )}
 
       {/* ── FOOTER ── */}
+      <style>{`
+        .footer-inner {
+          position: relative;
+          padding: 28px 28px 0;
+          overflow: hidden;
+          min-height: 200px;
+          background: #0f0f0f;
+        }
+        .footer-copy {
+          position: relative;
+          z-index: 2;
+          max-width: 58%;
+        }
+        .footer-door-wrap {
+          position: absolute;
+          right: 0; top: 0; bottom: 0;
+          width: 100%;
+          z-index: 1;
+        }
+        .footer-door-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: right center;
+          display: block;
+        }
+        .footer-bottom {
+          padding: 16px 28px 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .footer-divider {
+          margin: 16px 28px 0;
+          border-top: 1px solid #2a2a2a;
+        }
+        @media (min-width: 600px) {
+          .footer-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            min-height: 260px;
+            display: flex;
+            align-items: center;
+            padding: 32px 28px;
+          }
+          .footer-copy {
+            max-width: 50%;
+            flex-shrink: 0;
+          }
+          .footer-door-wrap {
+            width: 56%;
+          }
+          .footer-door-img {
+            object-position: 35% center;
+          }
+          .footer-divider {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 28px;
+            border-top: 1px solid #2a2a2a;
+          }
+          .footer-bottom {
+            max-width: 680px;
+            margin: 0 auto;
+          }
+        }
+      `}</style>
+
       <footer style={{ background: "#0f0f0f", marginTop: 0 }}>
 
         {/* Top section: big statement + door illustration */}
-        <div style={{
-          position: "relative",
-          padding: "28px 28px 0",
-          overflow: "hidden",
-          minHeight: 200,
-          background: "#0f0f0f",
-        }}>
-          {/* Brand statement — tighter font, left side */}
-          <div style={{ position: "relative", zIndex: 2, maxWidth: "58%" }}>
+        <div className="footer-inner">
+          {/* Brand statement */}
+          <div className="footer-copy">
             <p style={{
               fontSize: "clamp(22px, 5.5vw, 32px)",
               fontWeight: 900,
@@ -205,28 +267,11 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Door — PNG illustration, spans full width behind text */}
-          <div style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: "100%",
-            zIndex: 1,
-          }}>
+          {/* Door — PNG illustration */}
+          <div className="footer-door-wrap">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/footer-door.png"
-              alt=""
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "right center",
-                display: "block",
-              }}
-            />
-            {/* Fade bottom edge to #0f0f0f to blend into footer bar */}
+            <img className="footer-door-img" src="/footer-door.png" alt="" />
+            {/* Fade bottom edge */}
             <div style={{
               position: "absolute",
               inset: 0,
@@ -237,15 +282,10 @@ export default function Home() {
         </div>
 
         {/* Divider */}
-        <div style={{ margin: "0 28px", borderTop: "1px solid #2a2a2a", marginTop: 16 }} />
+        <div className="footer-divider" />
 
         {/* Bottom bar: M lockup + nav + copyright */}
-        <div style={{
-          padding: "16px 28px 24px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-        }}>
+        <div className="footer-bottom">
           {/* Row: M icon + MEVITE */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {/* Inline M icon — white version */}
