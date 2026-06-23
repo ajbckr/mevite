@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
+import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const alt = "MEVITE";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -10,10 +12,27 @@ const BASE = "https://mevite.vercel.app";
 
 async function getMeviteData(id: string) {
   try {
-    const res = await fetch(`${BASE}/api/mevite/${id}`, { cache: "no-store" });
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const apiKey    = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    if (!projectId || !apiKey) return null;
+    const res = await fetch(
+      `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/mevites/${id}?key=${apiKey}`,
+      { cache: "no-store" }
+    );
     if (!res.ok) return null;
-    return await res.json();
-  } catch { return null; }
+    const json = await res.json();
+    const f = json.fields;
+    if (!f) return null;
+    return {
+      sender:   f.sender?.stringValue   || f.who?.stringValue || "",
+      bringing: f.bringing?.stringValue || "",
+      why:      f.why?.stringValue      || "",
+      when:     f.when?.stringValue     || "",
+    };
+  } catch (e) {
+    console.error("OG fetch error:", e);
+    return null;
+  }
 }
 
 export default async function OGImage({ params }: { params: { id: string } }) {
@@ -24,7 +43,6 @@ export default async function OGImage({ params }: { params: { id: string } }) {
   const bringing = mevite?.bringing || "";
   const why      = mevite?.why      || "";
 
-  // Load the background plate
   const plateRes = await fetch(`${BASE}/og-plate.png`);
   const plateB64 = plateRes.ok
     ? `data:image/png;base64,${Buffer.from(await plateRes.arrayBuffer()).toString("base64")}`
@@ -38,13 +56,10 @@ export default async function OGImage({ params }: { params: { id: string } }) {
         position: "relative",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}>
-
-        {/* Background plate — door + wordmark already composited */}
         {plateB64 && (
           <img src={plateB64} style={{ position: "absolute", inset: 0, width: 1200, height: 630 }} />
         )}
 
-        {/* Dynamic text layer — left column */}
         <div style={{
           position: "absolute",
           left: 64, top: 52, bottom: 52,
@@ -53,8 +68,6 @@ export default async function OGImage({ params }: { params: { id: string } }) {
           flexDirection: "column",
           justifyContent: "space-between",
         }}>
-
-          {/* Headline */}
           <div style={{ display: "flex", flexDirection: "column", lineHeight: 0.92, letterSpacing: "-0.03em" }}>
             <span style={{ fontSize: 112, fontWeight: 900, color: "#111" }}>{sender}</span>
             <span style={{ fontSize: 112, fontWeight: 900, color: "#111" }}>is coming</span>
@@ -63,7 +76,6 @@ export default async function OGImage({ params }: { params: { id: string } }) {
             </span>
           </div>
 
-          {/* Details */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {when && (
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -99,7 +111,6 @@ export default async function OGImage({ params }: { params: { id: string } }) {
               </div>
             )}
           </div>
-
         </div>
       </div>
     ),
