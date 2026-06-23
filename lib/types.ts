@@ -54,7 +54,7 @@ export const ARRIVAL_STATUSES: {
   { key: "open-the-door",  label: "Open The Door",   description: "Save me a seat.",               sub: "Assume I'm coming.",              gaugeLevel: 5 },
 ];
 
-export const WHO_PROMPTS    = ["Your college roommate","Your best friend","Your mom","Your old neighbor","Your cousin","Your work friend","Your person"];
+export const WHO_PROMPTS    = ["The Bestie","The Old Friend","The Ride or Die","The College Crew","The Long Lost One","The Sibling","The Neighbor","The Work Wife","The Far Away One"];
 export const SENDER_PROMPTS = ["Alex","Sam","Jordan","Taylor","Chris","Morgan","Your name"];
 export const WHEN_PROMPTS   = ["This Weekend","Next Monday","Tomorrow Night","Friday at 8","Sunday Afternoon"];
 export const BRINGING_PROMPTS = ["Pizza","Wine","Beer","Snacks","Nothing, just myself","Flowers"];
