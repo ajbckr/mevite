@@ -2,9 +2,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /mevites/{id} {
-      allow read: if true;
+      // Anyone with the Mevite ID can read it — the URL is the access token
+      allow get: if true;
+
+      // Anyone can create a new Mevite
       allow create: if true;
-      allow update: if true;
+
+      // Updates allowed only if the document already exists (receiver responding, commitment updates)
+      allow update: if resource != null;
+
+      // Nobody can list all Mevites or delete them
+      allow list: if false;
+      allow delete: if false;
     }
   }
 }
