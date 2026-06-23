@@ -131,7 +131,7 @@ function SendingScreen() {
       <img
         src="/mevite-wordmark.png"
         alt="MEVITE"
-        style={{ height: 22, width: "auto", opacity: 0.35 }}
+        style={{ height: 22, width: "auto", opacity: 1 }}
       />
     </div>
   );
