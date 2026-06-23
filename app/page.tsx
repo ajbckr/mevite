@@ -204,24 +204,24 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Door — PNG illustration, bleeds to right edge */}
+          {/* Door — PNG illustration, spans full width behind text */}
           <div style={{
             position: "absolute",
             right: 0,
             top: 0,
             bottom: 0,
-            width: "55%",
+            width: "100%",
             zIndex: 1,
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/footer-door.jpg"
+              src="/footer-door.png"
               alt=""
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                objectPosition: "left center",
+                objectPosition: "right center",
                 display: "block",
               }}
             />
