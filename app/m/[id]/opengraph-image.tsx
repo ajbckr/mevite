@@ -43,7 +43,12 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
     readFile(path.join(process.cwd(), "public", "inter-600.woff2")),
   ]);
 
-  const sender   = mevite?.sender   || "Someone";
+  const toArrayBuffer = (buf: Buffer): ArrayBuffer => {
+    const ab = new ArrayBuffer(buf.length);
+    const view = new Uint8Array(ab);
+    for (let i = 0; i < buf.length; i++) view[i] = buf[i];
+    return ab;
+  };
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
   const why      = mevite?.why      || "";
@@ -117,8 +122,8 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
     {
       ...size,
       fonts: [
-        { name: "Inter", data: font900.buffer as ArrayBuffer, weight: 900, style: "normal" },
-        { name: "Inter", data: font600.buffer as ArrayBuffer, weight: 600, style: "normal" },
+        { name: "Inter", data: toArrayBuffer(font900), weight: 900, style: "normal" },
+        { name: "Inter", data: toArrayBuffer(font600), weight: 600, style: "normal" },
       ],
     }
   );
