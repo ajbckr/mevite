@@ -1,8 +1,6 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import path from "path";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const alt = "MEVITE";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -35,33 +33,23 @@ async function getMeviteData(id: string) {
 
 export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const mevite = await getMeviteData(id);
 
-  // All three in parallel: data + font + plate URL fetch
-  const [mevite, font900, font600] = await Promise.all([
-    getMeviteData(id),
-    readFile(path.join(process.cwd(), "public", "inter-900.woff2")),
-    readFile(path.join(process.cwd(), "public", "inter-600.woff2")),
-  ]);
-
-  const toArrayBuffer = (buf: Buffer): ArrayBuffer => {
-    const ab = new ArrayBuffer(buf.length);
-    const view = new Uint8Array(ab);
-    for (let i = 0; i < buf.length; i++) view[i] = buf[i];
-    return ab;
-  };
+  const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
   const why      = mevite?.why      || "";
 
-  // Plate via URL — ImageResponse fetches it internally, no memory spike
-  const plateUrl = `${BASE}/og-plate.jpg`;
+  // Load Inter 900 from public URL — small woff2, fast at edge
+  const fontRes = await fetch(`${BASE}/inter-900.woff2`);
+  const font900 = fontRes.ok ? await fontRes.arrayBuffer() : null;
 
   return new ImageResponse(
     (
       <div style={{ width: 1200, height: 630, display: "flex", position: "relative", fontFamily: "Inter" }}>
 
-        {/* Plate background */}
-        <img src={plateUrl} style={{ position: "absolute", inset: 0, width: 1200, height: 630, objectFit: "cover" }} />
+        {/* Plate via URL — ImageResponse resolves this natively */}
+        <img src={`${BASE}/og-plate.jpg`} style={{ position: "absolute", inset: 0, width: 1200, height: 630, objectFit: "cover" }} />
 
         {/* Text overlay */}
         <div style={{
@@ -121,10 +109,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
     ),
     {
       ...size,
-      fonts: [
-        { name: "Inter", data: toArrayBuffer(font900), weight: 900, style: "normal" },
-        { name: "Inter", data: toArrayBuffer(font600), weight: 600, style: "normal" },
-      ],
+      fonts: font900 ? [{ name: "Inter", data: font900, weight: 900, style: "normal" as const }] : [],
     }
   );
 }
