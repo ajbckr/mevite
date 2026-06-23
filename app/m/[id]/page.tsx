@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { subscribeMevite, respondToMevite, updateArrivalStatus, confirmSuggestion } from "@/lib/mevite";
 import { Mevite, ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
+import { StatusIcon } from "@/components/StatusIcons";
 
 const ORANGE = "#E8470A";
 const F = "Inter, system-ui, sans-serif";
@@ -189,7 +190,7 @@ export default function MissionPage() {
             {senderName}<br />is coming<br />over<span style={{ color: ORANGE }}>.</span>
           </h1>
           <p style={{ fontSize: 14, color: "#888", margin: "0 0 14px", fontStyle: "italic" }}>
-            Stop saying &ldquo;we should get together.&rdquo;
+            Just show up.
           </p>
 
           {/* Status pill */}
@@ -210,6 +211,7 @@ export default function MissionPage() {
             This Is Happening
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <StatusIcon status={mevite.arrivalStatus} size={44} color={ORANGE} />
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 24, fontWeight: 900, color: "#fff", margin: "0 0 3px", lineHeight: 1.1 }}>{arrivalInfo.label}</p>
               <p style={{ fontSize: 13, color: "#777", margin: 0 }}>{arrivalInfo.detail}</p>
