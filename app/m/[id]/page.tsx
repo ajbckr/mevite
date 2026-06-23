@@ -5,8 +5,8 @@ import { subscribeMevite, respondToMevite, updateArrivalStatus, confirmSuggestio
 import { Mevite, ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
 
 const ORANGE = "#E8470A";
+const F = "Inter, system-ui, sans-serif";
 
-// Commitment display config — door states represent conviction, not location
 const STATUS_DISPLAY: Record<string, { label: string; sub: string; detail: string }> = {
   "maybe":         { label: "Maybe",          sub: "Thinking about it.",            detail: "It's crossed my mind." },
   "probably":      { label: "Probably",        sub: "Looking likely.",               detail: "I'm checking calendars." },
@@ -14,6 +14,77 @@ const STATUS_DISPLAY: Record<string, { label: string; sub: string; detail: strin
   "locked-in":     { label: "Locked In",       sub: "Nothing's getting in the way.", detail: "You should expect me." },
   "open-the-door": { label: "Open The Door",   sub: "Assume I'm coming.",            detail: "There is no scenario where I don't show up." },
 };
+
+// Flat single-color orange SVG icons
+const CalIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <rect x="1" y="3" width="16" height="14" rx="2" fill={ORANGE}/>
+    <rect x="1" y="3" width="16" height="4" rx="2" fill={ORANGE}/>
+    <path d="M5 1v4M13 1v4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    <rect x="4" y="10" width="3" height="2" rx="0.5" fill="white"/>
+    <rect x="8" y="10" width="3" height="2" rx="0.5" fill="white"/>
+    <rect x="4" y="13" width="3" height="2" rx="0.5" fill="white"/>
+    <rect x="8" y="13" width="3" height="2" rx="0.5" fill="white"/>
+  </svg>
+);
+
+const BagIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M3 6h12l-1.5 9H4.5L3 6z" fill={ORANGE}/>
+    <path d="M6 6V4a3 3 0 016 0v2" stroke={ORANGE} strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+    <path d="M1 6h16" stroke={ORANGE} strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+// Google Calendar official button style
+const GoogleCalendarBtn = ({ href }: { href: string }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" style={{
+    display: "flex", alignItems: "center", gap: 10,
+    border: "1px solid #dadce0", borderRadius: 8,
+    padding: "10px 16px", background: "#fff",
+    textDecoration: "none", flex: 1,
+    fontFamily: "Google Sans, Inter, sans-serif",
+  }}>
+    <svg width="18" height="18" viewBox="0 0 18 18">
+      <path d="M17.64 9.2a10.3 10.3 0 00-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z" fill="#4285F4"/>
+      <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.02-3.7H.96v2.34A9 9 0 009 18z" fill="#34A853"/>
+      <path d="M3.98 10.72A5.4 5.4 0 013.7 9c0-.6.1-1.18.28-1.72V4.94H.96A9 9 0 000 9c0 1.45.35 2.82.96 4.06l3.02-2.34z" fill="#FBBC05"/>
+      <path d="M9 3.58c1.32 0 2.5.45 3.44 1.34l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 00.96 4.94L3.98 7.28C4.66 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+    </svg>
+    <span style={{ fontSize: 13, fontWeight: 600, color: "#3c4043" }}>Google Calendar</span>
+  </a>
+);
+
+// Apple Calendar — uses .ics data URI
+const AppleCalendarBtn = ({ icsHref }: { icsHref: string }) => (
+  <a href={icsHref} download="mevite.ics" style={{
+    display: "flex", alignItems: "center", gap: 10,
+    border: "1px solid #dadce0", borderRadius: 8,
+    padding: "10px 16px", background: "#fff",
+    textDecoration: "none", flex: 1,
+    fontFamily: "Inter, sans-serif",
+  }}>
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M14.25 9.56c-.02-1.97 1.61-2.92 1.68-2.97-0.92-1.34-2.34-1.52-2.85-1.54-1.21-.12-2.37.71-2.98.71-.62 0-1.57-.7-2.58-.68-1.32.02-2.54.77-3.22 1.95-1.38 2.38-.35 5.9.99 7.83.66.95 1.44 2.01 2.46 1.97 1-.04 1.37-.63 2.57-.63 1.2 0 1.54.63 2.58.61 1.06-.02 1.73-.96 2.38-1.92.76-1.09 1.07-2.16 1.09-2.21-.02-.01-2.08-.8-2.12-3.12z" fill="#555"/>
+      <path d="M12.29 3.56c.55-.67.92-1.59.82-2.51-.79.03-1.76.53-2.33 1.19-.5.58-.95 1.52-.83 2.41.88.07 1.78-.45 2.34-1.09z" fill="#555"/>
+    </svg>
+    <span style={{ fontSize: 13, fontWeight: 600, color: "#3c4043" }}>Apple Calendar</span>
+  </a>
+);
+
+function MeviteHeader() {
+  return (
+    <div style={{
+      borderBottom: "1px solid #F0F0F0",
+      padding: "14px 20px",
+      display: "flex",
+      alignItems: "center",
+    }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/m-lockup.png" alt="MEVITE" style={{ height: 24, width: "auto", display: "block" }} />
+    </div>
+  );
+}
 
 export default function MissionPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,18 +95,12 @@ export default function MissionPage() {
   const [view, setView] = useState<"receiver" | "sender">("receiver");
 
   useEffect(() => {
-    const unsub = subscribeMevite(id, (m) => {
-      setMevite(m);
-      setLoading(false);
-    });
+    const unsub = subscribeMevite(id, (m) => { setMevite(m); setLoading(false); });
     return unsub;
   }, [id]);
 
   const handleResponse = async (response: "obviously" | "adjust" | "terrible") => {
-    if (response === "adjust") {
-      router.push(`/m/${id}/adjust`);
-      return;
-    }
+    if (response === "adjust") { router.push(`/m/${id}/adjust`); return; }
     setResponding(true);
     await respondToMevite(id, response);
     setResponding(false);
@@ -51,155 +116,130 @@ export default function MissionPage() {
     await updateArrivalStatus(id, status);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="flex gap-2">
-          {[0,1,2].map(i => (
-            <div key={i} className="w-2.5 h-2.5 rounded-full bg-[#E8470A]"
-              style={{ animation: `pulseDot 1.2s ease-in-out ${i*0.2}s infinite` }} />
-          ))}
-        </div>
+  if (loading) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#fff" }}>
+      <div style={{ display: "flex", gap: 8 }}>
+        {[0,1,2].map(i => <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: ORANGE, animation: `pulseDot 1.2s ease-in-out ${i*0.2}s infinite` }} />)}
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (!mevite) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6 bg-white">
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl font-black">Mevite not found.</h2>
-          <p className="text-[#888] text-sm">This link may be expired or invalid.</p>
-        </div>
+  if (!mevite) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, background: "#fff" }}>
+      <div style={{ textAlign: "center" }}>
+        <h2 style={{ fontSize: 24, fontWeight: 900, fontFamily: F }}>Mevite not found.</h2>
+        <p style={{ color: "#888", fontSize: 14, fontFamily: F }}>This link may be expired or invalid.</p>
       </div>
-    );
-  }
+    </div>
+  );
 
-  const isLocked   = mevite.status === "locked";
-  const isAdjusting = mevite.status === "adjusting";
-  const isDeclined  = mevite.status === "declined";
+  const isLocked     = mevite.status === "locked";
+  const isAdjusting  = mevite.status === "adjusting";
+  const isDeclined   = mevite.status === "declined";
   const hasSuggestion = !!mevite.suggestedChange;
   const senderName   = (mevite.sender || mevite.who).split(" ")[0];
-  const statusColor  = isLocked ? "#22c55e" : isDeclined ? "#888" : ORANGE;
   const arrivalInfo  = STATUS_DISPLAY[mevite.arrivalStatus] ?? STATUS_DISPLAY["definitely"];
   const gaugeLevel   = ARRIVAL_STATUSES.find(s => s.key === mevite.arrivalStatus)?.gaugeLevel ?? 3;
+  const statusColor  = isLocked ? "#22c55e" : isDeclined ? "#888" : ORANGE;
 
   const whenDisplay = isLocked && hasSuggestion
     ? `${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`
     : mevite.when;
 
+  // Google Calendar URL
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&details=${encodeURIComponent(`Bringing: ${mevite.bringing}\n\n"${mevite.why}"\n\nMevite: https://mevite.vercel.app/m/${id}`)}`;
+
+  // Apple .ics
+  const icsContent = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT",
+    `SUMMARY:${senderName} is coming over`,
+    `DESCRIPTION:Bringing: ${mevite.bringing}\\n"${mevite.why}"`,
+    "DTSTART:" + new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z",
+    "END:VEVENT", "END:VCALENDAR"
+  ].join("\n");
+  const icsHref = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Top accent bar */}
-      <div className="w-full h-1" style={{ background: statusColor }} />
+    <div style={{ minHeight: "100vh", background: "#fff", fontFamily: F }}>
+      {/* Status accent bar */}
+      <div style={{ width: "100%", height: 3, background: statusColor }} />
 
-      <div className="max-w-md mx-auto px-6 pt-8 pb-16 space-y-8">
+      <MeviteHeader />
 
-        {/* View toggle — "Your view" / senderName */}
-        <div className="flex items-center justify-between">
-          <div className="flex gap-1 bg-[#F5F5F5] rounded-full p-1">
-            <button onClick={() => setView("receiver")}
-              className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${view === "receiver" ? "bg-white text-[#111] shadow-sm" : "text-[#888]"}`}>
-              Your view
+      <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 20px 64px" }}>
+
+        {/* View toggle */}
+        <div style={{ display: "flex", gap: 4, background: "#F5F5F5", borderRadius: 100, padding: 4, width: "fit-content", marginBottom: 28 }}>
+          {(["receiver", "sender"] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)} style={{
+              fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 100,
+              border: "none", cursor: "pointer", fontFamily: F, transition: "all 0.15s",
+              background: view === v ? "#fff" : "transparent",
+              color: view === v ? "#111" : "#888",
+              boxShadow: view === v ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
+            }}>
+              {v === "receiver" ? "Your view" : `${senderName}'s view`}
             </button>
-            <button onClick={() => setView("sender")}
-              className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${view === "sender" ? "bg-white text-[#111] shadow-sm" : "text-[#888]"}`}>
-              {senderName}&apos;s view
-            </button>
-          </div>
+          ))}
         </div>
 
-        {/* Hero headline */}
-        <div className="animate-slide-up space-y-4">
-          <h1 className="text-[2.8rem] font-black leading-[1.0] tracking-tight">
-            {senderName}<br />
-            is coming<br />
-            over<span style={{ color: ORANGE }}>.</span>
+        {/* Hero */}
+        <div style={{ marginBottom: 24 }}>
+          <h1 style={{ fontSize: "clamp(2.4rem, 10vw, 3rem)", fontWeight: 900, lineHeight: 1.0, letterSpacing: "-0.02em", margin: "0 0 12px", color: "#111" }}>
+            {senderName}<br />is coming<br />over<span style={{ color: ORANGE }}>.</span>
           </h1>
+          <p style={{ fontSize: 14, color: "#888", margin: "0 0 14px", fontStyle: "italic" }}>
+            Stop saying &ldquo;we should get together.&rdquo;
+          </p>
 
           {/* Status pill */}
-          <div>
-            {isLocked && (
-              <span className="status-pill bg-[#dcfce7] text-[#16a34a]">✓ Locked In</span>
-            )}
-            {isAdjusting && (
-              <span className="status-pill bg-[#fff3ed] text-[#E8470A]">↔ Adjusting Plans</span>
-            )}
-            {isDeclined && (
-              <span className="status-pill bg-[#F5F5F5] text-[#888]">Terrible Timing</span>
-            )}
-            {mevite.status === "pending" && (
-              <span className="status-pill bg-[#fff3ed] text-[#E8470A]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E8470A] inline-block animate-pulse mr-1" />
-                This Is Happening
-              </span>
-            )}
-          </div>
+          {isLocked && <span className="status-pill bg-[#dcfce7] text-[#16a34a]">✓ Locked In</span>}
+          {isAdjusting && <span className="status-pill" style={{ background: "#fff3ed", color: ORANGE }}>↔ Adjusting Plans</span>}
+          {isDeclined && <span className="status-pill" style={{ background: "#F5F5F5", color: "#888" }}>Terrible Timing</span>}
+          {mevite.status === "pending" && (
+            <span className="status-pill" style={{ background: "#fff3ed", color: ORANGE }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: ORANGE, display: "inline-block", marginRight: 5, animation: "pulseDot 1.5s infinite" }} />
+              This Is Happening
+            </span>
+          )}
         </div>
 
-        {/* ── COMMITMENT — declaration of intent, not location tracking ── */}
-        <div style={{
-          background: "#0f0f0f",
-          borderRadius: 16,
-          padding: "20px 20px",
-        }}>
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 10px", fontFamily: "Inter, system-ui, sans-serif" }}>
-            Commitment
+        {/* Commitment block */}
+        <div style={{ background: "#0f0f0f", borderRadius: 16, padding: "18px 20px", marginBottom: 24 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 10px" }}>
+            This Is Happening
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 2px", fontFamily: "Inter, system-ui, sans-serif", lineHeight: 1.1 }}>
-                {arrivalInfo.label}
-              </p>
-              <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: "Inter, system-ui, sans-serif" }}>
-                {arrivalInfo.detail}
-              </p>
+              <p style={{ fontSize: 24, fontWeight: 900, color: "#fff", margin: "0 0 3px", lineHeight: 1.1 }}>{arrivalInfo.label}</p>
+              <p style={{ fontSize: 13, color: "#777", margin: 0 }}>{arrivalInfo.detail}</p>
             </div>
-            {/* Horizontal gauge */}
-            <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
-              {[1,2,3,4,5].map(i => (
-                <div key={i} style={{
-                  width: 20, height: 4, borderRadius: 2,
-                  background: i <= gaugeLevel ? ORANGE : "#333",
-                  transition: "background 0.3s",
-                }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
+              {[5,4,3,2,1].map(i => (
+                <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: i <= gaugeLevel ? ORANGE : "#333", transition: "background 0.3s" }} />
               ))}
             </div>
           </div>
-          <p style={{ fontSize: 12, color: "#555", margin: "10px 0 0", fontFamily: "Inter, system-ui, sans-serif", fontStyle: "italic" }}>
-            {arrivalInfo.sub}
-          </p>
         </div>
 
-        {/* ── THE MESSAGE — emotional center ── */}
-        <div style={{ borderLeft: `3px solid ${ORANGE}`, paddingLeft: 16 }}>
-          <p style={{
-            fontSize: 22,
-            fontWeight: 800,
-            lineHeight: 1.3,
-            color: "#111",
-            margin: "0 0 4px",
-            fontFamily: "Inter, system-ui, sans-serif",
-            fontStyle: "italic",
-          }}>
+        {/* THE WHY — emotional center */}
+        <div style={{ borderLeft: `3px solid ${ORANGE}`, paddingLeft: 16, marginBottom: 24 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 6px" }}>Because</p>
+          <p style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.3, color: "#111", margin: "0 0 6px", fontStyle: "italic" }}>
             &ldquo;{mevite.why}&rdquo;
           </p>
-          <p style={{ fontSize: 12, color: "#AAA", margin: 0, fontFamily: "Inter, system-ui, sans-serif" }}>
-            — {senderName}
-          </p>
+          <p style={{ fontSize: 12, color: "#AAA", margin: 0 }}>— {senderName}</p>
         </div>
 
-        {/* ── LOGISTICS — lighter weight ── */}
-        <div className="space-y-2">
+        {/* Logistics */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
           {hasSuggestion && isAdjusting ? (
             <>
               <LogRow icon="cal" label="When" value={mevite.when} muted />
-              <div className="rounded-xl border border-[#E8470A]/30 bg-[#fff3ed] p-3 space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#E8470A]">Proposed change</p>
+              <div style={{ borderRadius: 12, border: `1px solid ${ORANGE}33`, background: "#fff3ed", padding: "12px 14px" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 8px" }}>Proposed change</p>
                 <LogRow icon="cal" label="New time" value={`${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`} />
-                {mevite.suggestedChange!.note && (
-                  <p className="text-xs text-[#888] italic pl-6">&ldquo;{mevite.suggestedChange!.note}&rdquo;</p>
-                )}
+                {mevite.suggestedChange!.note && <p style={{ fontSize: 12, color: "#888", margin: "6px 0 0", fontStyle: "italic" }}>&ldquo;{mevite.suggestedChange!.note}&rdquo;</p>}
               </div>
             </>
           ) : (
@@ -208,80 +248,67 @@ export default function MissionPage() {
           <LogRow icon="bag" label="Bringing" value={mevite.bringing} />
         </div>
 
-        {/* ── RECEIVER RESPONSE BUTTONS ── */}
+        {/* RESPONSE BUTTONS — receiver */}
         {view === "receiver" && !isLocked && !isDeclined && (
-          <div className="space-y-3">
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
             {hasSuggestion && isAdjusting ? (
               <>
-                <button onClick={handleConfirmSuggestion} disabled={responding} className="response-btn obviously">
-                  Works for me ✓
-                </button>
-                <button onClick={() => router.push(`/m/${id}/adjust`)} className="response-btn adjust">
-                  Different day?
-                </button>
-                <button onClick={() => handleResponse("terrible")} disabled={responding} className="response-btn terrible">
-                  Terrible timing.
-                </button>
+                <button onClick={handleConfirmSuggestion} disabled={responding} className="response-btn obviously">Works for me ✓</button>
+                <button onClick={() => router.push(`/m/${id}/adjust`)} className="response-btn adjust">Different day?</button>
+                <button onClick={() => handleResponse("terrible")} disabled={responding} className="response-btn terrible">Terrible timing.</button>
               </>
             ) : (
               <>
-                <button onClick={() => handleResponse("obviously")} disabled={responding} className="response-btn obviously">
-                  Obviously.
-                </button>
-                <button onClick={() => handleResponse("adjust")} disabled={responding} className="response-btn adjust">
-                  Different day?
-                </button>
-                <button onClick={() => handleResponse("terrible")} disabled={responding} className="response-btn terrible">
-                  Terrible timing.
-                </button>
+                <button onClick={() => handleResponse("obviously")} disabled={responding} className="response-btn obviously">Obviously.</button>
+                <button onClick={() => handleResponse("adjust")} disabled={responding} className="response-btn adjust">Different day?</button>
+                <button onClick={() => handleResponse("terrible")} disabled={responding} className="response-btn terrible">Terrible timing.</button>
               </>
             )}
           </div>
         )}
 
-        {/* LOCKED STATE */}
+        {/* LOCKED */}
         {isLocked && (
-          <div className="mevite-card border-[#bbf7d0] bg-[#f0fdf4] text-center space-y-2 py-6">
-            <p className="text-3xl">🎉</p>
-            <p className="text-xl font-black text-[#16a34a]">It&apos;s on.</p>
-            <p className="text-sm text-[#555]">
+          <div style={{ borderRadius: 16, border: "1px solid #bbf7d0", background: "#f0fdf4", padding: "24px 20px", textAlign: "center", marginBottom: 24 }}>
+            <p style={{ fontSize: 26, fontWeight: 900, color: "#16a34a", margin: "0 0 4px" }}>It&apos;s on.</p>
+            <p style={{ fontSize: 13, color: "#555", margin: 0 }}>
               {mevite.confirmedAt
-                ? `Confirmed ${new Date(mevite.confirmedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`
+                ? `Confirmed on ${new Date(mevite.confirmedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`
                 : "Plan confirmed."}
             </p>
           </div>
         )}
 
-        {/* DECLINED STATE */}
+        {/* DECLINED */}
         {isDeclined && (
-          <div className="mevite-card bg-[#F5F5F5] text-center space-y-2 py-6">
-            <p className="text-3xl">😬</p>
-            <p className="text-xl font-black text-[#888]">Terrible timing.</p>
-            <p className="text-sm text-[#888]">Maybe next time.</p>
+          <div style={{ borderRadius: 16, background: "#F5F5F5", padding: "24px 20px", textAlign: "center", marginBottom: 24 }}>
+            <p style={{ fontSize: 26, fontWeight: 900, color: "#888", margin: "0 0 4px" }}>Terrible timing.</p>
+            <p style={{ fontSize: 13, color: "#888", margin: 0 }}>Maybe next time.</p>
           </div>
         )}
 
-        {/* SENDER VIEW — update arrival status */}
+        {/* SENDER VIEW */}
         {view === "sender" && (
-          <div className="space-y-4">
-            <div className="mevite-card space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Update your commitment</p>
-              <div className="space-y-2">
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 28 }}>
+            <div style={{ borderRadius: 16, border: "1px solid #E8E8E8", padding: "16px 18px" }}>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#AAA", margin: "0 0 12px" }}>Update your commitment</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {ARRIVAL_STATUSES.map(s => {
+                  const sel = mevite.arrivalStatus === s.key;
                   return (
-                    <button key={s.key} onClick={() => handleStatusUpdate(s.key)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
-                        mevite.arrivalStatus === s.key ? "border-[#E8470A] bg-[#E8470A]/5" : "border-[#E8E8E8] hover:border-[#CCC]"
-                      }`}>
-                      <div className="flex-1">
-                        <p className={`text-sm font-semibold ${mevite.arrivalStatus === s.key ? "text-[#111]" : "text-[#444]"}`}>{s.label}</p>
-                        <p className="text-xs text-[#888] mt-0.5">{s.description}</p>
+                    <button key={s.key} onClick={() => handleStatusUpdate(s.key)} style={{
+                      display: "flex", alignItems: "center", gap: 12, padding: "12px 14px",
+                      borderRadius: 12, border: `2px solid ${sel ? ORANGE : "#E8E8E8"}`,
+                      background: sel ? `${ORANGE}0D` : "#fff", cursor: "pointer", textAlign: "left",
+                      transition: "all 0.15s",
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: "#111", margin: 0, fontFamily: F }}>{s.label}</p>
+                        <p style={{ fontSize: 11, color: "#888", margin: "2px 0 0", fontFamily: F }}>{s.description}</p>
                       </div>
-                      {mevite.arrivalStatus === s.key && (
-                        <div className="w-4 h-4 rounded-full bg-[#E8470A] flex items-center justify-center shrink-0">
-                          <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                        </div>
-                      )}
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${sel ? ORANGE : "#DDD"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        {sel && <div style={{ width: 8, height: 8, borderRadius: "50%", background: ORANGE }} />}
+                      </div>
                     </button>
                   );
                 })}
@@ -289,46 +316,39 @@ export default function MissionPage() {
             </div>
 
             {/* Share link */}
-            <div className="mevite-card space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Share your Mevite</p>
-              <div className="bg-[#F5F5F5] rounded-lg px-3 py-2 font-mono text-xs text-[#555] break-all">
+            <div style={{ borderRadius: 16, border: "1px solid #E8E8E8", padding: "16px 18px" }}>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#AAA", margin: "0 0 10px" }}>Share your Mevite</p>
+              <div style={{ background: "#F5F5F5", borderRadius: 8, padding: "8px 12px", fontFamily: "monospace", fontSize: 12, color: "#555", marginBottom: 10, wordBreak: "break-all" }}>
                 {typeof window !== "undefined" ? window.location.href : ""}
               </div>
-              <button onClick={() => {
-                navigator.clipboard.writeText(typeof window !== "undefined" ? window.location.href : "");
-              }} className="cta-btn text-sm">Copy Link</button>
+              <button onClick={() => navigator.clipboard.writeText(typeof window !== "undefined" ? window.location.href : "")}
+                className="cta-btn" style={{ fontSize: 13 }}>Copy Link</button>
             </div>
           </div>
         )}
 
-        {/* Add to Calendar (when locked) */}
+        {/* ADD TO CALENDAR — when locked */}
         {isLocked && (
-          <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Add to Calendar</p>
-            <div className="flex gap-3">
-              <a href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&details=${encodeURIComponent(`Bringing: ${mevite.bringing}\n${mevite.why}`)}`}
-                target="_blank" rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 border border-[#E8E8E8] rounded-xl py-3 text-sm font-semibold text-[#111] hover:bg-[#F5F5F5] transition-colors">
-                G Google
-              </a>
-              <button className="flex-1 flex items-center justify-center gap-2 border border-[#E8E8E8] rounded-xl py-3 text-sm font-semibold text-[#111] hover:bg-[#F5F5F5] transition-colors">
-                🍎 Apple
-              </button>
+          <div style={{ marginBottom: 28 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#AAA", margin: "0 0 10px" }}>Add to Calendar</p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <GoogleCalendarBtn href={gcalUrl} />
+              <AppleCalendarBtn icsHref={icsHref} />
             </div>
           </div>
         )}
 
-        {/* Live Timeline */}
+        {/* TIMELINE */}
         {mevite.timeline && mevite.timeline.length > 0 && (
-          <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Timeline</p>
-            <div className="space-y-3">
+          <div style={{ marginBottom: 28 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 12px" }}>This Started Happening</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {mevite.timeline.map((evt, i) => (
-                <div key={evt.id} className="flex gap-3 items-start">
-                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${i === mevite.timeline.length - 1 ? "bg-[#E8470A]" : "bg-[#DDD]"}`} />
+                <div key={evt.id} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", marginTop: 5, flexShrink: 0, background: i === mevite.timeline.length - 1 ? ORANGE : "#DDD" }} />
                   <div>
-                    <p className="text-sm text-[#111] font-medium">{evt.label}</p>
-                    <p className="text-xs text-[#AAA]">
+                    <p style={{ fontSize: 14, fontWeight: 600, color: "#111", margin: 0, fontFamily: F }}>{evt.label}</p>
+                    <p style={{ fontSize: 11, color: "#AAA", margin: "2px 0 0", fontFamily: F }}>
                       {new Date(evt.timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                     </p>
                   </div>
@@ -338,10 +358,15 @@ export default function MissionPage() {
           </div>
         )}
 
-        {/* Footer link */}
-        <div className="pt-4 border-t border-[#E8E8E8] text-center">
-          <button onClick={() => router.push("/")} className="text-xs text-[#888] hover:text-[#E8470A] transition-colors font-medium">
-            Make your own Mevite →
+        {/* Footer CTA */}
+        <div style={{ borderTop: "1px solid #F0F0F0", paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img src="/m-lockup.png" alt="MEVITE" style={{ height: 18, width: "auto", opacity: 0.5 }} />
+            <span style={{ fontSize: 11, color: "#AAA", fontStyle: "italic" }}>Stop saying &ldquo;we should get together.&rdquo;</span>
+          </div>
+          <button onClick={() => router.push("/")} style={{ fontSize: 12, fontWeight: 700, color: ORANGE, background: "none", border: "none", cursor: "pointer", fontFamily: F, whiteSpace: "nowrap" }}>
+            Who&apos;s coming over next? →
           </button>
         </div>
       </div>
@@ -349,30 +374,18 @@ export default function MissionPage() {
   );
 }
 
-// Lightweight logistics row — no card weight
 const LOG_ICONS: Record<string, React.ReactNode> = {
-  cal: (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
-      <rect x="1" y="2" width="14" height="13" rx="2" stroke="#E8470A" strokeWidth="1.5" fill="none"/>
-      <path d="M5 1v2M11 1v2M1 6h14" stroke="#E8470A" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  ),
-  bag: (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{flexShrink:0,marginTop:2}}>
-      <path d="M3 3h10l-1 8H4L3 3z" stroke="#E8470A" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
-      <path d="M1 3h14" stroke="#E8470A" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M6 3V2a2 2 0 014 0v1" stroke="#E8470A" strokeWidth="1.5" fill="none"/>
-    </svg>
-  ),
+  cal: <CalIcon />,
+  bag: <BagIcon />,
 };
 
 function LogRow({ icon, label, value, muted = false }: { icon: string; label: string; value: string; muted?: boolean }) {
   return (
-    <div className="flex gap-3 items-start">
-      {LOG_ICONS[icon]}
+    <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+      <div style={{ marginTop: 2, flexShrink: 0 }}>{LOG_ICONS[icon]}</div>
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-wider text-[#AAA] mb-0.5">{label}</p>
-        <p className={`text-sm font-semibold leading-snug ${muted ? "text-[#CCC] line-through" : "text-[#111]"}`}>{value}</p>
+        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#AAA", margin: "0 0 2px", fontFamily: "Inter, system-ui, sans-serif" }}>{label}</p>
+        <p style={{ fontSize: 15, fontWeight: 700, color: muted ? "#CCC" : "#111", margin: 0, textDecoration: muted ? "line-through" : "none", fontFamily: "Inter, system-ui, sans-serif" }}>{value}</p>
       </div>
     </div>
   );
