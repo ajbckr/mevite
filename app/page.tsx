@@ -129,49 +129,6 @@ function SendingScreen() {
   );
 }
 
-// ── Sticky shrinking nav ───────────────────────────────────────────
-function StickyNav() {
-  const [scrolled, setScrolled] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <div style={{
-      position: "sticky",
-      top: 0,
-      zIndex: 20,
-      background: "#fff",
-      borderBottom: scrolled ? "1px solid #EBEBEB" : "none",
-      transition: "all 0.3s ease",
-      display: "flex",
-      justifyContent: "center",
-      padding: scrolled ? "10px 20px" : "28px 20px 16px",
-    }}>
-      <button
-        onClick={() => router.push("/")}
-        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", justifyContent: "center" }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/mevite-wordmark.png"
-          alt="MEVITE"
-          style={{
-            height: scrolled ? 28 : 52,
-            width: "auto",
-            display: "block",
-            transition: "height 0.3s ease",
-          }}
-        />
-      </button>
-    </div>
-  );
-}
-
 export default function Home() {
   const router = useRouter();
   const [who, setWho] = useState("");
@@ -245,8 +202,19 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
 
-      {/* ── STICKY NAV — large on load, shrinks on scroll ── */}
-      <StickyNav />
+      {/* ── HERO LOCKUP ── */}
+      <div style={{ padding: "32px 20px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+          <div style={{ flexShrink: 0 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/m-lockup.png" alt="MEVITE" style={{ height: 110, width: "auto", display: "block" }} />
+          </div>
+          <div style={{ width: 2, background: "#111", alignSelf: "stretch", margin: "0 18px", minHeight: 110 }} />
+          <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1.05, color: "#111", letterSpacing: "-0.01em", fontFamily: "Inter, system-ui, sans-serif" }}>
+            Invite<br />Yourself<br />Over<span style={{ color: "#E8470A" }}>.</span>
+          </div>
+        </div>
+      </div>
 
       {/* ── FORM ── */}
       <div style={{ padding: "28px 24px 0", display: "flex", flexDirection: "column", gap: 28 }}>
