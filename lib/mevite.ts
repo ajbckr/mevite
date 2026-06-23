@@ -27,7 +27,7 @@ export async function createMevite(data: Omit<Mevite, "id" | "createdAt" | "time
     {
       id: "evt-1",
       type: "created",
-      label: `${data.who.split(" ")[0]} created the Mevite`,
+      label: `${data.sender.split(" ")[0]} created the Mevite`,
       timestamp: now,
     },
   ];

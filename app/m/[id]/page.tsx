@@ -73,7 +73,8 @@ export default function MissionPage() {
   const isAdjusting = mevite.status === "adjusting";
   const isDeclined = mevite.status === "declined";
   const hasSuggestion = !!mevite.suggestedChange;
-  const firstName = mevite.who.split(" ")[0];
+  const senderName = (mevite.sender || mevite.who).split(" ")[0];
+  const receiverName = mevite.who.split(" ")[0];
 
   // Status color
   const statusColor = isLocked ? "#22c55e" : isDeclined ? "#888" : "#FF4C00";
@@ -103,7 +104,7 @@ export default function MissionPage() {
         {/* Hero headline */}
         <div className="animate-slide-up">
           <h1 className="text-[2.8rem] font-black leading-[1.0] tracking-tight">
-            {firstName}<br />
+            {senderName}<br />
             is coming<br />
             over<span className="text-[#FF4C00]">.</span>
           </h1>
@@ -182,7 +183,7 @@ export default function MissionPage() {
             ) : (
               <>
                 <p className="text-xs text-[#888] text-center font-medium">
-                  {firstName} wants to come over. What do you say?
+                  {senderName} wants to come over. What do you say?
                 </p>
                 <button onClick={() => handleResponse("obviously")} disabled={responding} className="response-btn obviously">
                   Obviously.
@@ -264,7 +265,7 @@ export default function MissionPage() {
           <div className="space-y-3">
             <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Add to Calendar</p>
             <div className="flex gap-3">
-              <a href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${firstName} is coming over`)}&details=${encodeURIComponent(`Bringing: ${mevite.bringing}\n${mevite.why}`)}`}
+              <a href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&details=${encodeURIComponent(`Bringing: ${mevite.bringing}\n${mevite.why}`)}`}
                 target="_blank" rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 border border-[#E8E8E8] rounded-xl py-3 text-sm font-semibold text-[#111] hover:bg-[#F5F5F5] transition-colors">
                 G Google

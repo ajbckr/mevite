@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { RotatingPrompt, WhenField } from "@/components/RotatingPrompt";
 import { DoorSlider } from "@/components/DoorSlider";
 import { createMevite } from "@/lib/mevite";
-import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS } from "@/lib/types";
+import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS, SENDER_PROMPTS } from "@/lib/types";
 
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 const f: React.CSSProperties = { fontFamily: "Inter, system-ui, sans-serif" };
@@ -131,6 +131,7 @@ function SendingScreen() {
 export default function Home() {
   const router = useRouter();
   const [who, setWho] = useState("");
+  const [sender, setSender] = useState("");
   const [bringing, setBringing] = useState("");
   const [why, setWhy] = useState("");
   const [when, setWhen] = useState("");
@@ -171,14 +172,14 @@ export default function Home() {
   };
 
   const handleSend = async () => {
-    if (!who.trim() || !bringing.trim() || !why.trim()) {
-      setError("Fill in who, what you're bringing, and why.");
+    if (!who.trim() || !bringing.trim() || !why.trim() || !sender.trim()) {
+      setError("Fill in who, what you're bringing, why, and your name.");
       return;
     }
     setError("");
     setSending(true);
     try {
-      const id = await createMevite({ who, when: when || WHEN_ROTATE[whenIdx], bringing, why, arrivalStatus, senderPhone: "" });
+      const id = await createMevite({ who, sender, when: when || WHEN_ROTATE[whenIdx], bringing, why, arrivalStatus, senderPhone: "" });
       router.push(`/share/${id}`);
     } catch (e) {
       console.error(e);
@@ -239,6 +240,7 @@ export default function Home() {
 
         <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={setBringing} placeholder="" />
         <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={setWhy} placeholder="" />
+        <RotatingPrompt label="Who's showing up? (you)" prompts={SENDER_PROMPTS} value={sender} onChange={setSender} placeholder="" />
 
         <div style={{ borderTop: "1px solid #F0F0F0", paddingTop: 20 }}>
           <button onClick={() => setShowPicker(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", padding: 0 }}>

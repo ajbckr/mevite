@@ -18,7 +18,8 @@ export interface SuggestedChange {
 
 export interface Mevite {
   id: string;
-  who: string;
+  who: string;       // the person being visited
+  sender: string;    // the person showing up (you)
   when: string;
   bringing: string;
   why: string;
@@ -54,6 +55,7 @@ export const ARRIVAL_STATUSES: {
 ];
 
 export const WHO_PROMPTS    = ["Your college roommate","Your best friend","Your mom","Your old neighbor","Your cousin","Your work friend","Your person"];
+export const SENDER_PROMPTS = ["Alex","Sam","Jordan","Taylor","Chris","Morgan","Your name"];
 export const WHEN_PROMPTS   = ["This Weekend","Next Monday","Tomorrow Night","Friday at 8","Sunday Afternoon"];
 export const BRINGING_PROMPTS = ["Pizza","Wine","Beer","Snacks","Nothing, just myself","Flowers"];
 export const WHY_PROMPTS    = ["It's been too long.","We haven't talked in six months.","I miss you.","Life's short.","No reason needed.","Because I want to."];
