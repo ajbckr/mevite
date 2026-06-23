@@ -63,7 +63,7 @@ export function RotatingPrompt({
   return (
     <div>
       <label style={FIELD_STYLE.label}>{label}</label>
-      <div style={{ position: "relative", ...FIELD_STYLE.underline }}>
+      <div style={{ position: "relative", ...FIELD_STYLE.underline, cursor: "text" }} onClick={e => (e.currentTarget.querySelector("input") as HTMLInputElement)?.focus()}>
         {/* Input — invisible text, just captures typing */}
         <input
           type="text"

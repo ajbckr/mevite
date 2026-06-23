@@ -129,6 +129,49 @@ function SendingScreen() {
   );
 }
 
+// ── Sticky shrinking nav ───────────────────────────────────────────
+function StickyNav() {
+  const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div style={{
+      position: "sticky",
+      top: 0,
+      zIndex: 20,
+      background: "#fff",
+      borderBottom: scrolled ? "1px solid #EBEBEB" : "none",
+      transition: "all 0.3s ease",
+      display: "flex",
+      justifyContent: "center",
+      padding: scrolled ? "10px 20px" : "28px 20px 16px",
+    }}>
+      <button
+        onClick={() => router.push("/")}
+        style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", justifyContent: "center" }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/mevite-wordmark.png"
+          alt="MEVITE"
+          style={{
+            height: scrolled ? 28 : 52,
+            width: "auto",
+            display: "block",
+            transition: "height 0.3s ease",
+          }}
+        />
+      </button>
+    </div>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const [who, setWho] = useState("");
@@ -160,15 +203,21 @@ export default function Home() {
   const currentStatus = ARRIVAL_STATUSES.find(s => s.key === arrivalStatus);
 
   const handleDateConfirm = () => {
-    if (selectedDate) {
-      const d = new Date(selectedDate + "T00:00:00");
-      const dayStr = d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-      const [h] = selectedTime.split(":");
-      const hour = parseInt(h);
-      const ampm = hour >= 12 ? "PM" : "AM";
-      const h12 = hour % 12 || 12;
-      setWhen(`${dayStr} at ${h12}:${selectedTime.split(":")[1]} ${ampm}`);
+    if (!selectedDate) return;
+    const chosen = new Date(`${selectedDate}T${selectedTime}`);
+    if (chosen <= new Date()) {
+      setError("Please pick a future date and time.");
+      setShowDatePicker(false);
+      return;
     }
+    const d = new Date(selectedDate + "T00:00:00");
+    const dayStr = d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+    const [h] = selectedTime.split(":");
+    const hour = parseInt(h);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const h12 = hour % 12 || 12;
+    setWhen(`${dayStr} at ${h12}:${selectedTime.split(":")[1]} ${ampm}`);
+    setError("");
     setShowDatePicker(false);
   };
 
@@ -196,35 +245,8 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
 
-      {/* ── HERO LOCKUP: [M stacked over MEVITE] | vertical divider | Invite Yourself Over. ── */}
-      <div style={{ padding: "32px 20px 0" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
-
-          {/* Left: M mark + MEVITE below — use the exact stacked PNG */}
-          <div style={{ flexShrink: 0 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/m-lockup.png"
-              alt="MEVITE"
-              style={{ height: 110, width: "auto", display: "block" }}
-            />
-          </div>
-
-          {/* Vertical divider */}
-          <div style={{ width: 2, background: "#111", alignSelf: "stretch", margin: "0 18px", minHeight: 110 }} />
-
-          {/* Right: Invite Yourself Over. */}
-          <div style={{
-            fontSize: 34, fontWeight: 900, lineHeight: 1.05,
-            color: "#111", letterSpacing: "-0.01em",
-            fontFamily: "Inter, system-ui, sans-serif",
-          }}>
-            Invite<br />Yourself<br />Over<span style={{ color: "#E8470A" }}>.</span>
-          </div>
-        </div>
-
-
-      </div>
+      {/* ── STICKY NAV — large on load, shrinks on scroll ── */}
+      <StickyNav />
 
       {/* ── FORM ── */}
       <div style={{ padding: "28px 24px 0", display: "flex", flexDirection: "column", gap: 28 }}>
@@ -274,20 +296,28 @@ export default function Home() {
         </button>
       </div>
 
-      {showDatePicker && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 50, display: "flex", alignItems: "flex-end" }} onClick={() => setShowDatePicker(false)}>
-          <div style={{ background: "#fff", width: "100%", borderRadius: "16px 16px 0 0", padding: 24 }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-              <button onClick={() => setShowDatePicker(false)} style={{ color: "#888", fontSize: 14, background: "none", border: "none", cursor: "pointer", ...f }}>Cancel</button>
-              <span style={{ fontSize: 14, fontWeight: 700, ...f }}>Pick a time</span>
-              <button onClick={handleDateConfirm} style={{ color: "#E8470A", fontSize: 14, fontWeight: 700, background: "none", border: "none", cursor: "pointer", ...f }}>Done</button>
+      {showDatePicker && (() => {
+        const today = new Date().toISOString().split("T")[0];
+        const nowTime = new Date().toTimeString().slice(0, 5);
+        const isPast = !selectedDate || new Date(`${selectedDate}T${selectedTime}`) <= new Date();
+        return (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 50, display: "flex", alignItems: "flex-end" }} onClick={() => setShowDatePicker(false)}>
+            <div style={{ background: "#fff", width: "100%", borderRadius: "16px 16px 0 0", padding: 24 }} onClick={e => e.stopPropagation()}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                <button onClick={() => setShowDatePicker(false)} style={{ color: "#888", fontSize: 14, background: "none", border: "none", cursor: "pointer", ...f }}>Cancel</button>
+                <span style={{ fontSize: 14, fontWeight: 700, ...f }}>Pick a time</span>
+                <button onClick={handleDateConfirm} disabled={isPast} style={{ color: isPast ? "#CCC" : "#E8470A", fontSize: 14, fontWeight: 700, background: "none", border: "none", cursor: isPast ? "not-allowed" : "pointer", ...f }}>Done</button>
+              </div>
+              {isPast && selectedDate && (
+                <p style={{ fontSize: 12, color: "#E8470A", textAlign: "center", margin: "0 0 12px", ...f }}>Pick a future date and time.</p>
+              )}
+              <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ width: "100%", border: "1px solid #E8E8E8", borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 12, boxSizing: "border-box" }} min={today} />
+              <input type="time" value={selectedTime} onChange={e => setSelectedTime(e.target.value)} style={{ width: "100%", border: "1px solid #E8E8E8", borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 16, boxSizing: "border-box" }} min={selectedDate === today ? nowTime : undefined} />
+              <button onClick={handleDateConfirm} disabled={isPast} style={{ width: "100%", background: isPast ? "#CCC" : "#111", color: "#fff", padding: 16, borderRadius: 12, fontSize: 16, fontWeight: 700, border: "none", cursor: isPast ? "not-allowed" : "pointer", ...f }}>Set Time</button>
             </div>
-            <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ width: "100%", border: "1px solid #E8E8E8", borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 12, boxSizing: "border-box" }} min={new Date().toISOString().split("T")[0]} />
-            <input type="time" value={selectedTime} onChange={e => setSelectedTime(e.target.value)} style={{ width: "100%", border: "1px solid #E8E8E8", borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 16, boxSizing: "border-box" }} />
-            <button onClick={handleDateConfirm} style={{ width: "100%", background: "#111", color: "#fff", padding: 16, borderRadius: 12, fontSize: 16, fontWeight: 700, border: "none", cursor: "pointer", ...f }}>Set Time</button>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {showPicker && (
         <DoorSlider value={arrivalStatus} onChange={setArrivalStatus} onConfirm={() => setShowPicker(false)} onClose={() => setShowPicker(false)} />

@@ -10,9 +10,11 @@ const F = "Inter, system-ui, sans-serif";
 
 function MeviteHeader() {
   return (
-    <div style={{ borderBottom: "1px solid #F0F0F0", padding: "14px 20px", display: "flex", alignItems: "center" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/m-lockup.png" alt="MEVITE" style={{ height: 24, width: "auto", display: "block" }} />
+    <div style={{ borderBottom: "1px solid #F0F0F0", padding: "12px 20px", display: "flex", alignItems: "center" }}>
+      <a href="/" style={{ display: "block", lineHeight: 0 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/mevite-wordmark.png" alt="MEVITE" style={{ height: 22, width: "auto", display: "block" }} />
+      </a>
     </div>
   );
 }

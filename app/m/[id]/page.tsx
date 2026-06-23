@@ -20,10 +20,13 @@ const COMMITMENT: Record<string, { label: string; detail: string }> = {
 // ── Shared Components ──────────────────────────────────────────────
 
 function Header() {
+  const router = useRouter();
   return (
-    <div style={{ borderBottom: "1px solid #EBEBEB", padding: "14px 24px", display: "flex", alignItems: "center", background: "#fff", position: "sticky", top: 0, zIndex: 10 }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/m-lockup.png" alt="MEVITE" style={{ height: 22, width: "auto", display: "block" }} />
+    <div style={{ borderBottom: "1px solid #EBEBEB", padding: "12px 24px", display: "flex", alignItems: "center", background: "#fff", position: "sticky", top: 0, zIndex: 10 }}>
+      <button onClick={() => router.push("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/mevite-wordmark.png" alt="MEVITE" style={{ height: 22, width: "auto", display: "block" }} />
+      </button>
     </div>
   );
 }
