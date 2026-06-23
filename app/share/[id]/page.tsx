@@ -27,7 +27,8 @@ export default function SharePage() {
   const origin = typeof window !== "undefined" ? window.location.origin : "https://mevite.vercel.app";
   const meviteUrl = `${origin}/m/${id}`;
   const senderName = mevite ? (mevite.sender || mevite.who).split(" ")[0] : "";
-  const smsText = `Hey — I'm coming over. Here's my Mevite: ${meviteUrl}`;
+  const whoName = mevite ? mevite.who : "your friend";
+  const smsText = `Let's stop saying "we should get together." Let's get together: ${meviteUrl}`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(meviteUrl);
@@ -47,7 +48,7 @@ export default function SharePage() {
             Your Mevite<br />is ready<span style={{ color: ORANGE }}>.</span>
           </h1>
           <p style={{ fontSize: 14, color: "#888", margin: 0 }}>
-            One link. {senderName ? `${senderName} sees` : "Your friend sees"} everything — and can respond.
+            One link. {whoName} sees everything — and can respond.
           </p>
         </div>
 
@@ -106,7 +107,7 @@ export default function SharePage() {
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: ORANGE, margin: "0 0 2px" }}>Share your Mevite</p>
               <p style={{ fontSize: 17, fontWeight: 900, color: "#111", margin: "0 0 1px" }}>Send it. Make it real.</p>
-              <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Text it to {senderName || "them"} so the plan is in motion.</p>
+              <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Text it to {whoName} so the plan is in motion.</p>
             </div>
           </div>
 
@@ -169,7 +170,7 @@ export default function SharePage() {
           }}>
             View live mission page →
           </button>
-          <p style={{ fontSize: 11, color: "#AAA", margin: "4px 0 0" }}>This is what {senderName || "your friend"} sees when they open your link.</p>
+          <p style={{ fontSize: 11, color: "#AAA", margin: "4px 0 0" }}>This is what {whoName} sees when they open your link.</p>
         </div>
       </div>
     </div>
