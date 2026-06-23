@@ -265,7 +265,7 @@ export default function Home() {
         <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={setWhy} placeholder="" />
         <RotatingPrompt label="Who's showing up? (you)" prompts={SENDER_PROMPTS} value={sender} onChange={setSender} placeholder="" />
 
-        <div style={{ borderTop: "1px solid #F0F0F0", paddingTop: 20 }}>
+        <div style={{ paddingTop: 4 }}>
           <button onClick={() => setShowPicker(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E8470A", flexShrink: 0 }} />

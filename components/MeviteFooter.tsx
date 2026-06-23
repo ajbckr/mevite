@@ -1,5 +1,12 @@
 const F = "Inter, system-ui, sans-serif";
-const LINKS = ["About", "FAQ", "Privacy", "Terms", "Contact"];
+
+const LINKS = [
+  { label: "About",   href: "/about" },
+  { label: "FAQ",     href: "#" },
+  { label: "Privacy", href: "#" },
+  { label: "Terms",   href: "#" },
+  { label: "Contact", href: "#" },
+];
 
 export function MeviteFooter() {
   return (
@@ -12,25 +19,18 @@ export function MeviteFooter() {
       gap: 14,
       background: "#fff",
     }}>
-      <p style={{
-        fontSize: 13,
-        color: "#888",
-        margin: 0,
-        fontFamily: F,
-        textAlign: "center",
-        letterSpacing: "0.01em",
-      }}>
+      <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: F, textAlign: "center", letterSpacing: "0.01em" }}>
         Show up.
       </p>
 
       <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
-        {LINKS.map((link, i) => (
-          <span key={link} style={{ display: "flex", alignItems: "center" }}>
-            <a href="#" style={{ fontSize: 12, color: "#AAA", textDecoration: "none", fontFamily: F }}
+        {LINKS.map(({ label, href }, i) => (
+          <span key={label} style={{ display: "flex", alignItems: "center" }}>
+            <a href={href} style={{ fontSize: 12, color: "#AAA", textDecoration: "none", fontFamily: F, padding: "0 2px" }}
               onMouseEnter={e => (e.currentTarget.style.color = "#555")}
               onMouseLeave={e => (e.currentTarget.style.color = "#AAA")}
             >
-              {link}
+              {label}
             </a>
             {i < LINKS.length - 1 && (
               <span style={{ fontSize: 11, color: "#DDD", margin: "0 6px" }}>·</span>
