@@ -59,72 +59,80 @@ function AnimatedDoor({ angle }: { angle: number }) {
 
 function SendingScreen() {
   const [angle, setAngle] = useState(2);
-  const [phase, setPhase] = useState<"swing" | "hold">("swing");
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Swing from 2° → 85° over 900ms with easeOut feel
+    // Door cycles closed → open → closed, 2s per cycle, loops
+    const cycleDuration = 2000;
     const start = performance.now();
-    const duration = 900;
-    const from = 2, to = 85;
 
     const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      // ease out cubic
-      const eased = 1 - Math.pow(1 - t, 3);
-      setAngle(from + (to - from) * eased);
-      if (t < 1) {
-        requestAnimationFrame(tick);
+      const elapsed = (now - start) % cycleDuration;
+      const t = elapsed / cycleDuration; // 0→1 per cycle
+
+      // Ease in-out sine for a natural swing feel
+      // First half: open (2°→85°), second half: close (85°→2°)
+      let doorT: number;
+      if (t < 0.5) {
+        doorT = t * 2; // 0→1 opening
       } else {
-        setPhase("hold");
+        doorT = 1 - (t - 0.5) * 2; // 1→0 closing
       }
+      const eased = 0.5 - Math.cos(doorT * Math.PI) / 2; // smooth sine
+      setAngle(2 + (85 - 2) * eased);
+
+      // Progress bar fills over 2s total (one cycle = brand moment)
+      const totalElapsed = now - start;
+      setProgress(Math.min(totalElapsed / 2000, 1));
+
+      requestAnimationFrame(tick);
     };
-    requestAnimationFrame(tick);
+
+    const raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#111",
+      background: "#fff",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      gap: 0,
       fontFamily: "Inter, system-ui, sans-serif",
+      padding: "0 24px",
     }}>
       {/* Door */}
-      <div style={{
-        opacity: 1,
-        transform: "scale(1.1)",
-      }}>
+      <div style={{ transform: "scale(1.15)", marginBottom: 40 }}>
         <AnimatedDoor angle={angle} />
       </div>
 
-      {/* Logo + copy fade in after door opens */}
+      {/* Progress bar */}
       <div style={{
-        marginTop: 32,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 8,
-        opacity: phase === "hold" ? 1 : 0,
-        transform: phase === "hold" ? "translateY(0)" : "translateY(8px)",
-        transition: "opacity 0.5s ease, transform 0.5s ease",
+        width: 160,
+        height: 3,
+        background: "#F0F0F0",
+        borderRadius: 2,
+        overflow: "hidden",
+        marginBottom: 20,
       }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/m-lockup.png" alt="MEVITE"
-          style={{ height: 64, width: "auto", filter: "invert(1)", opacity: 0.9 }} />
-        <p style={{
-          fontSize: 13,
-          fontWeight: 600,
-          color: "#555",
-          margin: 0,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-        }}>
-          Sending your mevite…
-        </p>
+        <div style={{
+          height: "100%",
+          width: `${progress * 100}%`,
+          background: ORANGE,
+          borderRadius: 2,
+          transition: "width 0.05s linear",
+        }} />
       </div>
+
+      {/* Wordmark */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/mevite-wordmark.png"
+        alt="MEVITE"
+        style={{ height: 18, width: "auto", opacity: 0.25 }}
+      />
     </div>
   );
 }
