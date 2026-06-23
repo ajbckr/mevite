@@ -1,6 +1,4 @@
 import { ImageResponse } from "next/og";
-import { initializeApp, getApps, cert } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
 
 export const runtime = "nodejs";
 export const alt = "MEVITE";
