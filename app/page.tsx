@@ -185,6 +185,7 @@ export default function Home() {
           padding: "28px 28px 0",
           overflow: "hidden",
           minHeight: 200,
+          background: "#0f0f0f",
         }}>
           {/* Brand statement — tighter font, left side */}
           <div style={{ position: "relative", zIndex: 2, maxWidth: "58%" }}>
@@ -225,6 +226,13 @@ export default function Home() {
                 display: "block",
               }}
             />
+            {/* Fade bottom edge to #0f0f0f to blend into footer bar */}
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, transparent 50%, #0f0f0f 100%)",
+              pointerEvents: "none",
+            }} />
           </div>
         </div>
 
