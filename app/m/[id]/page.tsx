@@ -150,7 +150,7 @@ export default function MissionPage() {
   const isDeclined    = mevite.status === "declined";
   const isPending     = mevite.status === "pending";
   const hasSuggestion = !!mevite.suggestedChange;
-  const senderName    = (mevite.sender || mevite.who).split(" ")[0];
+  const senderName    = mevite.sender || mevite.who;
   const commitment    = COMMITMENT[mevite.arrivalStatus] ?? COMMITMENT["definitely"];
   const gaugeLevel    = ARRIVAL_STATUSES.find(s => s.key === mevite.arrivalStatus)?.gaugeLevel ?? 3;
   const statusColor   = isLocked ? "#16a34a" : isDeclined ? "#999" : ORANGE;
@@ -189,7 +189,7 @@ export default function MissionPage() {
               color: view === v ? "#111" : "#888",
               boxShadow: view === v ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
             }}>
-              {v === "receiver" ? "Your view" : `${senderName}'s view`}
+              {v === "receiver" ? "Your view" : `${senderName}' view`}
             </button>
           ))}
         </div>
@@ -243,18 +243,18 @@ export default function MissionPage() {
         </Card>
 
         {/* ── COMMITMENT ── */}
-        <Card style={{ marginBottom: 20, background: "#0f0f0f", border: "none" }}>
+        <Card style={{ marginBottom: 20, background: "#fff", border: `2px solid ${ORANGE}` }}>
           <SectionLabel color={ORANGE}>Commitment</SectionLabel>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <StatusIcon status={mevite.arrivalStatus} size={42} color={ORANGE} />
             <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 2px", lineHeight: 1.1 }}>{commitment.label}</p>
-              <p style={{ fontSize: 12, color: "#666", margin: 0 }}>{commitment.detail}</p>
+              <p style={{ fontSize: 22, fontWeight: 900, color: "#111", margin: "0 0 2px", lineHeight: 1.1 }}>{commitment.label}</p>
+              <p style={{ fontSize: 12, color: "#888", margin: 0 }}>{commitment.detail}</p>
             </div>
             {/* Gauge */}
             <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
               {[1,2,3,4,5].map(i => (
-                <div key={i} style={{ width: 18, height: 4, borderRadius: 2, background: i <= gaugeLevel ? ORANGE : "#2a2a2a", transition: "background 0.3s" }} />
+                <div key={i} style={{ width: 18, height: 4, borderRadius: 2, background: i <= gaugeLevel ? ORANGE : "#EEE", transition: "background 0.3s" }} />
               ))}
             </div>
           </div>
@@ -262,18 +262,18 @@ export default function MissionPage() {
 
         {/* ── RESPONSE BUTTONS — receiver, pending ── */}
         {view === "receiver" && !isLocked && !isDeclined && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
             {hasSuggestion && isAdjusting ? (
               <>
-                <button onClick={handleConfirmSuggestion} disabled={responding} className="response-btn obviously">Works for me ✓</button>
-                <button onClick={() => router.push(`/m/${id}/adjust`)} className="response-btn adjust">Different day?</button>
-                <button onClick={() => handleResponse("terrible")} disabled={responding} className="response-btn terrible">Terrible timing.</button>
+                <Btn variant="obviously" onClick={handleConfirmSuggestion} disabled={responding}>Works for me ✓</Btn>
+                <Btn variant="adjust" onClick={() => router.push(`/m/${id}/adjust`)}>Different day?</Btn>
+                <Btn variant="terrible" onClick={() => handleResponse("terrible")} disabled={responding}>Terrible timing.</Btn>
               </>
             ) : (
               <>
-                <button onClick={() => handleResponse("obviously")} disabled={responding} className="response-btn obviously">Obviously.</button>
-                <button onClick={() => handleResponse("adjust")} disabled={responding} className="response-btn adjust">Different day?</button>
-                <button onClick={() => handleResponse("terrible")} disabled={responding} className="response-btn terrible">Terrible timing.</button>
+                <Btn variant="obviously" onClick={() => handleResponse("obviously")} disabled={responding}>Obviously.</Btn>
+                <Btn variant="adjust" onClick={() => handleResponse("adjust")} disabled={responding}>Different day?</Btn>
+                <Btn variant="terrible" onClick={() => handleResponse("terrible")} disabled={responding}>Terrible timing.</Btn>
               </>
             )}
           </div>
@@ -394,6 +394,34 @@ export default function MissionPage() {
 
       </div>
     </div>
+  );
+}
+
+// ── Response Button ────────────────────────────────────────────────
+
+const BTN_STYLES = {
+  obviously: { background: ORANGE,   color: "#fff", border: `2px solid ${ORANGE}` },
+  adjust:    { background: "#1a2744", color: "#fff", border: "2px solid #1a2744"   },
+  terrible:  { background: "#111",   color: "#fff", border: "2px solid #111"       },
+} as const;
+
+function Btn({ variant, onClick, disabled = false, children }: {
+  variant: keyof typeof BTN_STYLES;
+  onClick: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
+  const s = BTN_STYLES[variant];
+  return (
+    <button onClick={onClick} disabled={disabled} style={{
+      width: "100%", padding: "16px 20px", borderRadius: 12,
+      fontSize: 16, fontWeight: 800, fontFamily: F, cursor: disabled ? "not-allowed" : "pointer",
+      letterSpacing: "0.01em", transition: "opacity 0.15s",
+      opacity: disabled ? 0.6 : 1,
+      ...s,
+    }}>
+      {children}
+    </button>
   );
 }
 
