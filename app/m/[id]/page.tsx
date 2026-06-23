@@ -106,6 +106,7 @@ export default function MissionPage() {
   const [mevite, setMevite] = useState<Mevite | null>(null);
   const [loading, setLoading] = useState(true);
   const [responding, setResponding] = useState(false);
+  const [lastResponse, setLastResponse] = useState<"obviously" | "adjust" | "terrible" | null>(null);
   const [view, setView] = useState<"receiver" | "sender">("receiver");
 
   useEffect(() => {
@@ -117,6 +118,7 @@ export default function MissionPage() {
     if (r === "adjust") { router.push(`/m/${id}/adjust`); return; }
     setResponding(true);
     await respondToMevite(id, r);
+    setLastResponse(r);
     setResponding(false);
   };
 
@@ -197,7 +199,7 @@ export default function MissionPage() {
         {/* ── HERO ── */}
         <div style={{ marginBottom: 20 }}>
           <h1 style={{ fontSize: "clamp(2.2rem, 9vw, 2.8rem)", fontWeight: 900, lineHeight: 1.0, letterSpacing: "-0.025em", margin: "0 0 10px", color: "#111" }}>
-            {senderName}<br />is coming<br />over<span style={{ color: ORANGE }}>.</span>
+            <span style={{ color: ORANGE }}>{senderName}</span><br />is coming<br />over<span style={{ color: ORANGE }}>.</span>
           </h1>
 
           {/* Status badge */}
@@ -211,7 +213,7 @@ export default function MissionPage() {
         </div>
 
         {/* ── THE WHY — emotional center ── */}
-        <Card style={{ marginBottom: 12, borderLeft: `4px solid ${ORANGE}`, paddingLeft: 18, border: `2px solid ${ORANGE}`, borderLeftWidth: 4 }}>
+        <Card style={{ marginBottom: 12, border: `2px solid ${ORANGE}` }}>
           <SectionLabel color={ORANGE}>Because</SectionLabel>
           <p style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.35, color: "#111", margin: "0 0 8px", fontStyle: "italic" }}>
             &ldquo;{mevite.why}&rdquo;
@@ -282,7 +284,30 @@ export default function MissionPage() {
           </div>
         )}
 
-        {/* ── LOCKED ── */}
+        {/* ── TEXT RESPONSE — after receiver picks ── */}
+        {lastResponse && (() => {
+          const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.vercel.app/m/${id}`;
+          const copy = {
+            obviously: `You had me at "coming over."\n${meviteLink}`,
+            adjust:    `The plan is good.\nThe timing isn't.\n${meviteLink}`,
+            terrible:  `The plan is good.\nThe timing isn't.\n${meviteLink}`,
+          }[lastResponse];
+          return (
+            <div style={{ marginBottom: 20 }}>
+              <a href={`sms:?body=${encodeURIComponent(copy)}`} style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                background: "#fff", border: `2px solid ${ORANGE}`, color: ORANGE,
+                padding: "14px 20px", borderRadius: 12, textDecoration: "none",
+                fontSize: 15, fontWeight: 800, fontFamily: F,
+              }}>
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H6l-4 3V4z" fill={ORANGE}/>
+                </svg>
+                Text your response
+              </a>
+            </div>
+          );
+        })()}
         {isLocked && (
           <Card style={{ marginBottom: 12, textAlign: "center", background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
             <p style={{ fontSize: 24, fontWeight: 900, color: "#16a34a", margin: "0 0 4px" }}>It&apos;s on.</p>
