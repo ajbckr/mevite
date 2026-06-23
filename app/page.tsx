@@ -177,7 +177,7 @@ export default function Home() {
       )}
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: "#0f0f0f", marginTop: 0 }}>
+      <footer style={{ background: "#000000", marginTop: 0 }}>
 
         {/* Top section: big statement + door illustration */}
         <div style={{
@@ -204,15 +204,14 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Door — PNG illustration */}
+          {/* Door — PNG illustration, bleeds to right edge */}
           <div style={{
             position: "absolute",
             right: 0,
             top: 0,
             bottom: 0,
-            width: "50%",
+            width: "55%",
             zIndex: 1,
-            overflow: "hidden",
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -222,7 +221,7 @@ export default function Home() {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                objectPosition: "center center",
+                objectPosition: "left center",
                 display: "block",
               }}
             />
@@ -230,7 +229,7 @@ export default function Home() {
         </div>
 
         {/* Divider */}
-        <div style={{ margin: "0 28px", borderTop: "1px solid #2a2a2a", paddingTop: 0, marginTop: 32 }} />
+        <div style={{ margin: "0 28px", borderTop: "1px solid #222", paddingTop: 0, marginTop: 32 }} />
 
         {/* Bottom bar: M lockup + nav + copyright */}
         <div style={{
