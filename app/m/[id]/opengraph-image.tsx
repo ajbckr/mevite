@@ -61,7 +61,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
         }}>
 
           {/* Headline */}
-          <div style={{ display: "flex", flexDirection: "column", lineHeight: 0.92, letterSpacing: "-0.04em" }}>
+          <div style={{ display: "flex", flexDirection: "column", lineHeight: 0.88, letterSpacing: "-0.04em" }}>
             <span style={{ fontSize: 108, fontWeight: 900, color: "#111" }}>{sender}</span>
             <span style={{ fontSize: 108, fontWeight: 900, color: "#111" }}>is coming</span>
             <span style={{ fontSize: 108, fontWeight: 900, color: "#111" }}>
@@ -74,33 +74,33 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
             {when ? (
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                 <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                  <rect x="2" y="5" width="26" height="23" rx="3" fill={ORANGE} opacity="0.15" stroke={ORANGE} strokeWidth="2"/>
-                  <path d="M2 12h26" stroke={ORANGE} strokeWidth="2"/>
-                  <path d="M9 2v5M21 2v5" stroke={ORANGE} strokeWidth="2" strokeLinecap="round"/>
+                  <rect x="2" y="5" width="26" height="23" rx="3" fill={ORANGE} opacity="0.2" stroke={ORANGE} strokeWidth="2.2"/>
+                  <path d="M2 12h26" stroke={ORANGE} strokeWidth="2.2"/>
+                  <path d="M9 2v5M21 2v5" stroke={ORANGE} strokeWidth="2.2" strokeLinecap="round"/>
                 </svg>
-                <span style={{ fontSize: 26, fontWeight: 700, color: "#222" }}>{when}</span>
+                <span style={{ fontSize: 26, fontWeight: 800, color: "#111" }}>{when}</span>
               </div>
             ) : null}
             {bringing ? (
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                 <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                  <circle cx="15" cy="10" r="5.5" fill={ORANGE} opacity="0.15" stroke={ORANGE} strokeWidth="2"/>
-                  <path d="M4 28c0-6.075 4.925-11 11-11s11 4.925 11 11" stroke={ORANGE} strokeWidth="2" strokeLinecap="round"/>
+                  <circle cx="15" cy="10" r="5.5" fill={ORANGE} opacity="0.2" stroke={ORANGE} strokeWidth="2.2"/>
+                  <path d="M4 28c0-6.075 4.925-11 11-11s11 4.925 11 11" stroke={ORANGE} strokeWidth="2.2" strokeLinecap="round"/>
                 </svg>
-                <span style={{ fontSize: 26, fontWeight: 700, color: "#222" }}>Bringing: {bringing}</span>
+                <span style={{ fontSize: 26, fontWeight: 800, color: "#111" }}>Bringing: {bringing}</span>
               </div>
             ) : null}
             {why ? (
               <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
                 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" style={{ marginTop: 3, flexShrink: 0 }}>
-                  <path d="M15 3C8.37 3 3 7.925 3 14c0 2.34.78 4.51 2.1 6.3L3 27l7.2-1.8A12.8 12.8 0 0015 25c6.63 0 12-4.925 12-11S21.63 3 15 3z" fill={ORANGE} opacity="0.15" stroke={ORANGE} strokeWidth="2" strokeLinejoin="round"/>
-                  <circle cx="10" cy="14" r="1.6" fill={ORANGE}/>
-                  <circle cx="15" cy="14" r="1.6" fill={ORANGE}/>
-                  <circle cx="20" cy="14" r="1.6" fill={ORANGE}/>
+                  <path d="M15 3C8.37 3 3 7.925 3 14c0 2.34.78 4.51 2.1 6.3L3 27l7.2-1.8A12.8 12.8 0 0015 25c6.63 0 12-4.925 12-11S21.63 3 15 3z" fill={ORANGE} opacity="0.2" stroke={ORANGE} strokeWidth="2.2" strokeLinejoin="round"/>
+                  <circle cx="10" cy="14" r="1.8" fill={ORANGE}/>
+                  <circle cx="15" cy="14" r="1.8" fill={ORANGE}/>
+                  <circle cx="20" cy="14" r="1.8" fill={ORANGE}/>
                 </svg>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                  <span style={{ fontSize: 26, fontWeight: 700, color: "#222", fontStyle: "italic" }}>"{why}"</span>
-                  <span style={{ fontSize: 20, fontWeight: 500, color: "#888" }}>– {sender}</span>
+                  <span style={{ fontSize: 26, fontWeight: 800, color: "#111", fontStyle: "italic" }}>"{why}"</span>
+                  <span style={{ fontSize: 20, fontWeight: 600, color: "#666" }}>– {sender}</span>
                 </div>
               </div>
             ) : null}
