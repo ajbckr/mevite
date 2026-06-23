@@ -209,6 +209,7 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
+      <div style={{ maxWidth: 480, margin: "0 auto", width: "100%" }}>
 
       {/* ── HERO LOCKUP ── */}
       <div style={{ padding: "32px 20px 0" }}>
@@ -301,6 +302,7 @@ export default function Home() {
 
       {/* ── FOOTER ── */}
       <MeviteFooter />
+      </div>
     </div>
   );
 }
