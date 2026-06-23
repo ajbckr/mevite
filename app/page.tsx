@@ -181,16 +181,24 @@ export default function Home() {
 
         {/* Top section: big statement + door illustration */}
         <div style={{
+          maxWidth: 680,
+          margin: "0 auto",
           position: "relative",
-          padding: "28px 28px 0",
           overflow: "hidden",
-          minHeight: 200,
-          background: "#0f0f0f",
+          minHeight: 220,
+          display: "flex",
+          alignItems: "center",
         }}>
-          {/* Brand statement — tighter font, left side */}
-          <div style={{ position: "relative", zIndex: 2, maxWidth: "58%" }}>
+          {/* Brand statement — left side */}
+          <div style={{
+            position: "relative",
+            zIndex: 2,
+            flex: "0 0 auto",
+            width: "50%",
+            padding: "28px 0 28px 28px",
+          }}>
             <p style={{
-              fontSize: "clamp(22px, 5.5vw, 32px)",
+              fontSize: "clamp(22px, 3.5vw, 30px)",
               fontWeight: 900,
               lineHeight: 1.08,
               color: "#ffffff",
@@ -205,14 +213,13 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Door — PNG illustration, spans full width behind text */}
+          {/* Door — locked to right half, natural aspect ratio */}
           <div style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: "100%",
+            flex: "0 0 auto",
+            width: "50%",
+            position: "relative",
             zIndex: 1,
+            alignSelf: "stretch",
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -222,25 +229,36 @@ export default function Home() {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                objectPosition: "right center",
+                objectPosition: "30% center",
                 display: "block",
               }}
             />
-            {/* Fade bottom edge to #0f0f0f to blend into footer bar */}
+            {/* Fade left edge so image blends into dark bg behind text */}
             <div style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(to bottom, transparent 50%, #0f0f0f 100%)",
+              background: "linear-gradient(to right, #0f0f0f 0%, transparent 40%)",
+              pointerEvents: "none",
+            }} />
+            {/* Fade bottom edge to blend into footer bar */}
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, transparent 55%, #0f0f0f 100%)",
               pointerEvents: "none",
             }} />
           </div>
         </div>
 
         {/* Divider */}
-        <div style={{ margin: "0 28px", borderTop: "1px solid #2a2a2a", marginTop: 16 }} />
+        <div style={{ maxWidth: 680, margin: "0 auto", padding: "0 28px" }}>
+          <div style={{ borderTop: "1px solid #2a2a2a" }} />
+        </div>
 
         {/* Bottom bar: M lockup + nav + copyright */}
         <div style={{
+          maxWidth: 680,
+          margin: "0 auto",
           padding: "16px 28px 24px",
           display: "flex",
           flexDirection: "column",
