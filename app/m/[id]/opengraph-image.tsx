@@ -6,7 +6,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const ORANGE = "#E8470A";
-const BASE = "https://mevite.vercel.app";
+const BG = "#F5EFE6";
 
 async function getMeviteData(id: string) {
   try {
@@ -29,95 +29,113 @@ async function getMeviteData(id: string) {
   } catch { return null; }
 }
 
-// Safely convert ArrayBuffer to base64 without stack overflow
-function toBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  const chunkSize = 8192;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
-}
-
 export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const mevite = await getMeviteData(id);
+
+  // Fetch data and font in parallel — no image loading
+  const [mevite, fontRes] = await Promise.all([
+    getMeviteData(id),
+    fetch("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2"),
+  ]);
+
+  const fontData = fontRes.ok ? await fontRes.arrayBuffer() : null;
 
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
   const why      = mevite?.why      || "";
 
-  // Fetch font and plate in parallel
-  const [fontRes, plateRes] = await Promise.all([
-    fetch(`${BASE}/inter-900.woff2`),
-    fetch(`${BASE}/og-plate.jpg`),
-  ]);
-
-  const [fontData, plateData] = await Promise.all([
-    fontRes.arrayBuffer(),
-    plateRes.arrayBuffer(),
-  ]);
-
-  const plate = `data:image/jpeg;base64,${toBase64(plateData)}`;
-
   return new ImageResponse(
     (
-      <div style={{ width: 1200, height: 630, display: "flex", position: "relative" }}>
-        <img src={plate} style={{ position: "absolute", inset: 0, width: 1200, height: 630 }} />
+      <div style={{
+        width: 1200, height: 630, display: "flex",
+        background: BG, position: "relative",
+        fontFamily: fontData ? "Inter" : "system-ui",
+      }}>
+        {/* Door illustration — pure SVG, no image fetch */}
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 520, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {/* Warm glow on floor */}
+          <div style={{
+            position: "absolute", bottom: 0, left: 40, right: 0, height: 260,
+            background: "radial-gradient(ellipse 80% 60% at 60% 100%, rgba(232,71,10,0.25) 0%, transparent 70%)",
+            display: "flex",
+          }} />
+          {/* Door frame */}
+          <div style={{
+            position: "absolute", right: 60, top: 60,
+            width: 280, height: 420,
+            border: `14px solid ${ORANGE}`,
+            background: "white",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: `inset 0 0 80px rgba(232,71,10,0.15), 0 0 60px rgba(232,71,10,0.2)`,
+          }}>
+            {/* Knob */}
+            <div style={{
+              position: "absolute", left: 28, top: "48%",
+              width: 16, height: 16, borderRadius: "50%",
+              background: "#333",
+              display: "flex",
+            }} />
+          </div>
+          {/* Door panel (open, perspective) */}
+          <div style={{
+            position: "absolute", right: 74 + 140, top: 74,
+            width: 110, height: 392,
+            background: ORANGE,
+            transformOrigin: "left center",
+            transform: "perspective(400px) rotateY(-40deg)",
+            display: "flex",
+          }} />
+        </div>
 
+        {/* Left content */}
         <div style={{
-          position: "absolute", left: 64, top: 48, bottom: 48, width: 580,
+          position: "absolute", left: 72, top: 52, bottom: 52, width: 600,
           display: "flex", flexDirection: "column", justifyContent: "space-between",
         }}>
+          {/* Headline */}
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontFamily: "Inter", fontSize: 108, fontWeight: 900, color: "#111", lineHeight: 0.92, letterSpacing: "-0.03em" }}>{sender}</span>
-            <span style={{ fontFamily: "Inter", fontSize: 108, fontWeight: 900, color: "#111", lineHeight: 0.92, letterSpacing: "-0.03em" }}>is coming</span>
-            <span style={{ fontFamily: "Inter", fontSize: 108, fontWeight: 900, color: "#111", lineHeight: 0.92, letterSpacing: "-0.03em" }}>over<span style={{ color: ORANGE }}>.</span></span>
+            <span style={{ fontSize: 108, fontWeight: 900, color: "#111", lineHeight: 0.92, letterSpacing: "-0.03em" }}>{sender}</span>
+            <span style={{ fontSize: 108, fontWeight: 900, color: "#111", lineHeight: 0.92, letterSpacing: "-0.03em" }}>is coming</span>
+            <span style={{ fontSize: 108, fontWeight: 900, color: "#111", lineHeight: 0.92, letterSpacing: "-0.03em" }}>
+              over<span style={{ color: ORANGE }}>.</span>
+            </span>
           </div>
 
+          {/* Details */}
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {when ? (
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <rect x="2" y="5" width="24" height="21" rx="3" fill={ORANGE} opacity="0.12" stroke={ORANGE} strokeWidth="1.8"/>
-                  <path d="M2 11h24" stroke={ORANGE} strokeWidth="1.8"/>
-                  <path d="M8 2v5M20 2v5" stroke={ORANGE} strokeWidth="1.8" strokeLinecap="round"/>
-                </svg>
-                <span style={{ fontFamily: "Inter", fontSize: 25, fontWeight: 600, color: "#222" }}>{when}</span>
+                <div style={{ width: 28, height: 28, border: `2px solid ${ORANGE}`, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 12, height: 10, borderTop: `2px solid ${ORANGE}`, display: "flex" }} />
+                </div>
+                <span style={{ fontSize: 25, fontWeight: 600, color: "#222" }}>{when}</span>
               </div>
             ) : null}
             {bringing ? (
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <circle cx="14" cy="10" r="5" fill={ORANGE} opacity="0.12" stroke={ORANGE} strokeWidth="1.8"/>
-                  <path d="M4 26c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke={ORANGE} strokeWidth="1.8" strokeLinecap="round"/>
-                </svg>
-                <span style={{ fontFamily: "Inter", fontSize: 25, fontWeight: 600, color: "#222" }}>Bringing: {bringing}</span>
+                <div style={{ width: 28, height: 28, border: `2px solid ${ORANGE}`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} />
+                <span style={{ fontSize: 25, fontWeight: 600, color: "#222" }}>Bringing: {bringing}</span>
               </div>
             ) : null}
             {why ? (
-              <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style={{ marginTop: 3, flexShrink: 0 }}>
-                  <path d="M14 2C7.373 2 2 6.925 2 13c0 2.1.63 4.05 1.72 5.68L2 26l7.5-1.87A12.6 12.6 0 0014 24c6.627 0 12-4.925 12-11S20.627 2 14 2z" fill={ORANGE} opacity="0.12" stroke={ORANGE} strokeWidth="1.8" strokeLinejoin="round"/>
-                  <circle cx="9" cy="13" r="1.4" fill={ORANGE}/>
-                  <circle cx="14" cy="13" r="1.4" fill={ORANGE}/>
-                  <circle cx="19" cy="13" r="1.4" fill={ORANGE}/>
-                </svg>
-                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <span style={{ fontFamily: "Inter", fontSize: 25, fontWeight: 600, color: "#222", fontStyle: "italic" }}>"{why}"</span>
-                  <span style={{ fontFamily: "Inter", fontSize: 19, fontWeight: 500, color: "#888" }}>– {sender}</span>
-                </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <span style={{ fontSize: 25, fontWeight: 600, color: "#222", fontStyle: "italic" }}>"{why}"</span>
+                <span style={{ fontSize: 19, fontWeight: 500, color: "#888" }}>– {sender}</span>
               </div>
             ) : null}
+          </div>
+
+          {/* Wordmark */}
+          <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+            <span style={{ fontSize: 28, fontWeight: 900, letterSpacing: "0.06em", color: "#111" }}>MEVITE</span>
           </div>
         </div>
       </div>
     ),
     {
       ...size,
-      fonts: [{ name: "Inter", data: fontData, weight: 900, style: "normal" }],
+      fonts: fontData ? [{ name: "Inter", data: fontData, weight: 900, style: "normal" }] : [],
     }
   );
 }
