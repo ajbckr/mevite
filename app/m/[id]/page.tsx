@@ -189,7 +189,7 @@ export default function MissionPage() {
               color: view === v ? "#111" : "#888",
               boxShadow: view === v ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
             }}>
-              {v === "receiver" ? "Your view" : `${senderName}' view`}
+              {v === "receiver" ? "Your view" : `${senderName}'s view`}
             </button>
           ))}
         </div>
@@ -211,7 +211,7 @@ export default function MissionPage() {
         </div>
 
         {/* ── THE WHY — emotional center ── */}
-        <Card style={{ marginBottom: 12, borderLeft: `4px solid ${ORANGE}`, paddingLeft: 18 }}>
+        <Card style={{ marginBottom: 12, borderLeft: `4px solid ${ORANGE}`, paddingLeft: 18, border: `2px solid ${ORANGE}`, borderLeftWidth: 4 }}>
           <SectionLabel color={ORANGE}>Because</SectionLabel>
           <p style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.35, color: "#111", margin: "0 0 8px", fontStyle: "italic" }}>
             &ldquo;{mevite.why}&rdquo;
@@ -220,7 +220,7 @@ export default function MissionPage() {
         </Card>
 
         {/* ── LOGISTICS ── */}
-        <Card style={{ marginBottom: 12 }}>
+        <Card style={{ marginBottom: 12, border: `2px solid ${ORANGE}` }}>
           {hasSuggestion && isAdjusting ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <DetailRow icon={<CalIcon />} label="Original plan" value={mevite.when} muted />
@@ -263,6 +263,9 @@ export default function MissionPage() {
         {/* ── RESPONSE BUTTONS — receiver, pending ── */}
         {view === "receiver" && !isLocked && !isDeclined && (
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#888", textAlign: "center", margin: "4px 0 2px", fontFamily: F, letterSpacing: "0.02em" }}>
+              What do you say?
+            </p>
             {hasSuggestion && isAdjusting ? (
               <>
                 <Btn variant="obviously" onClick={handleConfirmSuggestion} disabled={responding}>Works for me ✓</Btn>
