@@ -29,6 +29,17 @@ async function getMeviteData(id: string) {
   } catch { return null; }
 }
 
+// Safely convert ArrayBuffer to base64 without stack overflow
+function toBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
 export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const mevite = await getMeviteData(id);
@@ -49,7 +60,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
     plateRes.arrayBuffer(),
   ]);
 
-  const plate = `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(plateData)))}`;
+  const plate = `data:image/png;base64,${toBase64(plateData)}`;
 
   return new ImageResponse(
     (
