@@ -9,6 +9,125 @@ import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PRO
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 const f: React.CSSProperties = { fontFamily: "Inter, system-ui, sans-serif" };
 
+const ORANGE = "#E8470A";
+
+// Reuses the same door geometry as DoorSlider
+const FX = 30, FY = 10, FW = 100, FH = 158, FS = 8;
+const IX = FX + FS / 2;
+const IY = FY + FS / 2;
+const IW = FW - FS;
+const IH = FH - FS;
+
+function AnimatedDoor({ angle }: { angle: number }) {
+  const rad = (angle * Math.PI) / 180;
+  const panelW = Math.max(1, IW * Math.cos(rad));
+  const skew = Math.sin(rad) * 4;
+  const lightOpacity = Math.pow(angle / 85, 1.2) * 0.5;
+  const floorY = FY + FH + FS / 2;
+  const p = {
+    tl: { x: IX,          y: IY },
+    tr: { x: IX + panelW, y: IY + skew },
+    br: { x: IX + panelW, y: IY + IH - skew },
+    bl: { x: IX,          y: IY + IH },
+  };
+  const knobFrac = 0.75;
+  const knobX = IX + panelW * knobFrac;
+  const knobY = IY + IH * 0.54 + skew * knobFrac;
+
+  return (
+    <svg width="180" height="200" viewBox="0 0 180 200" fill="none" style={{ display: "block" }}>
+      {angle > 3 && (
+        <rect x={IX + panelW} y={IY}
+          width={Math.max(0, IW - panelW)} height={IH}
+          fill={ORANGE} opacity={lightOpacity} />
+      )}
+      <polygon
+        points={`${p.tl.x},${p.tl.y} ${p.tr.x},${p.tr.y} ${p.br.x},${p.br.y} ${p.bl.x},${p.bl.y}`}
+        fill={ORANGE}
+      />
+      {panelW > 12 && (
+        <circle cx={knobX} cy={knobY} r={3.5}
+          fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="2" />
+      )}
+      <rect x={FX} y={FY} width={FW} height={FH} rx="2"
+        fill="none" stroke={ORANGE} strokeWidth={FS} strokeLinejoin="miter" />
+      <rect x={FX - 10} y={floorY} width={FW + 20} height={10} rx="3" fill={ORANGE} />
+    </svg>
+  );
+}
+
+function SendingScreen() {
+  const [angle, setAngle] = useState(2);
+  const [phase, setPhase] = useState<"swing" | "hold">("swing");
+
+  useEffect(() => {
+    // Swing from 2° → 85° over 900ms with easeOut feel
+    const start = performance.now();
+    const duration = 900;
+    const from = 2, to = 85;
+
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      // ease out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setAngle(from + (to - from) * eased);
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        setPhase("hold");
+      }
+    };
+    requestAnimationFrame(tick);
+  }, []);
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "#111",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 0,
+      fontFamily: "Inter, system-ui, sans-serif",
+    }}>
+      {/* Door */}
+      <div style={{
+        opacity: 1,
+        transform: "scale(1.1)",
+      }}>
+        <AnimatedDoor angle={angle} />
+      </div>
+
+      {/* Logo + copy fade in after door opens */}
+      <div style={{
+        marginTop: 32,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 8,
+        opacity: phase === "hold" ? 1 : 0,
+        transform: phase === "hold" ? "translateY(0)" : "translateY(8px)",
+        transition: "opacity 0.5s ease, transform 0.5s ease",
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/m-lockup.png" alt="MEVITE"
+          style={{ height: 64, width: "auto", filter: "invert(1)", opacity: 0.9 }} />
+        <p style={{
+          fontSize: 13,
+          fontWeight: 600,
+          color: "#555",
+          margin: 0,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+        }}>
+          Sending your mevite…
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const [who, setWho] = useState("");
@@ -69,12 +188,7 @@ export default function Home() {
   };
 
   if (sending) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#111" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lockup.png" alt="MEVITE" style={{ width: 200, opacity: 0.9 }} />
-      </div>
-    );
+    return <SendingScreen />;
   }
 
   return (
