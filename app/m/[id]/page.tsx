@@ -6,13 +6,13 @@ import { Mevite, ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
 
 const ORANGE = "#E8470A";
 
-// Arrival status display config — door states with icons
-const STATUS_DISPLAY: Record<string, { label: string; icon: string; sub: string }> = {
-  "maybe":         { label: "Maybe",         icon: "💭", sub: "It's a thought." },
-  "probably":      { label: "Probably",       icon: "📅", sub: "Calendars are open." },
-  "definitely":    { label: "Definitely",     icon: "🎒", sub: "It's happening." },
-  "on-my-way":     { label: "On My Way",      icon: "🚗", sub: "No turning back." },
-  "open-the-door": { label: "Open The Door",  icon: "🚪", sub: "I'm outside." },
+// Commitment display config — door states represent conviction, not location
+const STATUS_DISPLAY: Record<string, { label: string; sub: string; detail: string }> = {
+  "maybe":         { label: "Maybe",          sub: "Thinking about it.",            detail: "It's crossed my mind." },
+  "probably":      { label: "Probably",        sub: "Looking likely.",               detail: "I'm checking calendars." },
+  "definitely":    { label: "Definitely",      sub: "It's happening.",               detail: "The plan is real now." },
+  "locked-in":     { label: "Locked In",       sub: "Nothing's getting in the way.", detail: "You should expect me." },
+  "open-the-door": { label: "Open The Door",   sub: "Assume I'm coming.",            detail: "There is no scenario where I don't show up." },
 };
 
 export default function MissionPage() {
@@ -82,6 +82,7 @@ export default function MissionPage() {
   const senderName   = (mevite.sender || mevite.who).split(" ")[0];
   const statusColor  = isLocked ? "#22c55e" : isDeclined ? "#888" : ORANGE;
   const arrivalInfo  = STATUS_DISPLAY[mevite.arrivalStatus] ?? STATUS_DISPLAY["definitely"];
+  const gaugeLevel   = ARRIVAL_STATUSES.find(s => s.key === mevite.arrivalStatus)?.gaugeLevel ?? 3;
 
   const whenDisplay = isLocked && hasSuggestion
     ? `${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`
@@ -136,40 +137,38 @@ export default function MissionPage() {
           </div>
         </div>
 
-        {/* ── ARRIVAL STATUS — live, prominent ── */}
+        {/* ── COMMITMENT — declaration of intent, not location tracking ── */}
         <div style={{
           background: "#0f0f0f",
           borderRadius: 16,
           padding: "20px 20px",
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
         }}>
-          <span style={{ fontSize: 36, lineHeight: 1 }}>{arrivalInfo.icon}</span>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 2px", fontFamily: "Inter, system-ui, sans-serif" }}>
-              Right now
-            </p>
-            <p style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 1px", fontFamily: "Inter, system-ui, sans-serif", lineHeight: 1.1 }}>
-              {arrivalInfo.label}
-            </p>
-            <p style={{ fontSize: 12, color: "#888", margin: 0, fontFamily: "Inter, system-ui, sans-serif" }}>
-              {arrivalInfo.sub}
-            </p>
-          </div>
-          {/* Gauge dots */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            {[5,4,3,2,1].map(i => {
-              const level = ARRIVAL_STATUSES.find(s => s.key === mevite.arrivalStatus)?.gaugeLevel ?? 3;
-              return (
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 10px", fontFamily: "Inter, system-ui, sans-serif" }}>
+            Commitment
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 2px", fontFamily: "Inter, system-ui, sans-serif", lineHeight: 1.1 }}>
+                {arrivalInfo.label}
+              </p>
+              <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: "Inter, system-ui, sans-serif" }}>
+                {arrivalInfo.detail}
+              </p>
+            </div>
+            {/* Horizontal gauge */}
+            <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+              {[1,2,3,4,5].map(i => (
                 <div key={i} style={{
-                  width: 6, height: 6, borderRadius: "50%",
-                  background: i <= level ? ORANGE : "#333",
+                  width: 20, height: 4, borderRadius: 2,
+                  background: i <= gaugeLevel ? ORANGE : "#333",
                   transition: "background 0.3s",
                 }} />
-              );
-            })}
+              ))}
+            </div>
           </div>
+          <p style={{ fontSize: 12, color: "#555", margin: "10px 0 0", fontFamily: "Inter, system-ui, sans-serif", fontStyle: "italic" }}>
+            {arrivalInfo.sub}
+          </p>
         </div>
 
         {/* ── THE MESSAGE — emotional center ── */}
@@ -266,19 +265,17 @@ export default function MissionPage() {
         {view === "sender" && (
           <div className="space-y-4">
             <div className="mevite-card space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Update where you&apos;re at</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#888]">Update your commitment</p>
               <div className="space-y-2">
                 {ARRIVAL_STATUSES.map(s => {
-                  const info = STATUS_DISPLAY[s.key];
                   return (
                     <button key={s.key} onClick={() => handleStatusUpdate(s.key)}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${
                         mevite.arrivalStatus === s.key ? "border-[#E8470A] bg-[#E8470A]/5" : "border-[#E8E8E8] hover:border-[#CCC]"
                       }`}>
-                      <span style={{ fontSize: 20 }}>{info.icon}</span>
                       <div className="flex-1">
-                        <p className={`text-sm font-semibold ${mevite.arrivalStatus === s.key ? "text-[#111]" : "text-[#444]"}`}>{info.label}</p>
-                        <p className="text-xs text-[#888] mt-0.5">{info.sub}</p>
+                        <p className={`text-sm font-semibold ${mevite.arrivalStatus === s.key ? "text-[#111]" : "text-[#444]"}`}>{s.label}</p>
+                        <p className="text-xs text-[#888] mt-0.5">{s.description}</p>
                       </div>
                       {mevite.arrivalStatus === s.key && (
                         <div className="w-4 h-4 rounded-full bg-[#E8470A] flex items-center justify-center shrink-0">

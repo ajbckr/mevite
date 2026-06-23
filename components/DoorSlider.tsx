@@ -6,20 +6,20 @@ const ORANGE = "#E8470A";
 const f = "Inter, system-ui, sans-serif";
 
 const STATES = [
-  { key: "maybe"          as ArrivalStatus, label: "Maybe",         sub: "It's a thought.",          msg: "Still living entirely in my head.", gauge: 1 },
-  { key: "probably"       as ArrivalStatus, label: "Probably",      sub: "Calendars are open.",       msg: "This has moved beyond wishful thinking.", gauge: 2 },
-  { key: "definitely"     as ArrivalStatus, label: "Definitely",    sub: "It's happening.",           msg: "The plan is real now.",          gauge: 3 },
-  { key: "on-my-way"      as ArrivalStatus, label: "On My Way",     sub: "No turning back.",          msg: "I'm already moving.",            gauge: 4 },
-  { key: "open-the-door"  as ArrivalStatus, label: "Open The Door", sub: "I'm outside.",              msg: "Seriously. Open up.",            gauge: 5 },
+  { key: "maybe"         as ArrivalStatus, label: "Maybe",         sub: "Thinking about it.",            msg: "It's crossed my mind.",                   gauge: 1 },
+  { key: "probably"      as ArrivalStatus, label: "Probably",      sub: "Looking likely.",               msg: "I'm checking calendars.",                 gauge: 2 },
+  { key: "definitely"    as ArrivalStatus, label: "Definitely",    sub: "It's happening.",               msg: "The plan is real now.",                   gauge: 3 },
+  { key: "locked-in"     as ArrivalStatus, label: "Locked In",     sub: "Nothing's getting in the way.", msg: "You should expect me.",                   gauge: 4 },
+  { key: "open-the-door" as ArrivalStatus, label: "Open The Door", sub: "Assume I'm coming.",            msg: "There is no scenario where I don't show up.", gauge: 5 },
 ];
 
 // Friend-will-see sublabels
 const FRIEND_SUBS: Record<string, string> = {
-  "maybe":          "It's a thought.",
-  "probably":       "Calendars are open.",
-  "definitely":     "It's happening.",
-  "on-my-way":      "No turning back.",
-  "open-the-door":  "I'm outside.",
+  "maybe":          "It's crossed my mind.",
+  "probably":       "I'm checking calendars.",
+  "definitely":     "The plan is real now.",
+  "locked-in":      "Nothing's getting in the way.",
+  "open-the-door":  "Save me a seat.",
 };
 
 const SNAP_ANGLES = [2, 20, 42, 65, 85];

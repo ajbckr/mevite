@@ -10,7 +10,7 @@ export function ArrivalGauge({ status }: { status: ArrivalStatus }) {
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E8470A" }} />
         <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#888", textTransform: "uppercase", fontFamily: "Inter, sans-serif" }}>
-          Arrival Status
+          Commitment
         </span>
       </div>
       <p style={{ fontSize: 13, fontWeight: 700, color: "#111", margin: 0, fontFamily: "Inter, sans-serif" }}>{current?.label}</p>
@@ -100,7 +100,7 @@ export function ThisIsHappeningPicker({
           <div style={{ width: 200, flexShrink: 0, background: "#F9F8F7", borderLeft: "1px solid #EBEBEB", padding: "20px 20px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#999", textTransform: "uppercase", margin: 0, fontFamily: f }}>Your Friend Will See</p>
             <div style={{ background: "#fff", borderRadius: 12, padding: 14, border: "1px solid #EBEBEB" }}>
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "#AAA", textTransform: "uppercase", margin: "0 0 10px", fontFamily: f }}>Arrival Status</p>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "#AAA", textTransform: "uppercase", margin: "0 0 10px", fontFamily: f }}>Commitment</p>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E8470A", flexShrink: 0 }} />
                 <p style={{ fontSize: 14, fontWeight: 900, color: "#111", margin: 0, fontFamily: f }}>{current?.label}</p>
