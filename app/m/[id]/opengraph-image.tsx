@@ -31,14 +31,7 @@ async function getMeviteData(id: string) {
 
 export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
-  // Fetch data and font in parallel — no image loading
-  const [mevite, fontRes] = await Promise.all([
-    getMeviteData(id),
-    fetch("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2"),
-  ]);
-
-  const fontData = fontRes.ok ? await fontRes.arrayBuffer() : null;
+  const mevite = await getMeviteData(id);
 
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
@@ -133,9 +126,6 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
         </div>
       </div>
     ),
-    {
-      ...size,
-      fonts: fontData ? [{ name: "Inter", data: fontData, weight: 900, style: "normal" }] : [],
-    }
+    { ...size }
   );
 }
