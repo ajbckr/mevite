@@ -10,9 +10,12 @@ const BASE = "https://mevite.vercel.app";
 
 async function getMeviteData(id: string) {
   try {
-    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-    const apiKey    = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-    if (!projectId || !apiKey) return null;
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID;
+    const apiKey    = process.env.NEXT_PUBLIC_FIREBASE_API_KEY    || process.env.FIREBASE_API_KEY;
+    if (!projectId || !apiKey) {
+      console.error("OG: missing Firebase env vars", { projectId: !!projectId, apiKey: !!apiKey });
+      return null;
+    }
     const res = await fetch(
       `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/mevites/${id}?key=${apiKey}`,
       { cache: "no-store" }
