@@ -52,7 +52,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
   // Fetch font and plate in parallel
   const [fontRes, plateRes] = await Promise.all([
     fetch(`${BASE}/inter-900.woff2`),
-    fetch(`${BASE}/og-plate.png`),
+    fetch(`${BASE}/og-plate.jpg`),
   ]);
 
   const [fontData, plateData] = await Promise.all([
@@ -60,7 +60,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
     plateRes.arrayBuffer(),
   ]);
 
-  const plate = `data:image/png;base64,${toBase64(plateData)}`;
+  const plate = `data:image/jpeg;base64,${toBase64(plateData)}`;
 
   return new ImageResponse(
     (
