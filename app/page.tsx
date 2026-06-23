@@ -107,9 +107,7 @@ export default function Home() {
           </div>
         </div>
 
-        <p style={{ color: "#888", fontSize: 13, marginTop: 14, lineHeight: 1.5, fontFamily: "Inter, system-ui, sans-serif" }}>
-          Stop saying &ldquo;we should get together.&rdquo; Show up.
-        </p>
+
       </div>
 
       {/* ── FORM ── */}
@@ -177,6 +175,68 @@ export default function Home() {
       {showPicker && (
         <DoorSlider value={arrivalStatus} onChange={setArrivalStatus} onConfirm={() => setShowPicker(false)} onClose={() => setShowPicker(false)} />
       )}
+
+      {/* ── FOOTER ── */}
+      <footer style={{
+        marginTop: 0,
+        padding: "48px 24px 40px",
+        borderTop: "1px solid #F0F0F0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 24,
+      }}>
+        {/* Brand statement */}
+        <div>
+          <p style={{
+            fontSize: 28,
+            fontWeight: 900,
+            lineHeight: 1.1,
+            color: "#111",
+            margin: 0,
+            fontFamily: "Inter, system-ui, sans-serif",
+            letterSpacing: "-0.01em",
+          }}>
+            Stop saying &ldquo;we should<br />get together.&rdquo;<br />
+            Show up<span style={{ color: "#E8470A" }}>.</span>
+          </p>
+        </div>
+
+        {/* Utility links */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 0" }}>
+          {["About", "FAQ", "Privacy", "Terms", "Contact"].map((link, i, arr) => (
+            <span key={link} style={{ display: "flex", alignItems: "center" }}>
+              <a href="#" style={{
+                fontSize: 12,
+                color: "#888",
+                textDecoration: "none",
+                fontFamily: "Inter, system-ui, sans-serif",
+                fontWeight: 500,
+              }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#E8470A")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#888")}
+              >
+                {link}
+              </a>
+              {i < arr.length - 1 && (
+                <span style={{ color: "#DDD", margin: "0 8px", fontSize: 12 }}>·</span>
+              )}
+            </span>
+          ))}
+        </div>
+
+        {/* Copyright */}
+        <p style={{
+          fontSize: 11,
+          color: "#CCC",
+          margin: 0,
+          fontFamily: "Inter, system-ui, sans-serif",
+          fontWeight: 500,
+          letterSpacing: "0.04em",
+        }}>
+          &copy; 2026 MEVITE
+        </p>
+      </footer>
     </div>
   );
 }
