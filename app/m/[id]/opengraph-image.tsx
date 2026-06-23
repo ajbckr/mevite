@@ -46,45 +46,39 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
       <div style={{
         width: 1200, height: 630, display: "flex",
         background: BG, position: "relative",
-        fontFamily: "'Helvetica Neue', Arial, sans-serif",
+        fontFamily: "'Arial Black', 'Helvetica Neue', Arial, sans-serif",
       }}>
-        {/* Door illustration — pure CSS/divs, instant render */}
-        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 520, display: "flex" }}>
-          {/* Floor glow */}
+        {/* Door illustration */}
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 540, display: "flex" }}>
+          {/* Warm floor glow */}
           <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: 280,
-            background: `radial-gradient(ellipse 80% 55% at 55% 100%, rgba(232,71,10,0.3) 0%, rgba(232,71,10,0.1) 40%, transparent 70%)`,
+            position: "absolute", bottom: 0, left: 20, right: 0, height: 320,
+            background: `radial-gradient(ellipse 90% 60% at 50% 100%, rgba(232,71,10,0.35) 0%, rgba(232,71,10,0.12) 50%, transparent 75%)`,
             display: "flex",
           }} />
-          {/* Frame */}
+          {/* Open door panel — perspective foreshortened left side */}
           <div style={{
-            position: "absolute", right: 56, top: 50,
-            width: 290, height: 430,
-            border: `16px solid ${ORANGE}`,
-            background: "rgba(255,255,255,0.95)",
+            position: "absolute", right: 330, top: 50,
+            width: 80, height: 420,
+            background: `linear-gradient(to right, rgba(180,60,0,0.9), ${ORANGE})`,
+            display: "flex",
+          }} />
+          {/* Door frame */}
+          <div style={{
+            position: "absolute", right: 50, top: 50,
+            width: 300, height: 440,
+            border: `18px solid ${ORANGE}`,
+            background: "rgba(255,255,255,0.98)",
             display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: `0 0 80px rgba(232,71,10,0.25), inset 0 0 40px rgba(232,71,10,0.08)`,
           }}>
             {/* Knob */}
             <div style={{
-              position: "absolute", left: 24, top: "50%",
-              width: 14, height: 14, borderRadius: "50%", background: "#333",
+              position: "absolute", left: 20, top: "50%",
+              width: 16, height: 16, borderRadius: "50%", background: "#222",
               display: "flex",
             }} />
           </div>
-          {/* Open panel */}
-          <div style={{
-            position: "absolute", right: 282, top: 66,
-            width: 100, height: 398,
-            background: ORANGE,
-            display: "flex",
-          }} />
-          {/* Panel edge shadow */}
-          <div style={{
-            position: "absolute", right: 282, top: 66,
-            width: 20, height: 398,
-            background: "linear-gradient(to right, rgba(0,0,0,0.2), transparent)",
-            display: "flex",
-          }} />
         </div>
 
         {/* Left text */}
