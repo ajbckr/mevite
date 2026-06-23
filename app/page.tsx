@@ -177,65 +177,149 @@ export default function Home() {
       )}
 
       {/* ── FOOTER ── */}
-      <footer style={{
-        marginTop: 0,
-        padding: "48px 24px 40px",
-        borderTop: "1px solid #F0F0F0",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: 24,
-      }}>
-        {/* Brand statement */}
-        <div>
+      <footer style={{ background: "#0f0f0f", marginTop: 0 }}>
+
+        {/* Top section: big statement + door illustration */}
+        <div style={{
+          position: "relative",
+          padding: "52px 28px 0",
+          overflow: "hidden",
+          minHeight: 260,
+        }}>
+          {/* Brand statement — large, white, left side */}
+          <div style={{ position: "relative", zIndex: 2, maxWidth: "62%" }}>
+            <p style={{
+              fontSize: "clamp(32px, 9vw, 52px)",
+              fontWeight: 900,
+              lineHeight: 1.05,
+              color: "#ffffff",
+              margin: 0,
+              fontFamily: "Inter, system-ui, sans-serif",
+              letterSpacing: "-0.02em",
+            }}>
+              Stop saying<br />
+              &ldquo;we should<br />
+              get together.&rdquo;<br />
+              Show up<span style={{ color: "#E8470A" }}>.</span>
+            </p>
+          </div>
+
+          {/* Door SVG — right side, open with light spill */}
+          <div style={{
+            position: "absolute",
+            right: -8,
+            top: 0,
+            bottom: 0,
+            width: "48%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            zIndex: 1,
+          }}>
+            <svg viewBox="0 0 220 280" fill="none" style={{ width: "100%", maxWidth: 220, display: "block" }}>
+              {/* Light spill on floor — the signature glow */}
+              <defs>
+                <radialGradient id="lightSpill" cx="30%" cy="20%" r="80%">
+                  <stop offset="0%" stopColor="#E8470A" stopOpacity="0.6"/>
+                  <stop offset="100%" stopColor="#E8470A" stopOpacity="0"/>
+                </radialGradient>
+              </defs>
+              {/* Floor glow triangle */}
+              <polygon
+                points="80,230 220,180 220,280 80,280"
+                fill="url(#lightSpill)"
+              />
+              {/* Frame — dark charcoal, matches mockup */}
+              <rect x="80" y="20" width="120" height="220" rx="2"
+                fill="none" stroke="#333" strokeWidth="10" strokeLinejoin="miter"/>
+              {/* Door panel — open, just a thin sliver on right */}
+              <polygon
+                points="86,28 96,30 96,232 86,234"
+                fill="#E8470A"
+              />
+              {/* Orange light flooding the open doorway */}
+              <rect x="90" y="28" width="104" height="202" fill="#E8470A" opacity="0.55"/>
+              {/* Knob */}
+              <circle cx="100" cy="140" r="5" fill="white" opacity="0.8"/>
+              {/* Frame redrawn on top to clean edges */}
+              <rect x="80" y="20" width="120" height="220" rx="2"
+                fill="none" stroke="#2a2a2a" strokeWidth="10" strokeLinejoin="miter"/>
+              {/* Floor base */}
+              <rect x="68" y="240" width="144" height="12" rx="3" fill="#2a2a2a"/>
+            </svg>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ margin: "0 28px", borderTop: "1px solid #2a2a2a", paddingTop: 0, marginTop: 32 }} />
+
+        {/* Bottom bar: M lockup + nav + copyright */}
+        <div style={{
+          padding: "20px 28px 32px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}>
+          {/* Row: M icon + MEVITE */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {/* Inline M icon — white version */}
+            <svg width="28" height="26" viewBox="0 0 100 90" fill="none">
+              <rect x="4" y="8" width="17" height="74" fill="white"/>
+              <polygon points="4,8 21,8 52,54 35,54" fill="white"/>
+              <polygon points="65,54 79,8 96,8 79,54" fill="white"/>
+              <rect x="79" y="8" width="17" height="74" fill="white"/>
+              <polygon points="35,54 52,54 52,82 35,82" fill="white"/>
+              <polygon points="52,54 79,54 79,82 52,82" fill="#E8470A"/>
+              <circle cx="70" cy="69" r="3" fill="white"/>
+            </svg>
+            <span style={{
+              fontSize: 14,
+              fontWeight: 900,
+              letterSpacing: "0.12em",
+              color: "white",
+              fontFamily: "Inter, system-ui, sans-serif",
+            }}>MEVITE</span>
+          </div>
+
+          {/* Nav links */}
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 0" }}>
+            {["About", "FAQ", "Privacy", "Terms", "Contact"].map((link, i, arr) => (
+              <span key={link} style={{ display: "flex", alignItems: "center" }}>
+                <a href="#" style={{
+                  fontSize: 13,
+                  color: "#888",
+                  textDecoration: "none",
+                  fontFamily: "Inter, system-ui, sans-serif",
+                  fontWeight: 500,
+                  transition: "color 0.15s",
+                }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#E8470A")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "#888")}
+                >
+                  {link}
+                </a>
+                {i < arr.length - 1 && (
+                  <span style={{ color: "#E8470A", margin: "0 10px", fontSize: 11, opacity: 0.7 }}>·</span>
+                )}
+              </span>
+            ))}
+          </div>
+
+          {/* Copyright */}
           <p style={{
-            fontSize: 28,
-            fontWeight: 900,
-            lineHeight: 1.1,
-            color: "#111",
+            fontSize: 11,
+            color: "#444",
             margin: 0,
             fontFamily: "Inter, system-ui, sans-serif",
-            letterSpacing: "-0.01em",
+            fontWeight: 500,
+            letterSpacing: "0.05em",
           }}>
-            Stop saying &ldquo;we should<br />get together.&rdquo;<br />
-            Show up<span style={{ color: "#E8470A" }}>.</span>
+            &copy; 2026 MEVITE
           </p>
         </div>
 
-        {/* Utility links */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 0" }}>
-          {["About", "FAQ", "Privacy", "Terms", "Contact"].map((link, i, arr) => (
-            <span key={link} style={{ display: "flex", alignItems: "center" }}>
-              <a href="#" style={{
-                fontSize: 12,
-                color: "#888",
-                textDecoration: "none",
-                fontFamily: "Inter, system-ui, sans-serif",
-                fontWeight: 500,
-              }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#E8470A")}
-                onMouseLeave={e => (e.currentTarget.style.color = "#888")}
-              >
-                {link}
-              </a>
-              {i < arr.length - 1 && (
-                <span style={{ color: "#DDD", margin: "0 8px", fontSize: 12 }}>·</span>
-              )}
-            </span>
-          ))}
-        </div>
-
-        {/* Copyright */}
-        <p style={{
-          fontSize: 11,
-          color: "#CCC",
-          margin: 0,
-          fontFamily: "Inter, system-ui, sans-serif",
-          fontWeight: 500,
-          letterSpacing: "0.04em",
-        }}>
-          &copy; 2026 MEVITE
-        </p>
+        {/* Orange accent line at very bottom */}
+        <div style={{ height: 3, background: "#E8470A" }} />
       </footer>
     </div>
   );
