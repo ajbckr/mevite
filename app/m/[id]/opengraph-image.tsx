@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import path from "path";
 
 export const runtime = "nodejs";
 export const alt = "MEVITE";
@@ -41,14 +43,16 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
   const bringing = mevite?.bringing || "";
   const why      = mevite?.why      || "";
 
-  // Load Inter font
-  const fontRes = await fetch("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2");
-  const fontBold = fontRes.ok ? await fontRes.arrayBuffer() : null;
+  // Load fonts from public folder (no network call)
+  const publicDir = path.join(process.cwd(), "public");
+  const [font900, font600, plateBuffer] = await Promise.all([
+    readFile(path.join(publicDir, "inter-900.woff2")).catch(() => null),
+    readFile(path.join(publicDir, "inter-600.woff2")).catch(() => null),
+    readFile(path.join(publicDir, "og-plate.png")).catch(() => null),
+  ]);
 
-  // Load background plate
-  const plateRes = await fetch(`${BASE}/og-plate.png`);
-  const plateB64 = plateRes.ok
-    ? `data:image/png;base64,${Buffer.from(await plateRes.arrayBuffer()).toString("base64")}`
+  const plateB64 = plateBuffer
+    ? `data:image/png;base64,${plateBuffer.toString("base64")}`
     : null;
 
   return new ImageResponse(
@@ -135,7 +139,10 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
     ),
     {
       ...size,
-      fonts: fontBold ? [{ name: "Inter", data: fontBold, weight: 900, style: "normal" }] : [],
+      fonts: [
+        ...(font900 ? [{ name: "Inter", data: font900.buffer as ArrayBuffer, weight: 900 as const, style: "normal" as const }] : []),
+        ...(font600 ? [{ name: "Inter", data: font600.buffer as ArrayBuffer, weight: 600 as const, style: "normal" as const }] : []),
+      ],
     }
   );
 }
