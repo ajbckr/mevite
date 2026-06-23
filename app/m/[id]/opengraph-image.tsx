@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import path from "path";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const alt = "MEVITE";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -23,48 +25,51 @@ async function getMeviteData(id: string) {
     const { fields: f } = await res.json();
     if (!f) return null;
     return {
-      sender:   f.sender?.stringValue   || f.who?.stringValue || "",
+      sender:   f.sender?.stringValue || f.who?.stringValue || "",
       bringing: f.bringing?.stringValue || "",
-      why:      f.why?.stringValue      || "",
-      when:     f.when?.stringValue     || "",
+      why:      f.why?.stringValue || "",
+      when:     f.when?.stringValue || "",
     };
   } catch { return null; }
 }
 
 export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const mevite = await getMeviteData(id);
+
+  // All three in parallel: data + font + plate URL fetch
+  const [mevite, font900, font600] = await Promise.all([
+    getMeviteData(id),
+    readFile(path.join(process.cwd(), "public", "inter-900.woff2")),
+    readFile(path.join(process.cwd(), "public", "inter-600.woff2")),
+  ]);
 
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
   const why      = mevite?.why      || "";
 
-  // Use URL directly — ImageResponse fetches it internally, no base64 needed
+  // Plate via URL — ImageResponse fetches it internally, no memory spike
   const plateUrl = `${BASE}/og-plate.jpg`;
 
   return new ImageResponse(
     (
-      <div style={{ width: 1200, height: 630, display: "flex", position: "relative" }}>
+      <div style={{ width: 1200, height: 630, display: "flex", position: "relative", fontFamily: "Inter" }}>
 
-        {/* Background plate via URL — ImageResponse handles the fetch */}
+        {/* Plate background */}
         <img src={plateUrl} style={{ position: "absolute", inset: 0, width: 1200, height: 630, objectFit: "cover" }} />
 
-        {/* Dynamic text overlay — left column */}
+        {/* Text overlay */}
         <div style={{
           position: "absolute",
-          left: 72, top: 48, bottom: 48,
-          width: 590,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          left: 72, top: 48, bottom: 48, width: 590,
+          display: "flex", flexDirection: "column", justifyContent: "space-between",
         }}>
 
           {/* Headline */}
           <div style={{ display: "flex", flexDirection: "column", lineHeight: 0.88, letterSpacing: "-0.04em" }}>
-            <span style={{ fontSize: 108, fontWeight: 900, color: "#111" }}>{sender}</span>
-            <span style={{ fontSize: 108, fontWeight: 900, color: "#111" }}>is coming</span>
-            <span style={{ fontSize: 108, fontWeight: 900, color: "#111" }}>
+            <span style={{ fontSize: 108, fontWeight: 900, color: "#111", fontFamily: "Inter" }}>{sender}</span>
+            <span style={{ fontSize: 108, fontWeight: 900, color: "#111", fontFamily: "Inter" }}>is coming</span>
+            <span style={{ fontSize: 108, fontWeight: 900, color: "#111", fontFamily: "Inter" }}>
               over<span style={{ color: ORANGE }}>.</span>
             </span>
           </div>
@@ -78,7 +83,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
                   <path d="M2 12h26" stroke={ORANGE} strokeWidth="2.2"/>
                   <path d="M9 2v5M21 2v5" stroke={ORANGE} strokeWidth="2.2" strokeLinecap="round"/>
                 </svg>
-                <span style={{ fontSize: 26, fontWeight: 800, color: "#111" }}>{when}</span>
+                <span style={{ fontSize: 26, fontWeight: 600, color: "#111", fontFamily: "Inter" }}>{when}</span>
               </div>
             ) : null}
             {bringing ? (
@@ -87,7 +92,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
                   <circle cx="15" cy="10" r="5.5" fill={ORANGE} opacity="0.2" stroke={ORANGE} strokeWidth="2.2"/>
                   <path d="M4 28c0-6.075 4.925-11 11-11s11 4.925 11 11" stroke={ORANGE} strokeWidth="2.2" strokeLinecap="round"/>
                 </svg>
-                <span style={{ fontSize: 26, fontWeight: 800, color: "#111" }}>Bringing: {bringing}</span>
+                <span style={{ fontSize: 26, fontWeight: 600, color: "#111", fontFamily: "Inter" }}>Bringing: {bringing}</span>
               </div>
             ) : null}
             {why ? (
@@ -99,8 +104,8 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
                   <circle cx="20" cy="14" r="1.8" fill={ORANGE}/>
                 </svg>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                  <span style={{ fontSize: 26, fontWeight: 800, color: "#111", fontStyle: "italic" }}>"{why}"</span>
-                  <span style={{ fontSize: 20, fontWeight: 600, color: "#666" }}>– {sender}</span>
+                  <span style={{ fontSize: 26, fontWeight: 600, color: "#111", fontFamily: "Inter", fontStyle: "italic" }}>"{why}"</span>
+                  <span style={{ fontSize: 20, fontWeight: 500, color: "#666", fontFamily: "Inter" }}>– {sender}</span>
                 </div>
               </div>
             ) : null}
@@ -109,6 +114,12 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
         </div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: [
+        { name: "Inter", data: font900.buffer as ArrayBuffer, weight: 900, style: "normal" },
+        { name: "Inter", data: font600.buffer as ArrayBuffer, weight: 600, style: "normal" },
+      ],
+    }
   );
 }
