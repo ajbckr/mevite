@@ -1,4 +1,3 @@
-"use client";
 const F = "Inter, system-ui, sans-serif";
 
 const LINKS = [
@@ -6,43 +5,45 @@ const LINKS = [
   { label: "FAQ",     href: "/faq" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms",   href: "/terms" },
-  { label: "Contact", href: "#" },
+  { label: "Contact", href: "mailto:me@mevite.me" },
 ];
 
 export function MeviteFooter() {
   return (
-    <footer style={{
-      borderTop: "1px solid #EBEBEB",
-      padding: "48px 24px 52px",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: 14,
-      background: "#fff",
-    }}>
-      <p style={{ fontSize: 13, color: "#888", margin: 0, fontFamily: F, textAlign: "center", letterSpacing: "0.01em" }}>
-        Show up.
-      </p>
+    <>
+      <style>{`
+        .mevite-footer-link { color: #AAA; text-decoration: none; font-size: 12px; padding: 0 2px; font-family: ${F}; transition: color 0.15s; }
+        .mevite-footer-link:hover { color: #555; }
+      `}</style>
+      <footer style={{
+        borderTop: "1px solid #EBEBEB",
+        padding: "48px 24px 52px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 14,
+        background: "#fff",
+        fontFamily: F,
+      }}>
+        <p style={{ fontSize: 13, color: "#888", margin: 0, textAlign: "center", letterSpacing: "0.01em" }}>
+          Show up.
+        </p>
 
-      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
-        {LINKS.map(({ label, href }, i) => (
-          <span key={label} style={{ display: "flex", alignItems: "center" }}>
-            <a href={href} style={{ fontSize: 12, color: "#AAA", textDecoration: "none", fontFamily: F, padding: "0 2px" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#555")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#AAA")}
-            >
-              {label}
-            </a>
-            {i < LINKS.length - 1 && (
-              <span style={{ fontSize: 11, color: "#DDD", margin: "0 6px" }}>·</span>
-            )}
-          </span>
-        ))}
-      </div>
+        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+          {LINKS.map(({ label, href }, i) => (
+            <span key={label} style={{ display: "flex", alignItems: "center" }}>
+              <a href={href} className="mevite-footer-link">{label}</a>
+              {i < LINKS.length - 1 && (
+                <span style={{ fontSize: 11, color: "#DDD", margin: "0 6px" }}>·</span>
+              )}
+            </span>
+          ))}
+        </div>
 
-      <p style={{ fontSize: 11, color: "#CCC", margin: 0, fontFamily: F }}>
-        © 2026 Mevite
-      </p>
-    </footer>
+        <p style={{ fontSize: 11, color: "#CCC", margin: 0 }}>
+          © 2026 Mevite
+        </p>
+      </footer>
+    </>
   );
 }
