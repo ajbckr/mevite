@@ -1,3 +1,4 @@
+"use client";
 const F = "Inter, system-ui, sans-serif";
 
 const LINKS = [
