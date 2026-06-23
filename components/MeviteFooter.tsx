@@ -4,8 +4,8 @@ const F = "Inter, system-ui, sans-serif";
 const LINKS = [
   { label: "About",   href: "/about" },
   { label: "FAQ",     href: "/faq" },
-  { label: "Privacy", href: "#" },
-  { label: "Terms",   href: "#" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms",   href: "/terms" },
   { label: "Contact", href: "#" },
 ];
 
