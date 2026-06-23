@@ -182,16 +182,16 @@ export default function Home() {
         {/* Top section: big statement + door illustration */}
         <div style={{
           position: "relative",
-          padding: "52px 28px 0",
+          padding: "40px 28px 0",
           overflow: "hidden",
-          minHeight: 260,
+          minHeight: 200,
         }}>
-          {/* Brand statement — large, white, left side */}
-          <div style={{ position: "relative", zIndex: 2, maxWidth: "62%" }}>
+          {/* Brand statement — tighter font, left side */}
+          <div style={{ position: "relative", zIndex: 2, maxWidth: "58%" }}>
             <p style={{
-              fontSize: "clamp(32px, 9vw, 52px)",
+              fontSize: "clamp(22px, 5.5vw, 32px)",
               fontWeight: 900,
-              lineHeight: 1.05,
+              lineHeight: 1.08,
               color: "#ffffff",
               margin: 0,
               fontFamily: "Inter, system-ui, sans-serif",
@@ -204,48 +204,54 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Door SVG — right side, open with light spill */}
+          {/* Door — perspective open door with floor glow, matching mockup */}
           <div style={{
             position: "absolute",
-            right: -8,
+            right: 0,
             top: 0,
             bottom: 0,
-            width: "48%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
+            width: "46%",
             zIndex: 1,
+            overflow: "hidden",
           }}>
-            <svg viewBox="0 0 220 280" fill="none" style={{ width: "100%", maxWidth: 220, display: "block" }}>
-              {/* Light spill on floor — the signature glow */}
+            <svg viewBox="0 0 180 260" fill="none" preserveAspectRatio="xMaxYMid meet"
+              style={{ width: "100%", height: "100%", display: "block" }}>
               <defs>
-                <radialGradient id="lightSpill" cx="30%" cy="20%" r="80%">
-                  <stop offset="0%" stopColor="#E8470A" stopOpacity="0.6"/>
+                {/* Floor glow — radial from door threshold outward */}
+                <radialGradient id="fg" cx="10%" cy="85%" r="75%" gradientUnits="objectBoundingBox">
+                  <stop offset="0%" stopColor="#E8470A" stopOpacity="0.75"/>
+                  <stop offset="60%" stopColor="#E8470A" stopOpacity="0.25"/>
                   <stop offset="100%" stopColor="#E8470A" stopOpacity="0"/>
                 </radialGradient>
+                {/* Door interior glow */}
+                <radialGradient id="dg" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stopColor="#ff8040" stopOpacity="0.9"/>
+                  <stop offset="100%" stopColor="#E8470A" stopOpacity="0.7"/>
+                </radialGradient>
               </defs>
-              {/* Floor glow triangle */}
-              <polygon
-                points="80,230 220,180 220,280 80,280"
-                fill="url(#lightSpill)"
-              />
-              {/* Frame — dark charcoal, matches mockup */}
-              <rect x="80" y="20" width="120" height="220" rx="2"
-                fill="none" stroke="#333" strokeWidth="10" strokeLinejoin="miter"/>
-              {/* Door panel — open, just a thin sliver on right */}
-              <polygon
-                points="86,28 96,30 96,232 86,234"
-                fill="#E8470A"
-              />
-              {/* Orange light flooding the open doorway */}
-              <rect x="90" y="28" width="104" height="202" fill="#E8470A" opacity="0.55"/>
-              {/* Knob */}
-              <circle cx="100" cy="140" r="5" fill="white" opacity="0.8"/>
-              {/* Frame redrawn on top to clean edges */}
-              <rect x="80" y="20" width="120" height="220" rx="2"
-                fill="none" stroke="#2a2a2a" strokeWidth="10" strokeLinejoin="miter"/>
-              {/* Floor base */}
-              <rect x="68" y="240" width="144" height="12" rx="3" fill="#2a2a2a"/>
+
+              {/* Floor light spill — wide triangle fanning left */}
+              <polygon points="30,220 180,190 180,260 0,260" fill="url(#fg)"/>
+
+              {/* Door frame — charcoal, right side of viewport */}
+              <rect x="42" y="14" width="130" height="210" rx="2"
+                fill="none" stroke="#3a3a3a" strokeWidth="11" strokeLinejoin="miter"/>
+
+              {/* Open door interior — warm glowing orange */}
+              <rect x="48" y="20" width="118" height="198" fill="url(#dg)"/>
+
+              {/* Door panel — thin sliver on left (hinge side), perspective open */}
+              <polygon points="48,20 62,22 62,216 48,218" fill="#E8470A"/>
+
+              {/* Knob on panel */}
+              <circle cx="58" cy="122" r="4" fill="white" opacity="0.7"/>
+
+              {/* Frame on top — clean edges */}
+              <rect x="42" y="14" width="130" height="210" rx="2"
+                fill="none" stroke="#2a2a2a" strokeWidth="11" strokeLinejoin="miter"/>
+
+              {/* Floor slab */}
+              <rect x="30" y="224" width="150" height="10" rx="3" fill="#2a2a2a"/>
             </svg>
           </div>
         </div>
