@@ -1,3 +1,6 @@
+"use client";
+import { trackFooterLink } from "@/lib/analytics";
+
 const F = "Inter, system-ui, sans-serif";
 
 const LINKS = [
@@ -32,7 +35,7 @@ export function MeviteFooter() {
         <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
           {LINKS.map(({ label, href }, i) => (
             <span key={label} style={{ display: "flex", alignItems: "center" }}>
-              <a href={href} className="mevite-footer-link">{label}</a>
+              <a href={href} className="mevite-footer-link" onClick={() => trackFooterLink(label)}>{label}</a>
               {i < LINKS.length - 1 && (
                 <span style={{ fontSize: 11, color: "#DDD", margin: "0 6px" }}>·</span>
               )}

@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { RotatingPrompt, WhenField } from "@/components/RotatingPrompt";
 import { DoorSlider } from "@/components/DoorSlider";
 import { createMevite } from "@/lib/mevite";
 import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS, SENDER_PROMPTS } from "@/lib/types";
 import { MeviteFooter } from "@/components/MeviteFooter";
+import { trackFormStart, trackFieldFilled, trackCommitmentSet, trackMeviteCreated } from "@/lib/analytics";
 
 const WHEN_ROTATE = ["This Weekend", "Tomorrow Night", "Friday at 8", "Next Monday", "Sunday Afternoon"];
 const f: React.CSSProperties = { fontFamily: "Inter, system-ui, sans-serif" };
@@ -131,6 +132,14 @@ export default function Home() {
   const [why, setWhy] = useState("");
   const [when, setWhen] = useState("");
   const [arrivalStatus, setArrivalStatus] = useState<ArrivalStatus>("definitely");
+  const formStarted = useRef(false);
+
+  const trackStart = () => {
+    if (!formStarted.current) {
+      formStarted.current = true;
+      trackFormStart();
+    }
+  };
   const [showPicker, setShowPicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
@@ -180,6 +189,7 @@ export default function Home() {
     setError("");
     setSending(true);
     try {
+      trackMeviteCreated({ has_when: !!when, has_bringing: !!bringing, has_why: !!why, commitment: arrivalStatus });
       const id = await createMevite({ who, sender, when: when || WHEN_ROTATE[whenIdx], bringing, why, arrivalStatus, senderPhone: "" });
       router.push(`/share/${id}`);
     } catch (e) {
@@ -214,7 +224,7 @@ export default function Home() {
       {/* ── FORM ── */}
       <div style={{ padding: "28px 24px 0", display: "flex", flexDirection: "column", gap: 28 }}>
 
-        <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={setWho} placeholder="" />
+        <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={v => { trackStart(); setWho(v); if (v) trackFieldFilled("who"); }} placeholder="" />
 
         <WhenField
           value={when}
@@ -224,9 +234,9 @@ export default function Home() {
           onClick={() => setShowDatePicker(true)}
         />
 
-        <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={setBringing} placeholder="" />
-        <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={setWhy} placeholder="" />
-        <RotatingPrompt label="Who's showing up? (you)" prompts={SENDER_PROMPTS} value={sender} onChange={setSender} placeholder="" />
+        <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={v => { trackStart(); setBringing(v); if (v) trackFieldFilled("bringing"); }} placeholder="" />
+        <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={v => { trackStart(); setWhy(v); if (v) trackFieldFilled("why"); }} placeholder="" />
+        <RotatingPrompt label="Who's showing up? (you)" prompts={SENDER_PROMPTS} value={sender} onChange={v => { trackStart(); setSender(v); if (v) trackFieldFilled("sender"); }} placeholder="" />
 
         <div style={{ paddingTop: 4 }}>
           <button onClick={() => setShowPicker(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
@@ -283,7 +293,7 @@ export default function Home() {
       })()}
 
       {showPicker && (
-        <DoorSlider value={arrivalStatus} onChange={setArrivalStatus} onConfirm={() => setShowPicker(false)} onClose={() => setShowPicker(false)} />
+        <DoorSlider value={arrivalStatus} onChange={v => { setArrivalStatus(v); trackCommitmentSet(v); }} onConfirm={() => setShowPicker(false)} onClose={() => setShowPicker(false)} />
       )}
 
       {/* ── FOOTER ── */}

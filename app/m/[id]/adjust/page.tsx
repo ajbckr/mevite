@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { suggestChange } from "@/lib/mevite";
 import { MeviteFooter } from "@/components/MeviteFooter";
+import { trackSuggestionSent } from "@/lib/analytics";
 
 const ORANGE = "#E8470A";
 const F = "Inter, system-ui, sans-serif";
@@ -20,6 +21,7 @@ export default function AdjustPage() {
     if (!newDate && !newTime && !note) return;
     setSending(true);
     await suggestChange(id, newDate, newTime, note);
+    trackSuggestionSent();
     setSending(false);
     setSent(true);
   };

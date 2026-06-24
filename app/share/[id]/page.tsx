@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getMevite } from "@/lib/mevite";
 import { Mevite } from "@/lib/types";
 import { MeviteFooter } from "@/components/MeviteFooter";
+import { trackSharePageView, trackShareSMS, trackShareWhatsApp, trackShareEmail } from "@/lib/analytics";
 
 const ORANGE = "#E8470A";
 const F = "Inter, system-ui, sans-serif";
@@ -25,7 +26,7 @@ export default function SharePage() {
   const [mevite, setMevite] = useState<Mevite | null>(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => { getMevite(id).then(setMevite); }, [id]);
+  useEffect(() => { getMevite(id).then(setMevite); trackSharePageView(id); }, [id]);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://mevite.me";
   const meviteUrl = `${origin}/m/${id}`;
@@ -115,7 +116,7 @@ export default function SharePage() {
           </div>
 
           {/* Primary — SMS */}
-          <a href={`sms:?body=${encodeURIComponent(smsText)}`} style={{
+          <a href={`sms:?body=${encodeURIComponent(smsText)}`} onClick={trackShareSMS} style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
             background: ORANGE, color: "#fff", padding: "14px 20px", borderRadius: 12,
             textDecoration: "none", fontSize: 15, fontWeight: 800, fontFamily: F,
@@ -143,7 +144,7 @@ export default function SharePage() {
 
         {/* WhatsApp + Email */}
         <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-          <a href={`https://wa.me/?text=${encodeURIComponent(smsText)}`} target="_blank" rel="noopener noreferrer" style={{
+          <a href={`https://wa.me/?text=${encodeURIComponent(smsText)}`} onClick={trackShareWhatsApp} target="_blank" rel="noopener noreferrer" style={{
             flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             border: "1px solid #E8E8E8", borderRadius: 12, padding: "12px",
             textDecoration: "none", fontSize: 13, fontWeight: 600, color: "#111", fontFamily: F,
@@ -153,7 +154,7 @@ export default function SharePage() {
             </svg>
             WhatsApp
           </a>
-          <a href={`mailto:?subject=${encodeURIComponent("I'm coming over.")}&body=${encodeURIComponent(`${smsText}\n\nCheck my Mevite to respond.`)}`} style={{
+          <a href={`mailto:?subject=${encodeURIComponent("I'm coming over.")}&body=${encodeURIComponent(`${smsText}\n\nCheck my Mevite to respond.`)}`} onClick={trackShareEmail} style={{
             flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             border: "1px solid #E8E8E8", borderRadius: 12, padding: "12px",
             textDecoration: "none", fontSize: 13, fontWeight: 600, color: "#111", fontFamily: F,

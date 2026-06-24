@@ -5,6 +5,7 @@ import { subscribeMevite, respondToMevite, updateArrivalStatus, confirmSuggestio
 import { Mevite, ARRIVAL_STATUSES, ArrivalStatus } from "@/lib/types";
 import { StatusIcon } from "@/components/StatusIcons";
 import { MeviteFooter } from "@/components/MeviteFooter";
+import { trackMissionView, trackViewToggle, trackReceiverResponse, trackTextResponse, trackAdjustOpen, trackSuggestionConfirmed, trackAddToCalendar, trackCommitmentUpdate } from "@/lib/analytics";
 
 const ORANGE = "#E8470A";
 const F = "Inter, system-ui, sans-serif";
@@ -68,9 +69,9 @@ function BagIcon() {
   );
 }
 
-function GoogleCalendarBtn({ href }: { href: string }) {
+function GoogleCalendarBtn({ href, onClick }: { href: string; onClick?: () => void }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" style={{
+    <a href={href} onClick={onClick} target="_blank" rel="noopener noreferrer" style={{
       flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
       border: "1px solid #DADCE0", borderRadius: 10, padding: "11px 12px",
       textDecoration: "none", background: "#fff",
@@ -86,9 +87,9 @@ function GoogleCalendarBtn({ href }: { href: string }) {
   );
 }
 
-function AppleCalendarBtn({ icsHref }: { icsHref: string }) {
+function AppleCalendarBtn({ icsHref, onClick }: { icsHref: string; onClick?: () => void }) {
   return (
-    <a href={icsHref} download="mevite.ics" style={{
+    <a href={icsHref} onClick={onClick} download="mevite.ics" style={{
       flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
       border: "1px solid #DADCE0", borderRadius: 10, padding: "11px 12px",
       textDecoration: "none", background: "#fff",
@@ -114,12 +115,14 @@ export default function MissionPage() {
   const [view, setView] = useState<"receiver" | "sender">("receiver");
 
   useEffect(() => {
+    trackMissionView(id);
     const unsub = subscribeMevite(id, (m) => { setMevite(m); setLoading(false); });
     return unsub;
   }, [id]);
 
   const handleResponse = async (r: "obviously" | "adjust" | "terrible") => {
-    if (r === "adjust") { router.push(`/m/${id}/adjust`); return; }
+    if (r === "adjust") { trackAdjustOpen(); router.push(`/m/${id}/adjust`); return; }
+    trackReceiverResponse(r);
     setResponding(true);
     await respondToMevite(id, r);
     setLastResponse(r);
@@ -127,12 +130,13 @@ export default function MissionPage() {
   };
 
   const handleConfirmSuggestion = async () => {
+    trackSuggestionConfirmed();
     setResponding(true);
     await confirmSuggestion(id);
     setResponding(false);
   };
 
-  const handleStatusUpdate = async (s: ArrivalStatus) => updateArrivalStatus(id, s);
+  const handleStatusUpdate = async (s: ArrivalStatus) => { trackCommitmentUpdate(s); updateArrivalStatus(id, s); };
 
   if (loading) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -188,7 +192,7 @@ export default function MissionPage() {
         {/* ── VIEW TOGGLE ── */}
         <div style={{ display: "flex", gap: 4, background: "#EBEBEB", borderRadius: 100, padding: 3, width: "fit-content", marginBottom: 24 }}>
           {(["receiver","sender"] as const).map(v => (
-            <button key={v} onClick={() => setView(v)} style={{
+            <button key={v} onClick={() => { setView(v); trackViewToggle(v); }} style={{
               fontSize: 12, fontWeight: 700, padding: "6px 16px", borderRadius: 100,
               border: "none", cursor: "pointer", fontFamily: F, transition: "all 0.15s",
               background: view === v ? "#fff" : "transparent",
@@ -298,7 +302,7 @@ export default function MissionPage() {
           }[lastResponse];
           return (
             <div style={{ marginBottom: 20 }}>
-              <a href={`sms:?body=${encodeURIComponent(copy)}`} style={{
+              <a href={`sms:?body=${encodeURIComponent(copy)}`} onClick={trackTextResponse} style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
                 background: ORANGE, border: "none", color: "#fff",
                 padding: "16px 20px", borderRadius: 12, textDecoration: "none",
@@ -336,8 +340,8 @@ export default function MissionPage() {
           <Card style={{ marginBottom: 12 }}>
             <SectionLabel>Add to Calendar</SectionLabel>
             <div style={{ display: "flex", gap: 8 }}>
-              <GoogleCalendarBtn href={gcalUrl} />
-              <AppleCalendarBtn icsHref={icsHref} />
+              <GoogleCalendarBtn href={gcalUrl} onClick={() => trackAddToCalendar("google")} />
+              <AppleCalendarBtn icsHref={icsHref} onClick={() => trackAddToCalendar("apple")} />
             </div>
           </Card>
         )}
