@@ -27,7 +27,7 @@ export default function SharePage() {
 
   useEffect(() => { getMevite(id).then(setMevite); }, [id]);
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://mevite.vercel.app";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://mevite.me";
   const meviteUrl = `${origin}/m/${id}`;
   const senderName = mevite ? (mevite.sender || mevite.who).split(" ")[0] : "";
   const whoName = mevite ? mevite.who : "your friend";

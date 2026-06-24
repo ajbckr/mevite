@@ -165,7 +165,7 @@ export default function MissionPage() {
     ? `${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`
     : mevite.when;
 
-  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&details=${encodeURIComponent(`"${mevite.why}"\n\nBringing: ${mevite.bringing}\n\nMevite: https://mevite.vercel.app/m/${id}`)}`;
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&details=${encodeURIComponent(`"${mevite.why}"\n\nBringing: ${mevite.bringing}\n\nMevite: https://mevite.me/m/${id}`)}`;
 
   const icsContent = [
     "BEGIN:VCALENDAR","VERSION:2.0","BEGIN:VEVENT",
@@ -290,7 +290,7 @@ export default function MissionPage() {
 
         {/* ── TEXT RESPONSE — after receiver picks ── */}
         {lastResponse && (() => {
-          const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.vercel.app/m/${id}`;
+          const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.me/m/${id}`;
           const copy = {
             obviously: `You had me at "coming over."\n${meviteLink}`,
             adjust:    `The plan is good.\nThe timing isn't.\n${meviteLink}`,
