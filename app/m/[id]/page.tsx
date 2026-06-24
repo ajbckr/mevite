@@ -288,8 +288,8 @@ export default function MissionPage() {
           </div>
         )}
 
-        {/* ── TEXT RESPONSE — after receiver picks ── */}
-        {lastResponse && (() => {
+        {/* ── TEXT RESPONSE — receiver view only, after they pick ── */}
+        {view === "receiver" && lastResponse && (() => {
           const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.me/m/${id}`;
           const copy = {
             obviously: `You had me at "coming over."\n${meviteLink}`,
