@@ -80,13 +80,13 @@ export function RotatingPrompt({
             background: "transparent",
             border: "none",
             outline: "none",
-            opacity: value ? 1 : 0.01,
-            caretColor: "#111",
+            opacity: (value || focused) ? 1 : 0.01,
+            caretColor: "#E8470A",
             zIndex: 10,
             cursor: "text",
           }}
         />
-        {/* Rotating placeholder */}
+        {/* Rotating placeholder — only when blurred and empty */}
         {!value && !focused && (
           <span
             className={animating ? "prompt-exit" : "prompt-enter"}

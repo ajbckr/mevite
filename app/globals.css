@@ -74,3 +74,8 @@ body {
 
 .animate-fade-in  { animation: fadeIn  0.3s ease-out; }
 .animate-slide-up { animation: slideUp 0.4s ease-out; }
+
+/* Orange caret on all inputs */
+input, textarea {
+  caret-color: #E8470A;
+}
