@@ -62,21 +62,30 @@ function SendingScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const cycleDuration = 8000;
+    // Door cycles closed → open → closed, 4s per cycle, loops
+    const cycleDuration = 4000;
     const start = performance.now();
-    let raf: number;
 
     const tick = (now: number) => {
       const elapsed = (now - start) % cycleDuration;
       const t = elapsed / cycleDuration;
-      const doorT = t < 0.5 ? t * 2 : 1 - (t - 0.5) * 2;
+
+      let doorT: number;
+      if (t < 0.5) {
+        doorT = t * 2;
+      } else {
+        doorT = 1 - (t - 0.5) * 2;
+      }
       const eased = 0.5 - Math.cos(doorT * Math.PI) / 2;
       setAngle(2 + (85 - 2) * eased);
-      setProgress(Math.min((now - start) / 8000, 1));
-      raf = requestAnimationFrame(tick);
+
+      const totalElapsed = now - start;
+      setProgress(Math.min(totalElapsed / 4000, 1));
+
+      requestAnimationFrame(tick);
     };
 
-    raf = requestAnimationFrame(tick);
+    const raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
 
