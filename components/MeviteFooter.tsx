@@ -30,7 +30,7 @@ export function MeviteFooter() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/footer-door.png" alt="" style={{ height: 18, width: "auto", opacity: 0.35 }} />
+          <img src="/footer-door.png" alt="" style={{ height: 28, width: "auto", opacity: 0.5 }} />
           <p style={{ fontSize: 13, color: "#888", margin: 0, letterSpacing: "0.01em" }}>
             Show up.
           </p>
