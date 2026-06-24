@@ -63,7 +63,7 @@ function SendingScreen() {
 
   useEffect(() => {
     // Door cycles closed → open → closed, 2s per cycle, loops
-    const cycleDuration = 4000;
+    const cycleDuration = 8000;
     const start = performance.now();
 
     const tick = (now: number) => {
@@ -83,7 +83,7 @@ function SendingScreen() {
 
       // Progress bar fills over 2s total (one cycle = brand moment)
       const totalElapsed = now - start;
-      setProgress(Math.min(totalElapsed / 4000, 1));
+      setProgress(Math.min(totalElapsed / 8000, 1));
 
       requestAnimationFrame(tick);
     };
