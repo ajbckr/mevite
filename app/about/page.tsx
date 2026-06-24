@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { MeviteFooter } from "@/components/MeviteFooter";
+
+export const metadata: Metadata = {
+  title: "About Mevite — Why We Built an Anti-RSVP App",
+  description: "Evites are too formal. RSVPs kill spontaneity. Mevite is the casual hangout app that lets you invite yourself over — no planning paralysis, no group chats that go nowhere. Just show up.",
+  alternates: { canonical: "https://mevite.me/about" },
+};
 
 const F = "Inter, system-ui, sans-serif";
 
@@ -56,41 +63,28 @@ export default function AboutPage() {
 
         {/* Body */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <p style={{
-            fontSize: 20,
-            fontWeight: 700,
-            lineHeight: 1.4,
-            color: "#111",
-            margin: 0,
-          }}>
+          <p style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.4, color: "#111", margin: 0 }}>
             Friends should stay friends.
           </p>
 
-          <p style={{
-            fontSize: 16,
-            lineHeight: 1.75,
-            color: "#555",
-            margin: 0,
-          }}>
-            Life is noisy. Intentions fade. Time gets away from us.
+          <p style={{ fontSize: 16, lineHeight: 1.75, color: "#555", margin: 0 }}>
+            Life is noisy. Intentions fade. Time gets away from us. And somewhere along the way, we started treating hanging out like it requires a project manager.
           </p>
 
-          <p style={{
-            fontSize: 16,
-            lineHeight: 1.75,
-            color: "#555",
-            margin: 0,
-          }}>
-            Mevite exists for the moments when you want to reach out but don&apos;t know where to start. It&apos;s a small commitment, a little courage, and a simple way to tell someone they still matter.
+          <p style={{ fontSize: 16, lineHeight: 1.75, color: "#555", margin: 0 }}>
+            Evites. RSVPs. Doodle polls. Group chats that go nowhere. We&apos;ve added so much friction to something that used to be simple: <em>showing up.</em>
           </p>
 
-          <p style={{
-            fontSize: 16,
-            lineHeight: 1.75,
-            color: "#555",
-            margin: 0,
-          }}>
-            No polls. No RSVPs. No endless planning. Just one person deciding a friendship is worth showing up for.
+          <p style={{ fontSize: 16, lineHeight: 1.75, color: "#555", margin: 0 }}>
+            Mevite is the anti-evite. Instead of sending a formal invitation and waiting for RSVPs, you invite yourself. You declare that you&apos;re coming over. You make it real.
+          </p>
+
+          <p style={{ fontSize: 16, lineHeight: 1.75, color: "#555", margin: 0 }}>
+            No polls. No planning paralysis. No &ldquo;let&apos;s find a time that works for everyone.&rdquo; Just one person deciding a friendship is worth showing up for — and doing something about it.
+          </p>
+
+          <p style={{ fontSize: 16, lineHeight: 1.75, color: "#555", margin: 0 }}>
+            The best hangs are spontaneous. The best friends are the ones who just appear. Mevite is how you become that person.
           </p>
         </div>
 

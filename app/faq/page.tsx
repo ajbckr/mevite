@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { MeviteFooter } from "@/components/MeviteFooter";
+
+export const metadata: Metadata = {
+  title: "FAQ — How Mevite Works",
+  description: "What is Mevite? How do I invite myself over? What happened to RSVPs? Get answers to everything about the casual hangout app that's replacing evites and group chats.",
+  alternates: { canonical: "https://mevite.me/faq" },
+};
 
 const F = "Inter, system-ui, sans-serif";
 const ORANGE = "#E8470A";
