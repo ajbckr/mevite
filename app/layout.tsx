@@ -5,6 +5,13 @@ export const metadata: Metadata = {
   title: "MEVITE — Invite Yourself Over.",
   description: "Stop saying 'we should get together.' Show up.",
   metadataBase: new URL("https://mevite.me"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png" }],
+  },
   openGraph: {
     title: "MEVITE — Invite Yourself Over.",
     description: "Stop saying 'we should get together.' Show up.",
