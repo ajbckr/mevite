@@ -62,33 +62,21 @@ function SendingScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Door cycles closed → open → closed, 2s per cycle, loops
     const cycleDuration = 8000;
     const start = performance.now();
+    let raf: number;
 
     const tick = (now: number) => {
       const elapsed = (now - start) % cycleDuration;
-      const t = elapsed / cycleDuration; // 0→1 per cycle
-
-      // Ease in-out sine for a natural swing feel
-      // First half: open (2°→85°), second half: close (85°→2°)
-      let doorT: number;
-      if (t < 0.5) {
-        doorT = t * 2; // 0→1 opening
-      } else {
-        doorT = 1 - (t - 0.5) * 2; // 1→0 closing
-      }
-      const eased = 0.5 - Math.cos(doorT * Math.PI) / 2; // smooth sine
+      const t = elapsed / cycleDuration;
+      const doorT = t < 0.5 ? t * 2 : 1 - (t - 0.5) * 2;
+      const eased = 0.5 - Math.cos(doorT * Math.PI) / 2;
       setAngle(2 + (85 - 2) * eased);
-
-      // Progress bar fills over 2s total (one cycle = brand moment)
-      const totalElapsed = now - start;
-      setProgress(Math.min(totalElapsed / 8000, 1));
-
-      requestAnimationFrame(tick);
+      setProgress(Math.min((now - start) / 8000, 1));
+      raf = requestAnimationFrame(tick);
     };
 
-    const raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
 
@@ -110,29 +98,18 @@ function SendingScreen() {
 
       {/* Progress bar */}
       <div style={{
-        width: 160,
-        height: 3,
-        background: "#F0F0F0",
-        borderRadius: 2,
-        overflow: "hidden",
-        marginBottom: 20,
+        width: 160, height: 3,
+        background: "#F0F0F0", borderRadius: 2, overflow: "hidden", marginBottom: 20,
       }}>
         <div style={{
-          height: "100%",
-          width: `${progress * 100}%`,
-          background: ORANGE,
-          borderRadius: 2,
-          transition: "width 0.05s linear",
+          height: "100%", width: `${progress * 100}%`,
+          background: ORANGE, borderRadius: 2, transition: "width 0.05s linear",
         }} />
       </div>
 
       {/* Wordmark */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/mevite-wordmark.png"
-        alt="MEVITE"
-        style={{ height: 22, width: "auto", opacity: 1 }}
-      />
+      <img src="/mevite-wordmark.png" alt="MEVITE" style={{ height: 22, width: "auto" }} />
     </div>
   );
 }

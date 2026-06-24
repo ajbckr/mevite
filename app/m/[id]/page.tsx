@@ -300,12 +300,12 @@ export default function MissionPage() {
             <div style={{ marginBottom: 20 }}>
               <a href={`sms:?body=${encodeURIComponent(copy)}`} style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-                background: "#fff", border: `2px solid ${ORANGE}`, color: ORANGE,
-                padding: "14px 20px", borderRadius: 12, textDecoration: "none",
+                background: ORANGE, border: "none", color: "#fff",
+                padding: "16px 20px", borderRadius: 12, textDecoration: "none",
                 fontSize: 15, fontWeight: 800, fontFamily: F,
               }}>
                 <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                  <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H6l-4 3V4z" fill={ORANGE}/>
+                  <path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H6l-4 3V4z" fill="white"/>
                 </svg>
                 Text your response
               </a>
