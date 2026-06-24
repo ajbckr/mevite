@@ -28,9 +28,13 @@ export function MeviteFooter() {
         background: "#fff",
         fontFamily: F,
       }}>
-        <p style={{ fontSize: 13, color: "#888", margin: 0, textAlign: "center", letterSpacing: "0.01em" }}>
-          Show up.
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/footer-door.png" alt="" style={{ height: 18, width: "auto", opacity: 0.35 }} />
+          <p style={{ fontSize: 13, color: "#888", margin: 0, letterSpacing: "0.01em" }}>
+            Show up.
+          </p>
+        </div>
 
         <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
           {LINKS.map(({ label, href }, i) => (
