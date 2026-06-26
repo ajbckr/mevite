@@ -176,13 +176,26 @@ export default function MissionPage() {
     ? `${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`
     : mevite.when;
 
-  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&details=${encodeURIComponent(`"${mevite.why}"\n\nBringing: ${mevite.bringing}\n\nMevite: https://mevite.me/m/${id}`)}`;
+  // Parse mevite.when into a proper Date for calendar events
+  const whenDate = mevite.when ? (() => {
+    try {
+      const d = new Date(mevite.when.replace(" at ", " "));
+      return isNaN(d.getTime()) ? null : d;
+    } catch { return null; }
+  })() : null;
+
+  const toCalDate = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const calStart = whenDate ? toCalDate(whenDate) : toCalDate(new Date());
+  const calEnd   = whenDate ? toCalDate(new Date(whenDate.getTime() + 2 * 60 * 60 * 1000)) : toCalDate(new Date(Date.now() + 2 * 60 * 60 * 1000));
+
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`${senderName} is coming over`)}&dates=${calStart}/${calEnd}&details=${encodeURIComponent(`"${mevite.why}"\n\nBringing: ${mevite.bringing}\n\nMevite: https://mevite.me/m/${id}`)}`
 
   const icsContent = [
     "BEGIN:VCALENDAR","VERSION:2.0","BEGIN:VEVENT",
     `SUMMARY:${senderName} is coming over`,
     `DESCRIPTION:"${mevite.why}"\\nBringing: ${mevite.bringing}`,
-    "DTSTART:" + new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z",
+    `DTSTART:${calStart}`,
+    `DTEND:${calEnd}`,
     "END:VEVENT","END:VCALENDAR",
   ].join("\n");
   const icsHref = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
