@@ -102,11 +102,13 @@ export default function SharePage() {
 
             {/* Because */}
             {mevite.why && (
-              <div style={{ borderLeft: `3px solid ${ORANGE}`, paddingLeft: 14, marginBottom: 18 }}>
+              <div style={{ marginBottom: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                   <MsgIcon />
                   <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: 0 }}>Because</p>
                 </div>
+                <p style={{ fontSize: 15, fontWeight: 700, fontStyle: "italic", color: "#111", margin: 0, paddingLeft: 30 }}>&ldquo;{mevite.why}&rdquo;</p>
+              </div>
                 <p style={{ fontSize: 15, fontWeight: 700, fontStyle: "italic", color: "#111", margin: 0 }}>&ldquo;{mevite.why}&rdquo;</p>
               </div>
             )}

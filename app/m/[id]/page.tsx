@@ -251,10 +251,10 @@ export default function MissionPage() {
             </svg>
             <SectionLabel color={ORANGE}>Because</SectionLabel>
           </div>
-          <p style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.35, color: "#111", margin: "0 0 8px", fontStyle: "italic" }}>
+          <p style={{ fontSize: 19, fontWeight: 800, lineHeight: 1.35, color: "#111", margin: "0 0 8px", fontStyle: "italic", paddingLeft: 22 }}>
             &ldquo;{mevite.why}&rdquo;
           </p>
-          <p style={{ fontSize: 12, color: "#AAA", margin: 0 }}>— {senderName}</p>
+          <p style={{ fontSize: 12, color: "#AAA", margin: 0, paddingLeft: 22 }}>— {senderName}</p>
         </Card>
 
         {/* ── LOGISTICS ── */}
