@@ -1,19 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ArrivalStatus } from "@/lib/types";
 
 const ORANGE = "#E8470A";
 const f = "Inter, system-ui, sans-serif";
 
 const STATES = [
-  { key: "maybe"         as ArrivalStatus, label: "Maybe",         sub: "Thinking about it.",            msg: "It's crossed my mind.",                   gauge: 1 },
-  { key: "probably"      as ArrivalStatus, label: "Probably",      sub: "Looking likely.",               msg: "I'm checking calendars.",                 gauge: 2 },
-  { key: "definitely"    as ArrivalStatus, label: "Definitely",    sub: "It's happening.",               msg: "The plan is real now.",                   gauge: 3 },
-  { key: "locked-in"     as ArrivalStatus, label: "Locked In",     sub: "Nothing's getting in the way.", msg: "You should expect me.",                   gauge: 4 },
+  { key: "maybe"         as ArrivalStatus, label: "Maybe",         sub: "Thinking about it.",            msg: "It's crossed my mind.",                    gauge: 1 },
+  { key: "probably"      as ArrivalStatus, label: "Probably",      sub: "Looking likely.",               msg: "I'm checking calendars.",                  gauge: 2 },
+  { key: "definitely"    as ArrivalStatus, label: "Definitely",    sub: "It's happening.",               msg: "The plan is real now.",                    gauge: 3 },
+  { key: "locked-in"     as ArrivalStatus, label: "Locked In",     sub: "Nothing's getting in the way.", msg: "You should expect me.",                    gauge: 4 },
   { key: "open-the-door" as ArrivalStatus, label: "Open The Door", sub: "Assume I'm coming.",            msg: "There is no scenario where I don't show up.", gauge: 5 },
 ];
 
-// Friend-will-see sublabels
 const FRIEND_SUBS: Record<string, string> = {
   "maybe":          "It's crossed my mind.",
   "probably":       "I'm checking calendars.",
@@ -24,28 +23,22 @@ const FRIEND_SUBS: Record<string, string> = {
 
 const SNAP_ANGLES = [2, 20, 42, 65, 85];
 
-// All geometry in one coordinate space — no CSS/SVG conflicts
 // ViewBox: 180 wide x 200 tall
-// Frame: starts at x=30, y=10, 100 wide, 158 tall, stroke=8
-const FX = 30, FY = 10, FW = 100, FH = 158, FS = 8;
-// Inner opening (where panel sits): hinge on left inner edge
-const IX = FX + FS / 2;   // 34
-const IY = FY + FS / 2;   // 14
-const IW = FW - FS;       // 92
-const IH = FH - FS;       // 150
+// Frame centered: x=20, width=120 → center at x=80 (true center of 180 is 90, offset right slightly for visual balance with hinge)
+const FX = 25, FY = 10, FW = 110, FH = 158, FS = 8;
+const IX = FX + FS / 2;
+const IY = FY + FS / 2;
+const IW = FW - FS;
+const IH = FH - FS;
 
 function Door({ angle }: { angle: number }) {
   const rad = (angle * Math.PI) / 180;
-  // True perspective foreshortening
   const panelW = Math.max(1, IW * Math.cos(rad));
-  // Skew: top-right corner shifts right, bottom-right shifts left — creates 3D feel
-  // Keep skew small and proportional so recesses don't distort
-  const skew = Math.sin(rad) * 4; // max 4px skew at 90deg
-
+  const skew = Math.sin(rad) * 4;
   const lightOpacity = Math.pow(angle / 85, 1.2) * 0.4;
   const showKnob = panelW > 12;
+  const showRecess = panelW > 28;
 
-  // Panel corners — parallelogram, hinge fixed on left
   const p = {
     tl: { x: IX,           y: IY },
     tr: { x: IX + panelW,  y: IY + skew },
@@ -54,21 +47,16 @@ function Door({ angle }: { angle: number }) {
   };
   const panelPts = `${p.tl.x},${p.tl.y} ${p.tr.x},${p.tr.y} ${p.br.x},${p.br.y} ${p.bl.x},${p.bl.y}`;
 
-  // Recess rectangles — computed in panel-local terms, scaled by panelW
-  // Only show when panel is wide enough to look right
-  const showRecess = panelW > 28;
-  const recessPadH = panelW * 0.12;  // horizontal padding inside panel
-  const recessPadV = IH * 0.08;      // vertical padding
-  const recessMid = IY + IH * 0.52;  // divider between upper/lower recess
+  const recessPadH = panelW * 0.12;
+  const recessPadV = IH * 0.08;
+  const recessMid = IY + IH * 0.52;
 
-  // Upper recess corners
   const ur = {
     tl: { x: IX + recessPadH,          y: IY + recessPadV + skew * (recessPadH / IW) },
     tr: { x: IX + panelW - recessPadH, y: IY + recessPadV + skew * ((panelW - recessPadH) / IW) },
     br: { x: IX + panelW - recessPadH, y: recessMid - 4 + skew * ((panelW - recessPadH) / IW) },
     bl: { x: IX + recessPadH,          y: recessMid - 4 + skew * (recessPadH / IW) },
   };
-  // Lower recess corners
   const lr = {
     tl: { x: IX + recessPadH,          y: recessMid + 4 + skew * (recessPadH / IW) },
     tr: { x: IX + panelW - recessPadH, y: recessMid + 4 + skew * ((panelW - recessPadH) / IW) },
@@ -76,19 +64,13 @@ function Door({ angle }: { angle: number }) {
     bl: { x: IX + recessPadH,          y: IY + IH - recessPadV + skew * (recessPadH / IW) },
   };
 
-  // Knob — on the panel, right-ish side, vertically centered
-  // x at 75% of panel width, y at 54% of panel height
   const knobFrac = 0.75;
   const knobX = IX + panelW * knobFrac;
   const knobY = IY + IH * 0.54 + skew * knobFrac;
-
-  // Floor slab bottom y
   const floorY = FY + FH + FS / 2;
 
   return (
     <svg width="180" height="200" viewBox="0 0 180 200" fill="none" style={{ display: "block" }}>
-
-      {/* Light behind open door */}
       {angle > 3 && (
         <rect
           x={IX + panelW} y={IY}
@@ -96,11 +78,7 @@ function Door({ angle }: { angle: number }) {
           fill={ORANGE} opacity={lightOpacity}
         />
       )}
-
-      {/* Door panel */}
       <polygon points={panelPts} fill={ORANGE} />
-
-      {/* Panel recesses — properly perspective-mapped */}
       {showRecess && (
         <>
           <polygon
@@ -113,22 +91,14 @@ function Door({ angle }: { angle: number }) {
           />
         </>
       )}
-
-      {/* Knob — circle, perspective-aware position */}
       {showKnob && (
         <circle cx={knobX} cy={knobY} r={3.5}
           fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="2" />
       )}
-
-      {/* Frame — drawn on top so it cleanly covers panel edges */}
       <rect x={FX} y={FY} width={FW} height={FH} rx="2"
         fill="none" stroke={ORANGE} strokeWidth={FS} strokeLinejoin="miter" />
-
-      {/* Hinge markers */}
       <rect x={FX - 2} y={IY + 16} width={6} height={5} rx="1" fill={ORANGE} opacity={0.55} />
       <rect x={FX - 2} y={IY + IH - 21} width={6} height={5} rx="1" fill={ORANGE} opacity={0.55} />
-
-      {/* Floor slab */}
       <rect x={FX - 10} y={floorY} width={FW + 20} height={10} rx="3" fill={ORANGE} />
     </svg>
   );
@@ -140,19 +110,67 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
   onConfirm: () => void;
   onClose?: () => void;
 }) {
-  const idx = Math.max(0, STATES.findIndex(s => s.key === value));
-  const [liveAngle, setLiveAngle] = useState(SNAP_ANGLES[idx]);
-  const current = STATES[idx];
+  const snapIdx = Math.max(0, STATES.findIndex(s => s.key === value));
+
+  // rawPos: continuous 0-4 float, drives door angle smoothly
+  const [rawPos, setRawPos] = useState<number>(snapIdx);
+  // displayIdx: which label/state is "active" — updates continuously as you drag
+  const displayIdx = Math.min(4, Math.max(0, Math.round(rawPos)));
+  const current = STATES[displayIdx];
+
+  // Door angle interpolated continuously from rawPos
+  const liveAngle = (() => {
+    const lo = Math.floor(rawPos);
+    const hi = Math.ceil(rawPos);
+    const t = rawPos - lo;
+    const a1 = SNAP_ANGLES[Math.min(lo, 4)];
+    const a2 = SNAP_ANGLES[Math.min(hi, 4)];
+    // Ease in-out between snap points
+    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    return a1 + (a2 - a1) * eased;
+  })();
+
+  // Animate snapping to nearest state on release
+  const rafRef = useRef<number | null>(null);
+
+  const snapTo = (targetIdx: number) => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    const start = performance.now();
+    const from = rawPos;
+    const to = targetIdx;
+    const duration = 280;
+
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setRawPos(from + (to - from) * eased);
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        setRawPos(to);
+        onChange(STATES[targetIdx].key);
+      }
+    };
+    rafRef.current = requestAnimationFrame(tick);
+  };
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     const raw = parseFloat(e.target.value);
-    const angle = 2 + (raw / 4) * 83;
-    setLiveAngle(angle);
+    setRawPos(raw);
+    // Fire onChange with snapped value while dragging so parent stays in sync
     onChange(STATES[Math.min(4, Math.max(0, Math.round(raw)))].key);
   };
 
-  const handleSliderEnd = () => setLiveAngle(SNAP_ANGLES[idx]);
-  const handleStateTap = (i: number) => { onChange(STATES[i].key); setLiveAngle(SNAP_ANGLES[i]); };
+  const handleSliderEnd = () => {
+    const nearest = Math.round(rawPos);
+    snapTo(nearest);
+  };
+
+  const handleStateTap = (i: number) => snapTo(i);
+
+  const fillPct = (rawPos / 4) * 100;
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 50, display: "flex", alignItems: "flex-end" }}>
@@ -178,10 +196,10 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
           )}
         </div>
 
-        {/* Door + label — centered column */}
+        {/* Door + label */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "28px 24px 4px" }}>
           <Door angle={liveAngle} />
-          <div style={{ textAlign: "center", marginTop: 16 }}>
+          <div style={{ textAlign: "center", marginTop: 16, minHeight: 56 }}>
             <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.12em", color: ORANGE, textTransform: "uppercase", margin: "0 0 4px", fontFamily: f }}>
               {current.label}
             </p>
@@ -199,19 +217,27 @@ export function DoorSlider({ value, onChange, onConfirm, onClose }: {
             .door-range::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:${ORANGE};border:3px solid white;cursor:pointer;}
           `}</style>
           <input
-            type="range" min={0} max={4} step={0.01} value={idx}
+            type="range" min={0} max={4} step={0.01}
+            value={rawPos}
             onChange={handleSliderChange}
             onMouseUp={handleSliderEnd}
             onTouchEnd={handleSliderEnd}
             className="door-range"
-            style={{ background: `linear-gradient(to right, ${ORANGE} ${idx * 25}%, #E8E8E8 ${idx * 25}%)` }}
+            style={{ background: `linear-gradient(to right, ${ORANGE} ${fillPct}%, #E8E8E8 ${fillPct}%)` }}
           />
-          {/* Pad by half thumb (14px) so labels center under endpoints */}
+          {/* Labels: padded by half thumb width so endpoints center under thumb at min/max */}
           <div style={{ display: "flex", marginTop: 8, paddingLeft: 14, paddingRight: 14 }}>
             {STATES.map((s, i) => (
               <button key={s.key} onClick={() => handleStateTap(i)}
                 style={{ flex: 1, background: "none", border: "none", cursor: "pointer", padding: "4px 0", textAlign: "center" }}>
-                <span style={{ fontSize: 10, fontWeight: i === idx ? 800 : 400, color: i === idx ? ORANGE : "#C0C0C0", fontFamily: f, transition: "all 0.2s", display: "block" }}>
+                <span style={{
+                  fontSize: 10,
+                  fontWeight: i === displayIdx ? 800 : 400,
+                  color: i === displayIdx ? ORANGE : "#C0C0C0",
+                  fontFamily: f,
+                  transition: "all 0.2s",
+                  display: "block",
+                }}>
                   {s.label}
                 </span>
               </button>
