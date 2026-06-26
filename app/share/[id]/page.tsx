@@ -93,7 +93,7 @@ export default function SharePage() {
 
         {/* Mevite card — matches mission page "Your View" style */}
         {mevite ? (
-          <div style={{ background: "#fff", border: "1px solid #EBEBEB", borderRadius: 16, padding: "20px", marginBottom: 16 }}>
+          <div style={{ background: "#fff", border: `2px solid ${ORANGE}`, borderRadius: 16, padding: "20px", marginBottom: 16 }}>
 
             {/* Headline */}
             <p style={{ fontSize: 20, fontWeight: 900, color: "#111", margin: "0 0 16px", lineHeight: 1.2 }}>
@@ -103,7 +103,10 @@ export default function SharePage() {
             {/* Because */}
             {mevite.why && (
               <div style={{ borderLeft: `3px solid ${ORANGE}`, paddingLeft: 14, marginBottom: 18 }}>
-                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: "0 0 4px" }}>Because</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <MsgIcon />
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: ORANGE, margin: 0 }}>Because</p>
+                </div>
                 <p style={{ fontSize: 15, fontWeight: 700, fontStyle: "italic", color: "#111", margin: 0 }}>&ldquo;{mevite.why}&rdquo;</p>
               </div>
             )}
@@ -135,7 +138,7 @@ export default function SharePage() {
         )}
 
         {/* Share section */}
-        <div style={{ background: "#fff", border: "1px solid #EBEBEB", borderRadius: 16, padding: "18px", marginBottom: 12 }}>
+        <div style={{ background: "#fff", border: `2px solid ${ORANGE}`, borderRadius: 16, padding: "18px", marginBottom: 12 }}>
 
           {/* Primary SMS */}
           <a href={`sms:?body=${encodeURIComponent(smsText)}`} onClick={trackShareSMS} style={{
