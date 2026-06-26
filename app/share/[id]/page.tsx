@@ -109,8 +109,6 @@ export default function SharePage() {
                 </div>
                 <p style={{ fontSize: 15, fontWeight: 700, fontStyle: "italic", color: "#111", margin: 0, paddingLeft: 30 }}>&ldquo;{mevite.why}&rdquo;</p>
               </div>
-                <p style={{ fontSize: 15, fontWeight: 700, fontStyle: "italic", color: "#111", margin: 0 }}>&ldquo;{mevite.why}&rdquo;</p>
-              </div>
             )}
 
             {/* Details with custom icons */}
