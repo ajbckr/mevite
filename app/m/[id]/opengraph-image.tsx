@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "fs/promises";
 import path from "path";
+import React from "react";
 
 export const runtime = "nodejs";
 export const alt = "MEVITE";
