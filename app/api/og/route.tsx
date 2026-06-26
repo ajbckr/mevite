@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
             {bringing ? (
               <div style={{ display: "flex", alignItems: "center", gap: 14, height: 48 }}>
                 <div style={{ width: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="34" height="34" viewBox={bringVB} fill="none">
+                  <svg width="25" height="34" viewBox={bringVB} fill="none">
                     <polygon fill={ORANGE} points="0 37.11 4.02 31.25 21.78 36.3 17.76 42.16 0 37.11"/>
                     <path fill={ORANGE} d="M22.25,61.57l-17.82-5.1v-16.6l13.41,3.81c.32.09.66-.03.84-.31l3.56-5.2v23.4Z"/>
                     <path fill={ORANGE} d="M39.87,30.32l-16.91,4.8-16.9-4.8,8.06-2.29c.52.96,1,1.93,1.44,2.93.33.76,1.09,1.22,1.88,1.22.26,0,.52-.05.77-.15.25-.11.48-.26.67-.45.19-.19.34-.42.44-.67.06-.16.11-.32.13-.49.37.53.99.87,1.67.87.06,0,.12,0,.17,0h0c.55-.05,1.04-.31,1.39-.73.12-.14.22-.3.29-.47.07.17.17.33.29.47.35.42.85.68,1.39.73h.01c.05,0,.11,0,.16,0,.67,0,1.29-.34,1.66-.86.02.16.07.33.13.48.21.51.6.91,1.11,1.12.25.1.51.15.77.15.79,0,1.54-.46,1.88-1.22.43-.99.91-1.97,1.44-2.93l8.06,2.29Z"/>
@@ -102,7 +102,6 @@ export async function GET(req: NextRequest) {
                 </svg>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <span style={{ fontSize: 26, fontWeight: 600, color: "#222", fontStyle: "italic" }}>"{why}"</span>
-                  <span style={{ fontSize: 20, fontWeight: 500, color: "#888" }}>– {sender}</span>
                 </div>
               </div>
             ) : null}
