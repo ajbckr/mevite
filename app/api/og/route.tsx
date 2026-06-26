@@ -31,18 +31,11 @@ async function getMeviteData(id: string) {
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id") || "";
 
-  const BASE = "https://mevite.me";
-
-  // Only fetch what's essential — one font + Firestore data
-  const [mevite, font900Res] = await Promise.all([
+  const [mevite] = await Promise.all([
     getMeviteData(id),
-    fetch(`${BASE}/inter-900.woff2`),
   ]);
 
-  const font900 = await font900Res.arrayBuffer();
-
-  // Plate as direct URL — ImageResponse handles the fetch internally
-  const plate = `${BASE}/og-plate.jpg`;
+  const plate = "https://mevite.me/og-plate.jpg";
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
@@ -117,11 +110,6 @@ export async function GET(req: NextRequest) {
         </div>
       </div>
     ),
-    {
-      width: 1200, height: 630,
-      fonts: [
-        { name: "Inter", data: font900, weight: 900, style: "normal" },
-      ],
-    }
+    { width: 1200, height: 630 }
   );
 }
