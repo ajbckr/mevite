@@ -25,7 +25,7 @@ const SNAP_ANGLES = [2, 20, 42, 65, 85];
 
 // ViewBox: 180 wide x 200 tall
 // Frame centered: x=20, width=120 → center at x=80 (true center of 180 is 90, offset right slightly for visual balance with hinge)
-const FX = 25, FY = 10, FW = 110, FH = 158, FS = 8;
+const FX = 30, FY = 10, FW = 110, FH = 158, FS = 8;
 const IX = FX + FS / 2;
 const IY = FY + FS / 2;
 const IW = FW - FS;
