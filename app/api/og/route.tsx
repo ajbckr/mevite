@@ -33,11 +33,10 @@ async function getMeviteData(id: string) {
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id") || "";
 
-  const [mevite, font900, font600, plateBuffer] = await Promise.all([
+  const [mevite, font900, font600] = await Promise.all([
     getMeviteData(id),
     readFile(path.join(process.cwd(), "public", "inter-900.woff2")),
     readFile(path.join(process.cwd(), "public", "inter-600.woff2")),
-    readFile(path.join(process.cwd(), "public", "og-plate.jpg")),
   ]);
 
   const ab = (b: Buffer): ArrayBuffer => {
@@ -46,7 +45,8 @@ export async function GET(req: NextRequest) {
     return copy;
   };
 
-  const plate = `data:image/jpeg;base64,${plateBuffer.toString("base64")}`;
+  // Plate via URL — avoids base64 memory spike
+  const plate = "https://mevite.me/og-plate.jpg";
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
