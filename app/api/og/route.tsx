@@ -1,9 +1,7 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import path from "path";
 import { NextRequest } from "next/server";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 const ORANGE = "#E8470A";
 
@@ -33,20 +31,20 @@ async function getMeviteData(id: string) {
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id") || "";
 
-  const [mevite, font900, font600] = await Promise.all([
+  const BASE = "https://mevite.me";
+
+  const [mevite, font900Res, font600Res] = await Promise.all([
     getMeviteData(id),
-    readFile(path.join(process.cwd(), "public", "inter-900.woff2")),
-    readFile(path.join(process.cwd(), "public", "inter-600.woff2")),
+    fetch(`${BASE}/inter-900.woff2`),
+    fetch(`${BASE}/inter-600.woff2`),
   ]);
 
-  const ab = (b: Buffer): ArrayBuffer => {
-    const copy = new ArrayBuffer(b.length);
-    new Uint8Array(copy).set(b);
-    return copy;
-  };
+  const [font900, font600] = await Promise.all([
+    font900Res.arrayBuffer(),
+    font600Res.arrayBuffer(),
+  ]);
 
-  // Plate via URL — avoids base64 memory spike
-  const plate = "https://mevite.me/og-plate.jpg";
+  const plate = `${BASE}/og-plate.jpg`;
   const sender   = mevite?.sender   || "Someone";
   const when     = mevite?.when     || "";
   const bringing = mevite?.bringing || "";
@@ -124,8 +122,8 @@ export async function GET(req: NextRequest) {
     {
       width: 1200, height: 630,
       fonts: [
-        { name: "Inter", data: ab(font900), weight: 900, style: "normal" },
-        { name: "Inter", data: ab(font600), weight: 600, style: "normal" },
+        { name: "Inter", data: font900, weight: 900, style: "normal" },
+        { name: "Inter", data: font600, weight: 600, style: "normal" },
       ],
     }
   );
