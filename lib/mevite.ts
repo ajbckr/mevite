@@ -67,6 +67,9 @@ export async function respondToMevite(
   if (!snap.exists()) return;
   const mevite = snap.data() as Mevite;
 
+  // Guard: prevent overwriting a terminal response
+  if (mevite.receiverResponse === "obviously" || mevite.receiverResponse === "terrible") return;
+
   const labels = {
     obviously: "Confirmed — obviously.",
     adjust: "Suggested adjusting the plan.",

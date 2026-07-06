@@ -379,7 +379,7 @@ export default function MissionPage() {
         )}
 
         {/* ── ADD TO CALENDAR — locked only ── */}
-        {isLocked && (
+        {isLocked && whenDate && (
           <Card style={{ marginBottom: 12 }}>
             <SectionLabel>Add to Calendar</SectionLabel>
             <div style={{ display: "flex", gap: 8 }}>

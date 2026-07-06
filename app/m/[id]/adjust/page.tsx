@@ -26,7 +26,14 @@ export default function AdjustPage() {
     setSent(true);
   };
 
-  const canSubmit = !!(newDate || newTime || note);
+  const canSubmit = !!(newDate || newTime || note) && (() => {
+    // If a date is selected, ensure the combined datetime is in the future
+    if (newDate) {
+      const combined = new Date(`${newDate}T${newTime || "00:00"}`);
+      return combined > new Date();
+    }
+    return true;
+  })();
   const today = new Date().toISOString().split("T")[0];
 
   if (sent) {
@@ -128,6 +135,13 @@ export default function AdjustPage() {
           }}
         >
           {sending ? "Sending…" : "SEND SUGGESTION →"}
+        </button>
+
+        {newDate && new Date(`${newDate}T${newTime || "00:00"}`) <= new Date() && (
+          <p style={{ fontSize: 12, color: "#E8470A", textAlign: "center", margin: "8px 0 0", fontFamily: F }}>
+            Please pick a future date and time.
+          </p>
+        )}
         </button>
 
         <p style={{ fontSize: 12, color: "#AAA", textAlign: "center", margin: "0 0 8px" }}>
