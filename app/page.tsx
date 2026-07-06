@@ -191,7 +191,8 @@ export default function Home() {
     setSending(true);
     try {
       trackMeviteCreated({ has_when: !!when, has_bringing: !!bringing, has_why: !!why, commitment: arrivalStatus });
-      const id = await createMevite({ who, sender, when: when || WHEN_ROTATE[whenIdx], bringing, why, arrivalStatus, senderPhone: "" });
+      const whenIso = selectedDate ? `${selectedDate}T${selectedTime}` : undefined;
+      const id = await createMevite({ who, sender, when: when || WHEN_ROTATE[whenIdx], whenIso, bringing, why, arrivalStatus, senderPhone: "" });
       window.location.href = `/share/${id}`;
     } catch (e) {
       console.error(e);

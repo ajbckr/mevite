@@ -21,6 +21,7 @@ export interface Mevite {
   who: string;       // the person being visited
   sender: string;    // the person showing up (you)
   when: string;
+  whenIso?: string;   // ISO datetime string e.g. "2026-07-15T20:00"
   bringing: string;
   why: string;
   arrivalStatus: ArrivalStatus;

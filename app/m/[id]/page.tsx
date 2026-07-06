@@ -177,37 +177,27 @@ export default function MissionPage() {
     ? `${mevite.suggestedChange!.newDate}${mevite.suggestedChange!.newTime ? ` at ${mevite.suggestedChange!.newTime}` : ""}`
     : mevite.when;
 
-  // Parse mevite.when into a proper Date for calendar events
-  // when is free text like "Friday, June 26 at 9:00 PM"
-  const whenDate = mevite.when ? (() => {
+  // Use stored ISO date if available (exact), otherwise fall back to parsing display string
+  const whenDate = (() => {
+    if (mevite.whenIso) {
+      const d = new Date(mevite.whenIso);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    if (!mevite.when) return null;
     try {
       const currentYear = new Date().getFullYear();
-      // Normalize: remove "at", add current year, try parsing
-      let str = mevite.when
-        .replace(" at ", " ")
-        .replace(/,\s*(\d{1,2})\s+(at\s+)?(\d)/, `, ${currentYear} $1 $3`);
-
-      // If year not present, append it before the time
+      let str = mevite.when.replace(" at ", " ");
       if (!/\d{4}/.test(str)) {
-        // Insert year after month/day: "Friday, June 26 9:00 PM" → "Friday, June 26 2026 9:00 PM"
         str = str.replace(/(\w+ \d{1,2})\s+(\d{1,2}:\d{2})/, `$1 ${currentYear} $2`);
-        // Also try: "June 26 9:00 PM"
-        if (!/\d{4}/.test(str)) {
-          str = `${str.split(" ").slice(0, 2).join(" ")} ${currentYear} ${str.split(" ").slice(2).join(" ")}`;
-        }
       }
-
       const d = new Date(str);
       if (!isNaN(d.getTime())) {
-        // If the date is in the past, bump to next year
-        if (d < new Date()) {
-          d.setFullYear(d.getFullYear() + 1);
-        }
+        if (d < new Date()) d.setFullYear(d.getFullYear() + 1);
         return d;
       }
       return null;
     } catch { return null; }
-  })() : null;
+  })();
 
   const toCalDate = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   const calStart = whenDate ? toCalDate(whenDate) : toCalDate(new Date());
