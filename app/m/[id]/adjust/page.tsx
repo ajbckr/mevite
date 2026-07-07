@@ -136,7 +136,6 @@ export default function AdjustPage() {
             Please pick a future date and time.
           </p>
         )}
-        </button>
 
         <p style={{ fontSize: 12, color: "#AAA", textAlign: "center", margin: "0 0 8px" }}>
           They&apos;ll see this suggestion on the mission page.
