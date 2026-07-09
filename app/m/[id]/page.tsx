@@ -19,6 +19,16 @@ const COMMITMENT: Record<string, { label: string; detail: string }> = {
   "open-the-door": { label: "Open The Door",   detail: "There is no scenario where I don't show up." },
 };
 
+// Shared copy for the auto-fired / fallback "text your response" SMS
+function smsBodyFor(r: "obviously" | "adjust" | "terrible", link: string): string {
+  const copy = {
+    obviously: `You had me at "coming over."\n${link}`,
+    adjust:    `The plan is good.\nThe timing isn't.\n${link}`,
+    terrible:  `The plan is good.\nThe timing isn't.\n${link}`,
+  };
+  return copy[r];
+}
+
 // ── Shared Components ──────────────────────────────────────────────
 
 function Header() {
@@ -132,6 +142,14 @@ export default function MissionPage() {
     if (r === "adjust") { trackAdjustOpen(); router.push(`/m/${id}/adjust`); return; }
     trackReceiverResponse(r);
     setResponding(true);
+
+    // Fire the SMS compose sheet immediately, in the same tap — must happen
+    // synchronously (before any await) or iOS Safari blocks the app-switch
+    // since it no longer counts as a direct response to a user gesture.
+    const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.me/m/${id}`;
+    trackTextResponse();
+    window.location.href = `sms:?body=${encodeURIComponent(smsBodyFor(r, meviteLink))}`;
+
     await respondToMevite(id, r);
     setLastResponse(r);
     setResponding(false);
@@ -140,7 +158,13 @@ export default function MissionPage() {
   const handleConfirmSuggestion = async () => {
     trackSuggestionConfirmed();
     setResponding(true);
+
+    const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.me/m/${id}`;
+    trackTextResponse();
+    window.location.href = `sms:?body=${encodeURIComponent(smsBodyFor("obviously", meviteLink))}`;
+
     await confirmSuggestion(id);
+    setLastResponse("obviously");
     setResponding(false);
   };
 
@@ -335,14 +359,10 @@ export default function MissionPage() {
           </div>
         )}
 
-        {/* ── TEXT RESPONSE — receiver view only, after they pick ── */}
+        {/* ── TEXT RESPONSE — fallback, in case the auto-fired SMS compose didn't open ── */}
         {view === "receiver" && lastResponse && (() => {
           const meviteLink = typeof window !== "undefined" ? window.location.href : `https://mevite.me/m/${id}`;
-          const copy = {
-            obviously: `You had me at "coming over."\n${meviteLink}`,
-            adjust:    `The plan is good.\nThe timing isn't.\n${meviteLink}`,
-            terrible:  `The plan is good.\nThe timing isn't.\n${meviteLink}`,
-          }[lastResponse];
+          const copy = smsBodyFor(lastResponse, meviteLink);
           return (
             <div style={{ marginBottom: 20 }}>
               <a href={`sms:?body=${encodeURIComponent(copy)}`} onClick={trackTextResponse} style={{
@@ -356,6 +376,9 @@ export default function MissionPage() {
                 </svg>
                 Text your response
               </a>
+              <p style={{ fontSize: 12, color: "#AAA", textAlign: "center", margin: "8px 0 0", fontFamily: F }}>
+                Didn&apos;t open automatically? Tap to try again.
+              </p>
             </div>
           );
         })()}
