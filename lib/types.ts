@@ -5,6 +5,17 @@ export type ArrivalStatus =
   | "locked-in"
   | "open-the-door";
 
+// Character caps on free-text fields — enforced here (client UX), again in
+// lib/mevite.ts (defense in depth), and again in firestore.rules (the real
+// boundary, since there's no auth gating writes).
+export const FIELD_LIMITS = {
+  who: 60,
+  sender: 40,
+  bringing: 60,
+  why: 140,
+  note: 200,
+} as const;
+
 export type ReceiverResponse = "obviously" | "adjust" | "terrible" | null;
 export type MeviteStatus = "pending" | "adjusting" | "locked" | "declined";
 

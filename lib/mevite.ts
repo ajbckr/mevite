@@ -8,7 +8,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { Mevite, TimelineEvent } from "./types";
+import { Mevite, TimelineEvent, FIELD_LIMITS } from "./types";
 
 function generateId(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -19,7 +19,22 @@ function generateId(): string {
   return result;
 }
 
+// Defense in depth: the UI already caps these with maxLength, and
+// firestore.rules is the real enforcement boundary since writes have no
+// auth gate — this just turns a bypass into a clean error instead of a
+// raw Firestore permission-denied.
+function assertWithinLimit(value: string, field: keyof typeof FIELD_LIMITS): void {
+  if (value.length > FIELD_LIMITS[field]) {
+    throw new Error(`${field} must be ${FIELD_LIMITS[field]} characters or fewer.`);
+  }
+}
+
 export async function createMevite(data: Omit<Mevite, "id" | "createdAt" | "timeline" | "receiverResponse" | "status">): Promise<string> {
+  assertWithinLimit(data.who, "who");
+  assertWithinLimit(data.sender, "sender");
+  assertWithinLimit(data.bringing, "bringing");
+  assertWithinLimit(data.why, "why");
+
   const id = generateId();
   const now = new Date().toISOString();
 
@@ -99,6 +114,8 @@ export async function suggestChange(
   newTime: string,
   note: string
 ): Promise<void> {
+  assertWithinLimit(note, "note");
+
   const now = new Date().toISOString();
   const snap = await getDoc(doc(db, "mevites", id));
   if (!snap.exists()) return;

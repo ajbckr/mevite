@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { suggestChange } from "@/lib/mevite";
+import { FIELD_LIMITS } from "@/lib/types";
 import { MeviteFooter } from "@/components/MeviteFooter";
 import { trackSuggestionSent } from "@/lib/analytics";
 
@@ -112,6 +113,7 @@ export default function AdjustPage() {
               value={note}
               onChange={e => setNote(e.target.value)}
               placeholder="How about Saturday instead?"
+              maxLength={FIELD_LIMITS.note}
               style={{ width: "100%", border: "none", outline: "none", fontSize: 15, fontWeight: 500, color: "#111", background: "transparent", fontFamily: F }}
             />
           </div>

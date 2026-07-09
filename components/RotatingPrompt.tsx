@@ -40,12 +40,14 @@ export function RotatingPrompt({
   value,
   onChange,
   label,
+  maxLength,
 }: {
   prompts: string[];
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   label: string;
+  maxLength?: number;
 }) {
   const [idx, setIdx] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -71,6 +73,7 @@ export function RotatingPrompt({
           onChange={e => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
+          maxLength={maxLength}
           style={{
             ...FIELD_STYLE.value,
             position: "absolute",

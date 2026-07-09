@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { RotatingPrompt, WhenField } from "@/components/RotatingPrompt";
 import { DoorSlider } from "@/components/DoorSlider";
 import { createMevite } from "@/lib/mevite";
-import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS, SENDER_PROMPTS } from "@/lib/types";
+import { ArrivalStatus, ARRIVAL_STATUSES, WHO_PROMPTS, BRINGING_PROMPTS, WHY_PROMPTS, SENDER_PROMPTS, FIELD_LIMITS } from "@/lib/types";
 import { MeviteFooter } from "@/components/MeviteFooter";
 import { trackFormStart, trackFieldFilled, trackCommitmentSet, trackMeviteCreated } from "@/lib/analytics";
 
@@ -226,7 +226,7 @@ export default function Home() {
       {/* ── FORM ── */}
       <div style={{ padding: "28px 24px 0", display: "flex", flexDirection: "column", gap: 28 }}>
 
-        <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={v => { trackStart(); setWho(v); if (v) trackFieldFilled("who"); }} placeholder="" />
+        <RotatingPrompt label="Who are you showing up for?" prompts={WHO_PROMPTS} value={who} onChange={v => { trackStart(); setWho(v); if (v) trackFieldFilled("who"); }} placeholder="" maxLength={FIELD_LIMITS.who} />
 
         <WhenField
           value={when}
@@ -236,9 +236,9 @@ export default function Home() {
           onClick={() => setShowDatePicker(true)}
         />
 
-        <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={v => { trackStart(); setBringing(v); if (v) trackFieldFilled("bringing"); }} placeholder="" />
-        <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={v => { trackStart(); setWhy(v); if (v) trackFieldFilled("why"); }} placeholder="" />
-        <RotatingPrompt label="Who's showing up? (you)" prompts={SENDER_PROMPTS} value={sender} onChange={v => { trackStart(); setSender(v); if (v) trackFieldFilled("sender"); }} placeholder="" />
+        <RotatingPrompt label="What are you bringing?" prompts={BRINGING_PROMPTS} value={bringing} onChange={v => { trackStart(); setBringing(v); if (v) trackFieldFilled("bringing"); }} placeholder="" maxLength={FIELD_LIMITS.bringing} />
+        <RotatingPrompt label="Why?" prompts={WHY_PROMPTS} value={why} onChange={v => { trackStart(); setWhy(v); if (v) trackFieldFilled("why"); }} placeholder="" maxLength={FIELD_LIMITS.why} />
+        <RotatingPrompt label="Who's showing up? (you)" prompts={SENDER_PROMPTS} value={sender} onChange={v => { trackStart(); setSender(v); if (v) trackFieldFilled("sender"); }} placeholder="" maxLength={FIELD_LIMITS.sender} />
 
         <div style={{ paddingTop: 4 }}>
           <button onClick={() => setShowPicker(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", padding: 0 }}>

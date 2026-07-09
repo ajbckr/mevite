@@ -1,15 +1,32 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function withinLimit(data, field, max) {
+      return !(field in data) || (data[field] is string && data[field].size() <= max);
+    }
+
     match /mevites/{id} {
       // Anyone with the Mevite ID can read it — the URL is the access token
       allow get: if true;
 
-      // Anyone can create a new Mevite
-      allow create: if true;
+      // Anyone can create a new Mevite — no auth gates writes, so cap the
+      // free-text fields to stop abuse/spam at the database layer (the
+      // client-side maxLength is UX only and trivially bypassed).
+      allow create: if withinLimit(request.resource.data, 'who', 60)
+        && withinLimit(request.resource.data, 'sender', 40)
+        && withinLimit(request.resource.data, 'bringing', 60)
+        && withinLimit(request.resource.data, 'why', 140);
 
-      // Updates allowed only if the document already exists (receiver responding, commitment updates)
-      allow update: if resource != null;
+      // Updates allowed only if the document already exists (receiver
+      // responding, commitment updates, suggested-change notes).
+      allow update: if resource != null
+        && withinLimit(request.resource.data, 'who', 60)
+        && withinLimit(request.resource.data, 'sender', 40)
+        && withinLimit(request.resource.data, 'bringing', 60)
+        && withinLimit(request.resource.data, 'why', 140)
+        && (!('suggestedChange' in request.resource.data)
+            || withinLimit(request.resource.data.suggestedChange, 'note', 200));
 
       // Nobody can list all Mevites or delete them
       allow list: if false;
