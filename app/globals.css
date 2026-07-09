@@ -10,6 +10,11 @@ body {
   background: #ffffff;
   color: #111111;
   -webkit-font-smoothing: antialiased;
+  /* User-generated text (who/sender/bringing/why) has no spaces guarantee —
+     without this, one long unbroken string overflows straight past its
+     card instead of wrapping, even when it's within the character caps. */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Rotating prompt animations */
